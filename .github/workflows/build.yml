@@ -1,0 +1,25 @@
+name: TypeScript Compile Check
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: Compiling
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 17
+      - name: Installing dependencies
+        run: npm ci
+      - name: Setting up TypeScript Compiler
+        run: npm i typescript
+      - name: Making sh files executeable
+        run: chmod +x ./copy.sh
+      - name: Building project
+        run: npm run build:linux
