@@ -1,0 +1,27 @@
+{
+    "name": "frontend",
+    "version": "1.0.0",
+    "main": "index.js",
+    "scripts": {
+        "build:linux.old": "tsc && cp -r ./src/* ./out/ ",
+        "build:linux": "tsc && ./copy.sh",
+        "build:windows": "tsc && copy.cmd",
+        "start:windows": "npm run build:windows && node server/index.js",
+        "start:linux": "npm run build:linux && node server/index.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/VenRoot/PMAsset_Front.git"
+    },
+    "keywords": [],
+    "author": "VenRoot",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/VenRoot/PMAsset_Front/issues"
+    },
+    "homepage": "https://github.com/VenRoot/PMAsset_Front#readme",
+    "description": "",
+    "devDependencies": {
+        "@types/node": "^16.11.7"
+    }
+}
