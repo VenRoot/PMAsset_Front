@@ -14,9 +14,16 @@ https.createServer(options, async (req, res) => {
     const urlstring = url.parse(req.url);
     if(urlstring.pathname && urlstring.pathname != "/" && !urlstring.pathname.endsWith(".html")) {
         console.log("Ist keine HTML");
-        if(fs.existsSync(req.url)) {
-            res.writeHead(200);
-            return res.end(fs.readFileSync(requrl));
+        console.log(urlstring.pathname);
+        console.log(requrl);
+        if(fs.existsSync(requrl)) {
+            if(fs.lstatSync(requrl).isDirectory()) {
+                requrl = path.join(requrl, "index.html");
+            }
+            if(fs.existsSync(requrl)) { res.writeHead(200); return res.end(fs.readFileSync(requrl)); }
+            res.writeHead(404); 
+            return res.end(fs.readFileSync(path.join(__dirname, "../out/404.html")));
+            
         }
         res.writeHead(404);
         return res.end("404");
@@ -34,7 +41,7 @@ https.createServer(options, async (req, res) => {
     else
     {
         res.writeHead(404);
-        return res.end(fs.readFileSync("../out/404.html"));
+        return res.end(fs.readFileSync(path.join(__dirname, "../out/404.html")));
     }
 }).listen(process.env.PORT || 3000).on("listening", () => {
     console.log(`Server listening on port ${process.env.PORT || 3000}`);

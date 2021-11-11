@@ -2,7 +2,7 @@
 <html lang="de">
 
 <head>
-    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+    <link href="./css/tailwind.min.css" rel="stylesheet">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -78,12 +78,13 @@
                     <table class="table-fixed" id="table">
                         <thead>
                           <tr class="bg-blend-darken">
-                            <th class="w-1/6">Typ</th>
-                            <th class="w-1/6">Seriennummer</th>
-                            <th class="w-1/6">IT Nr</th>
-                            <th class="w-1/6">Equipment</th>
-                            <th class="w-1/6">Aktueller Standort</th>
-                            <th class="w-1/6">Status</th>
+                            <th class="w-1/7">Typ</th>
+                            <th class="w-1/7">Seriennummer</th>
+                            <th class="w-1/7">IT Nr</th>
+                            <th class="w-1/7">Equipment</th>
+                            <th class="w-1/7">Aktueller Standort</th>
+                            <th class="w-1/7">Status</th>
+                            <th class="w-1/7">Mitarbeiter</th>
 
                           </tr>
                         </thead>
@@ -92,19 +93,28 @@
                             <td class="border-2 border-black text-center">T14</td>
                             <td class="border-2 border-black text-center">3483467834</td>
                             <td class="border-2 border-black text-center">IT003721</td>
-                            <td class="border-2 border-black text-center">Bildschirm</td>
+                            <td class="border-2 border-black text-center"><a href="#" class="text-red-900 hover:text-green-900">Bildschirm</a></td>
                             <td class="border-2 border-black text-center">Aichtal</td>
                             <td class="border-2 border-black text-center">Aktiv</td>
+                            <td class="border-2 border-black text-center"><a href="#" class="text-red-900 hover:text-green-900">Name Name</a></td>
                           </tr>
                           <tr class="bg-blue-200">
-                            <td class="border-2 border-black text-center"></td>
-                            <td class="border-2 border-black text-center">Adam</td>
-                            <td class="border-2 border-black text-center">112</td>
+                            <td class="border-2 border-black text-center">T490</td>
+                            <td class="border-2 border-black text-center">2812794902</td>
+                            <td class="border-2 border-black text-center">IT003839</td>
+                            <td class="border-2 border-black text-center"><a href="#" class="text-red-900 hover:text-green-900">Bildschirm</a></td>
+                            <td class="border-2 border-black text-center">Aichtal</td>
+                            <td class="border-2 border-black text-center">Aktiv</td>
+                            <td class="border-2 border-black text-center"><a href="#" class="text-red-900 hover:text-green-900">Name Name</a></td>
                           </tr>
                           <tr>
-                            <td class="border-2 border-black text-center"></td>
-                            <td class="border-2 border-black text-center">Chris</td>
-                            <td class="border-2 border-black text-center">1,280</td>
+                            <td class="border-2 border-black text-center">T490</td>
+                            <td class="border-2 border-black text-center">2819472834</td>
+                            <td class="border-2 border-black text-center">IT003820</td>
+                            <td class="border-2 border-black text-center"><a href="#" class="text-red-900 hover:text-green-900">Bildschirm</a></td>
+                            <td class="border-2 border-black text-center">Lager</td>
+                            <td class="border-2 border-black text-center">Inaktiv</td>
+                            <td class="border-2 border-black text-center">-</td>
                           </tr>
                         </tbody>
                       </table>
@@ -112,7 +122,7 @@
             </span>
 
         </div>
-        <script src="./js/index.js"></script>
+        <script src="./js/anim.js"></script>
 </body>
 
 </html>
