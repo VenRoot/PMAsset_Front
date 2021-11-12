@@ -26,7 +26,7 @@ https.createServer(options, async (req, res) => {
             
         }
         res.writeHead(404);
-        return res.end("404");
+        return res.end(fs.readFileSync(path.join(__dirname, "../out/404.html")));
     }
     console.log(requrl);
     if(fs.existsSync(requrl))
@@ -46,3 +46,5 @@ https.createServer(options, async (req, res) => {
 }).listen(process.env.PORT || 3000).on("listening", () => {
     console.log(`Server listening on port ${process.env.PORT || 3000}`);
 });
+
+//create a function to handle requests and send response

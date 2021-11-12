@@ -2,6 +2,9 @@
 <html lang="de">
 
 <head>
+    <script>
+        var exports = {};
+    </script>
     <link href="./css/tailwind.min.css" rel="stylesheet">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,8 +12,8 @@
     <title>Asset-Management</title>
 </head>
 
-<body>
-    <div class="relative min-h-screen md:flex">
+<body translate="no" class="">
+    <div class=" flex overflow-x-hidden h-screen" x-data=" {sidebarOpen: false}">
         <!-- mobile menu bar-->
 
         <div class="bg-gray-800 text-gray-100 flex justify-between md:hidden">
@@ -25,47 +28,51 @@
         </div>
 
         <!-- sidebar -->
-        <div class="sidebar bg-blue-800 text-blue-100 w-64 space-y-6 py-7 px-2 absolute inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition duration-200 ease-in-out">
+        <!-- <div class="space-y-6 py-7 px-2 absolute"> -->
+        <aside class="bg-blue-800 text-blue-100 flex-shrink-0 w-64 flex flex-col border-r transition-all duration-300" :class="{ '-ml-64': sidebarOpen }">
             <!-- logo -->
-            <a href=" # " class="text-white flex items-center space-x-2 px-4 ">
-                <svg xmlns="http://www.w3.org/2000/svg " class="h-8 w-8 " fill="none " viewBox="0 0 24 24 " stroke="currentColor ">
-                <path stroke-linecap="round " stroke-linejoin="round " stroke-width="2 " d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42
-            0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42
-            3.42 0 013.138-3.138z " />
+            <a href=" #" class="text-white flex items-center space-x-2 px-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42
+    0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0
+    013.138-3.138z" />
               </svg>
                 <span>
-                    <row class="text-2xl font-extrabold "><p>Willkomen,</p></row>
-                    <row class="text-2xl font-extrabold "><p>Better Dev</p></row>
+                    <row class="text-2xl font-extrabold"><p>Willkomen,</p></row>
+                    <row class="text-2xl font-extrabold"><p>Better Dev</p></row>
                 </span>
             </a>
             <!-- nav -->
             <nav class="">
-                <a href="#" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3 ">Übersicht</a>
-                <a href="Laptops" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3 ">Laptop</a>
-                <a href="Laptops" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3 ">Bildschirm</a>
-                <a href="Laptops" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3 ">Phones</a>
+                <a href="#" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3">Übersicht</a>
+                <a href="Laptops" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3">Laptop</a>
+                <a href="Laptops" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3">Bildschirm</a>
+                <a href="Laptops" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3">Phones</a>
+                <a class="block py-2.5 px-4"></a>
+                <a href="create" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3 font-bold">Antrag erstellen</a>
             </nav>
             <div class="col-span-1 h-96 flex flex-col justify-between items-end">
                 <button href="Laptops" class=" absolute bottom-10 self-center align-bottom py-2.5 px-4 bg-red-900 white transition duration-200 hover:bg-black rounded-lg">Logout</button>
             </div>
-        </div>
+        </aside>
+        <!-- </div> -->
 
         <!-- content -->
-        <div class="flex-1 p-10 text-2xl font-bold transform -translate-x-full md:relative md:translate-x-0 transition duration-200 ease-in-out">
+        <div id="content" class="flex-1 text-2xl font-bold left-1">
             <!-- toggle button -->
-            <button class=" mobile-menu-button p-4 focus:outline-none focus:bg-gray-700">
+            <button class=" mobile-menu-button p-4 focus:outline-none focus:bg-gray-700" @click="sidebarOpen=! sidebarOpen">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                   </svg>
             </button> Dashboard
             <div class="flex justify-between items-center">
                 <div class="flex-1">
-                    <h1 class="text-2xl font-bold">Suchen Sie nach einer IT-Nummer</h1>
-                </div>>
-                <div class="flex-1">
-                    <div class="flex justify-end">
+                    <h1 class="text-2xl font-bold text-center">Suchen Sie nach einer IT-Nummer</h1>
+                </div>
+                <div class="flex-1 self-center">
+                    <div class="flex items-center self-center">
                         <div class="flex-1">
-                            <input type="text" class="bg-gray-800 text-white p-2 rounded-full w-full" placeholder="Search">
+                            <input type="text" class="bg-white text-gray p-2 rounded-full w-full" placeholder="Search">
                         </div>
                         <div class="flex-1">
                             <button class="bg-blue-700 text-white p-2 rounded-full w-full">Search</button>
@@ -75,46 +82,60 @@
             </div>
             <span>
                 <div>
-                    <table class="table-fixed" id="table">
+                    <table class="table-fixed w-full" id="table">
                         <thead>
                           <tr class="bg-blend-darken">
-                            <th class="w-1/7">Typ</th>
-                            <th class="w-1/7">Seriennummer</th>
-                            <th class="w-1/7">IT Nr</th>
-                            <th class="w-1/7">Equipment</th>
-                            <th class="w-1/7">Aktueller Standort</th>
-                            <th class="w-1/7">Status</th>
-                            <th class="w-1/7">Mitarbeiter</th>
+                            <th class="w-1/8">IT Nr</th>
+                            <th class="w-1/8">Typ</th>
+                            <th class="w-1/8">Seriennummer</th>
+                            <th class="w-1/8">Equipment</th>
+                            <th class="w-1/8">Standort</th>
+                            <th class="w-1/8">Status</th>
+                            <th class="w-1/8">Mitarbeiter</th>
+                            <th class="w-1/8">Formular vorhanden</th>
 
                           </tr>
                         </thead>
                         <tbody class="border-2 border-black" id="tbody">
-                          <tr>
-                            <td class="border-2 border-black text-center">T14</td>
-                            <td class="border-2 border-black text-center">3483467834</td>
-                            <td class="border-2 border-black text-center">IT003721</td>
-                            <td class="border-2 border-black text-center"><a href="#" class="text-red-900 hover:text-green-900">Bildschirm</a></td>
-                            <td class="border-2 border-black text-center">Aichtal</td>
-                            <td class="border-2 border-black text-center">Aktiv</td>
-                            <td class="border-2 border-black text-center"><a href="#" class="text-red-900 hover:text-green-900">Name Name</a></td>
-                          </tr>
-                          <tr class="bg-blue-200">
-                            <td class="border-2 border-black text-center">T490</td>
-                            <td class="border-2 border-black text-center">2812794902</td>
-                            <td class="border-2 border-black text-center">IT003839</td>
-                            <td class="border-2 border-black text-center"><a href="#" class="text-red-900 hover:text-green-900">Bildschirm</a></td>
-                            <td class="border-2 border-black text-center">Aichtal</td>
-                            <td class="border-2 border-black text-center">Aktiv</td>
-                            <td class="border-2 border-black text-center"><a href="#" class="text-red-900 hover:text-green-900">Name Name</a></td>
-                          </tr>
-                          <tr>
-                            <td class="border-2 border-black text-center">T490</td>
-                            <td class="border-2 border-black text-center">2819472834</td>
-                            <td class="border-2 border-black text-center">IT003820</td>
-                            <td class="border-2 border-black text-center"><a href="#" class="text-red-900 hover:text-green-900">Bildschirm</a></td>
-                            <td class="border-2 border-black text-center">Lager</td>
-                            <td class="border-2 border-black text-center">Inaktiv</td>
-                            <td class="border-2 border-black text-center">-</td>
+                            <tr>
+                                <th class="border-2 border-black" onfocus="ConvToInput(this);" name="IT_Nr" onblur="ConvToCell(this);" ></th>
+                                <th class="border-2 border-black" onfocus="ConvToInput(this);" name="Typ" onblur="ConvToCell(this);" ></th>
+                                <th class="border-2 border-black" onfocus="ConvToInput(this);" name="Seriennummer" onblur="ConvToCell(this);" ></th>
+                                <th class="border-2 border-black" onfocus="ConvToInput(this);" name="text" onblur="ConvToCell(this);" ></th>
+                                <th class="border-2 border-black" onfocus="ConvToInput(this);" name="text" onblur="ConvToCell(this);" ></th>
+                                <th class="border-2 border-black" onfocus="ConvToInput(this);" name="text" onblur="ConvToCell(this);" ></th>
+                                <th class="border-2 border-black" onfocus="ConvToInput(this);" name="text" onblur="ConvToCell(this);" ></th>
+                                <th class="border-2 border-black" onfocus="ConvToInput(this);" name="text" onblur="ConvToCell(this);" ></th>
+                            </tr>
+                          <tr onmouseover="foc(this);" onmouseout="unfoc(this);">
+                            <td class="border-2 border-black duration-500 transition text-center">IT003721</td>
+                            <td class="border-2 border-black duration-500 transition text-center">T14</td>
+                            <td class="border-2 border-black duration-500 transition text-center">3483467834</td>
+                            <td class="border-2 border-black duration-500 transition text-center"><a href="#" class="text-red-900 hover:text-green-900">Bildschirm</a></td>
+                            <td class="border-2 border-black duration-500 transition text-center">Aichtal</td>
+                            <td class="border-2 border-black duration-500 transition text-center">Aktiv</td>
+                            <td class="border-2 border-black duration-500 transition text-center"><a href="#" class="text-red-900 hover:text-green-900">Name Name</a></td>
+                            <td class="border-2 border-black duration-500 transition text-center"><a href="#" class="text-red-900 hover:text-green-900">Ja</a></td>                          
+                        </tr>
+                          <tr class="bg-blue-200" onmouseover="foc(this);" onmouseout="unfoc(this);">
+                            <td class="border-2 border-black duration-500 transition text-center">IT003839</td>
+                            <td class="border-2 border-black duration-500 transition text-center">T490</td>
+                            <td class="border-2 border-black duration-500 transition text-center">2812794902</td>
+                            <td class="border-2 border-black duration-500 transition text-center"><a href="#" title="Seriennummer" class="text-red-900 hover:text-green-900">Bildschirm</a></td>
+                            <td class="border-2 border-black duration-500 transition text-center">Aichtal</td>
+                            <td class="border-2 border-black duration-500 transition text-center">Aktiv</td>
+                            <td class="border-2 border-black duration-500 transition text-center"><a href="#" class="text-red-900 hover:text-green-900">Name Name</a></td>
+                            <td class="border-2 border-black duration-500 transition text-center"><a href="#" class="text-red-900 hover:text-green-900">Ja</a></td>                          
+                        </tr>
+                          <tr onmouseover="foc(this);" onmouseout="unfoc(this);">
+                            <td class="border-2 border-black duration-500 transition text-center">IT003820</td>
+                            <td class="border-2 border-black duration-500 transition text-center">T490</td>
+                            <td class="border-2 border-black duration-500 transition text-center">2819472834</td>
+                            <td class="border-2 border-black duration-500 transition text-center"><a href="#" class="text-red-900 hover:text-green-900">Bildschirm</a></td>
+                            <td class="border-2 border-black duration-500 transition text-center">Lager</td>
+                            <td class="border-2 border-black duration-500 transition text-center">Inaktiv</td>
+                            <td class="border-2 border-black duration-500 transition text-center">-</td>
+                            <td class="border-2 border-black duration-500 transition text-center">-</td>
                           </tr>
                         </tbody>
                       </table>
@@ -123,6 +144,7 @@
 
         </div>
         <script src="./js/anim.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/2.8.0/alpine.js"></script>
 </body>
 
 </html>
