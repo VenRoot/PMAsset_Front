@@ -2,14 +2,14 @@
 <html lang="de">
 
 <head>
-    <script>
-        var exports = {};
-    </script>
     <link href="./css/tailwind.min.css" rel="stylesheet">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Asset-Management</title>
+    <script type="module">
+        import * as main from "./js/main.js"; window.main = main;
+    </script>
 </head>
 
 <body translate="no" class="">
@@ -98,16 +98,16 @@
                         </thead>
                         <tbody class="border-2 border-black" id="tbody">
                             <tr>
-                                <th class="border-2 border-black" onfocus="ConvToInput(this);" name="IT_Nr" onblur="ConvToCell(this);" ></th>
-                                <th class="border-2 border-black" onfocus="ConvToInput(this);" name="Typ" onblur="ConvToCell(this);" ></th>
-                                <th class="border-2 border-black" onfocus="ConvToInput(this);" name="Seriennummer" onblur="ConvToCell(this);" ></th>
-                                <th class="border-2 border-black" onfocus="ConvToInput(this);" name="text" onblur="ConvToCell(this);" ></th>
-                                <th class="border-2 border-black" onfocus="ConvToInput(this);" name="text" onblur="ConvToCell(this);" ></th>
-                                <th class="border-2 border-black" onfocus="ConvToInput(this);" name="text" onblur="ConvToCell(this);" ></th>
-                                <th class="border-2 border-black" onfocus="ConvToInput(this);" name="text" onblur="ConvToCell(this);" ></th>
-                                <th class="border-2 border-black" onfocus="ConvToInput(this);" name="text" onblur="ConvToCell(this);" ></th>
+                                <th class="border-2 border-black" onfocus="main.ConvToInput(this);" name="IT_Nr" onblur="main.ConvToCell(this);" ></th>
+                                <th class="border-2 border-black" onfocus="main.ConvToInput(this);" name="Typ" onblur="main.ConvToCell(this);" ></th>
+                                <th class="border-2 border-black" onfocus="main.ConvToInput(this);" name="Seriennummer" onblur="main.ConvToCell(this);" ></th>
+                                <th class="border-2 border-black" onfocus="main.ConvToInput(this);" name="text" onblur="main.ConvToCell(this);" ></th>
+                                <th class="border-2 border-black" onfocus="main.ConvToInput(this);" name="text" onblur="main.ConvToCell(this);" ></th>
+                                <th class="border-2 border-black" onfocus="main.ConvToInput(this);" name="text" onblur="main.ConvToCell(this);" ></th>
+                                <th class="border-2 border-black" onfocus="main.ConvToInput(this);" name="text" onblur="main.ConvToCell(this);" ></th>
+                                <th class="border-2 border-black" onfocus="main.ConvToInput(this);" name="text" onblur="main.ConvToCell(this);" ></th>
                             </tr>
-                          <tr onmouseover="foc(this);" onmouseout="unfoc(this);">
+                          <tr onmouseover="main.foc(this);" onmouseout="main.unfoc(this);">
                             <td class="border-2 border-black duration-500 transition text-center">IT003721</td>
                             <td class="border-2 border-black duration-500 transition text-center">T14</td>
                             <td class="border-2 border-black duration-500 transition text-center">3483467834</td>
@@ -117,7 +117,7 @@
                             <td class="border-2 border-black duration-500 transition text-center"><a href="#" class="text-red-900 hover:text-green-900">Name Name</a></td>
                             <td class="border-2 border-black duration-500 transition text-center"><a href="#" class="text-red-900 hover:text-green-900">Ja</a></td>                          
                         </tr>
-                          <tr class="bg-blue-200" onmouseover="foc(this);" onmouseout="unfoc(this);">
+                          <tr class="bg-blue-200" onmouseover="main.foc(this);" onmouseout="main.unfoc(this);">
                             <td class="border-2 border-black duration-500 transition text-center">IT003839</td>
                             <td class="border-2 border-black duration-500 transition text-center">T490</td>
                             <td class="border-2 border-black duration-500 transition text-center">2812794902</td>
@@ -127,7 +127,7 @@
                             <td class="border-2 border-black duration-500 transition text-center"><a href="#" class="text-red-900 hover:text-green-900">Name Name</a></td>
                             <td class="border-2 border-black duration-500 transition text-center"><a href="#" class="text-red-900 hover:text-green-900">Ja</a></td>                          
                         </tr>
-                          <tr onmouseover="foc(this);" onmouseout="unfoc(this);">
+                          <tr onmouseover="main.foc(this);" onmouseout="main.unfoc(this);">
                             <td class="border-2 border-black duration-500 transition text-center">IT003820</td>
                             <td class="border-2 border-black duration-500 transition text-center">T490</td>
                             <td class="border-2 border-black duration-500 transition text-center">2819472834</td>
@@ -143,8 +143,7 @@
             </span>
 
         </div>
-        <script src="./js/anim.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/2.8.0/alpine.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/2.8.0/alpine.js "></script>
 </body>
 
 </html>

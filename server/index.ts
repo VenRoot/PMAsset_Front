@@ -20,6 +20,15 @@ https.createServer(options, async (req, res) => {
             if(fs.lstatSync(requrl).isDirectory()) {
                 requrl = path.join(requrl, "index.html");
             }
+            if(fs.existsSync(requrl) && (requrl.endsWith(".js") || requrl.endsWith(".mjs")))
+            {
+                console.log("Server requestred JS file");
+                res.writeHead(200, {
+                    "Content-Type": "application/javascript"
+                });
+                return res.end(fs.readFileSync(requrl));
+            }
+
             if(fs.existsSync(requrl)) { res.writeHead(200); return res.end(fs.readFileSync(requrl)); }
             res.writeHead(404); 
             return res.end(fs.readFileSync(path.join(__dirname, "../out/404.html")));
