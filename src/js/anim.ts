@@ -5,6 +5,9 @@ const table = document.getElementById("table") as HTMLTableElement;
 const tbody = document.getElementById('tbody') as HTMLTableElement;
 
 import {InputName} from "./interface";
+import {uwu} from "./cart.js";
+
+uwu();
 
 //add our event listener for the click
 
@@ -25,7 +28,7 @@ btn?.addEventListener('click', () => {
 });
 
 
-const foc = async (element: HTMLTableRowElement) => {
+export const foc = async (element: HTMLTableRowElement) => {
     for(let j = 0; j < element.cells.length; j++)
     {
         let cell = element.cells[j];
@@ -33,7 +36,7 @@ const foc = async (element: HTMLTableRowElement) => {
     }
 };
 
-const unfoc = async (element: HTMLTableRowElement) => {
+export const unfoc = async (element: HTMLTableRowElement) => {
     for(let j = 0; j < element.cells.length; j++)
     {
         let cell = element.cells[j];
@@ -41,7 +44,7 @@ const unfoc = async (element: HTMLTableRowElement) => {
     }
 }
 
-const ConvToInput = async (element: HTMLTableCellElement) => {
+export const ConvToInput = async (element: HTMLTableCellElement) => {
     let input = new HTMLInputElement();
     input.type = element.getAttribute("name") || "unknown" as InputName;
     switch(input.type as InputName)
