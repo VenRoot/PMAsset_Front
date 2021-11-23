@@ -1,5 +1,3 @@
-import {ConvToInput, foc, unfoc} from "./anim.js";
+import * as anim from "./anim.js";
 
-console.log(foc, unfoc, ConvToInput);
-
-export {foc, unfoc, ConvToInput};
+export * from "./anim.js";

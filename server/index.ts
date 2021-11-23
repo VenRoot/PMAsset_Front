@@ -8,7 +8,8 @@ const options = {
     cert: fs.readFileSync(path.join(__dirname, "certs/cert.pem"))
 };
 
-https.createServer(options, async (req, res) => {
+const server = https.createServer(options, async (req, res) => {
+    console.log('Aktuelle Path: '+__dirname);
     let requrl = path.join(__dirname, `../out/${req.url?.substr(1)}`);
     if(req.url === undefined) return;
     const urlstring = url.parse(req.url);
@@ -31,11 +32,11 @@ https.createServer(options, async (req, res) => {
 
             if(fs.existsSync(requrl)) { res.writeHead(200); return res.end(fs.readFileSync(requrl)); }
             res.writeHead(404); 
-            return res.end(fs.readFileSync(path.join(__dirname, "../out/404.html")));
+            return res.end(fs.readFileSync("/out/404.html"));
             
         }
         res.writeHead(404);
-        return res.end(fs.readFileSync(path.join(__dirname, "../out/404.html")));
+        return res.end(fs.readFileSync("/out/404.html"));
     }
     console.log(requrl);
     if(fs.existsSync(requrl))
@@ -50,9 +51,9 @@ https.createServer(options, async (req, res) => {
     else
     {
         res.writeHead(404);
-        return res.end(fs.readFileSync(path.join(__dirname, "../out/404.html")));
+        return res.end(fs.readFileSync("/out/404.html"));
     }
-}).listen(process.env.PORT || 3000).on("listening", () => {
+}).listen(Number(process.env.PORT) || 3000, "0.0.0.0", undefined, undefined).on("listening", () => {
     console.log(`Server listening on port ${process.env.PORT || 3000}`);
 });
 
