@@ -6,12 +6,8 @@
         "build:linux.old": "tsc && cp -r ./src/* ./out/ ",
         "build": "npm run clean && tsc && ./copy.sh",
         "start": "npm run build && node server/index.js",
-
-
         "build:windows": "tsc && copy.cmd",
         "start:windows": "npm run build:windows && node server/index.js",
-
-
         "clean": "rm -rf ./out"
     },
     "repository": {
@@ -27,6 +23,10 @@
     "homepage": "https://github.com/VenRoot/PMAsset_Front#readme",
     "description": "",
     "devDependencies": {
+        "@types/jquery": "^3.5.8",
         "@types/node": "^16.11.7"
+    },
+    "dependencies": {
+        "jquery": "^3.6.0"
     }
 }
