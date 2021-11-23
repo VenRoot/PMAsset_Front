@@ -497,3 +497,37 @@ export const validateInput = () =>
 }
 
 
+const keys = {
+    ctrl: false,
+    shift: false,
+    i: false,
+    F12: false,
+    fuse: false
+};
+
+document.onkeydown = (e) =>
+{
+    if(keys.fuse) return;
+    if(e.key == "F12") keys.F12 = true;
+    if(e.key === "Control") keys.ctrl = true;
+    if(e.key === "Shift") keys.shift = true;
+    if(e.key === "I") keys.i = true;
+
+    if(((keys.ctrl && keys.shift && keys.i) || keys.F12) && !keys.fuse)
+    {
+        console.warn('%cStop!', 'color: red; font-size: 60px; font-weight: bold;');
+        console.log("%cFalls dich jemand dazu aufgefordert hat, etwas zu kopieren und hier einzufügen, handelt es sich in 11 von 10 Fällen um einen Betrugsversuch.", 'font-size: 30px; font-weight: bold;');
+        console.log("%cEtwas hier einzufügen könnte die Seite verhunzen oder Angreifern Zugang verschaffen!", 'font-size: 30px; font-weight: bold;');
+        keys.fuse = true;
+    }
+    console.log(keys);
+    
+};
+
+document.onkeyup = (e) =>
+{
+    if(e.key === "Control") keys.ctrl = false;
+    if(e.key === "Shift") keys.shift = false;
+    if(e.key === "i") keys.i = false;
+    if(e.key === "F12") keys.F12 = false;
+}
