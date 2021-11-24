@@ -22,4 +22,4 @@ jobs:
       - name: Making sh files executeable
         run: chmod +x ./copy.sh
       - name: Building project
-        run: npm run build:linux
+        run: npm run build
