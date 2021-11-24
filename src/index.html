@@ -9,9 +9,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Asset-Management</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script type="module">
-        import * as main from "./js/main.js"; window.main = main; console.log(window.main);
+    <script defer src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script defer type="module">
+        import * as main from"./js/main.js"; window.main = main; console.log(window.main);
     </script>
 </head>
 
@@ -64,7 +64,7 @@
         <!-- content -->
         <div id="content" class="flex-1 text-2xl font-bold left-1">
             <!-- toggle button -->
-            <button class=" mobile-menu-button p-4 focus:outline-none focus:bg-gray-700" @click="sidebarOpen=! sidebarOpen">
+            <button id="DashBtn" class=" mobile-menu-button p-4 focus:outline-none focus:bg-gray-700" @click="sidebarOpen=! sidebarOpen">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                   </svg>
@@ -123,13 +123,13 @@
                                 </th>
                                 <th class="icons">
                                     <a href="#" class="text-gray-500 hover:text-gray-100">
-                                      <i onclick="main.ShowPassword(this);" class="material-icons-outlined text-base ">info</i>
+                                      <i onclick="main.ShowPassword(this);" class="material-icons-outlined text-base">info</i>
                                     </a>
-                                    <a href="#" class="text-green-400 hover:text-gray-100 mx-2 ">
+                                    <a href="#" class="text-red-400 hover:text-gray-100 mx-2">
                                       <i class="material-icons-outlined text-base" onclick="alert('Hello');" disabled id="DoneBTN">close</i>
                                     </a>
                                     <a href="#" onclick="main.ResetFields()" class="text-red-400 hover:text-gray-100">
-                                      <i class="material-icons-round text-base ">settings_backup_restore</i>
+                                      <i class="material-icons-round text-base">settings_backup_restore</i>
                                     </a>
                                   </th>
                             </tr>
@@ -144,14 +144,14 @@
                             <td class="border-2 border-black duration-500 transition text-center"><a href="#" class="text-red-900 hover:text-green-900">Ja</a></td>
                             <td class="border-2 border-black duration-500 transition text-center"><input type="password" class="bpasswd" value="Passwort123"></td>
                             <td class="icons">
-                                <a href="# " class="text-gray-500 hover:text-gray-100">
-                                  <i onclick="main.ShowPassword(this);" class="material-icons-outlined text-base ">visibility</i>
+                                <a href="#" class="text-gray-500 hover:text-gray-100">
+                                  <i onclick="main.ShowPassword(this);" class="material-icons-outlined text-base">visibility</i>
                                 </a>
-                                <a href="# " class="text-yellow-400 hover:text-gray-100 mx-2 ">
-                                  <i class="material-icons-outlined text-base ">edit</i>
+                                <a href="#" class="text-yellow-400 hover:text-gray-100 mx-2">
+                                  <i class="material-icons-outlined text-base">edit</i>
                                 </a>
-                                <a href="# " class="text-red-400 hover:text-gray-100">
-                                  <i class="material-icons-round text-base ">delete_outline</i>
+                                <a href="#" class="text-red-400 hover:text-gray-100">
+                                  <i class="material-icons-round text-base">delete_outline</i>
                                 </a>
                               </td>                       
                         </tr>
@@ -166,14 +166,14 @@
                             <td class="border-2 border-black duration-500 transition text-center"><a href="#" class="text-red-900 hover:text-green-900">Ja</a></td>
                             <td class="border-2 border-black duration-500 transition text-center"><input type="password" class="bpasswd" value="Hallo"></td>
                             <td class="icons">
-                                <a href="# " class="text-gray-500 hover:text-gray-100">
-                                  <i onclick="main.ShowPassword(this);" class="material-icons-outlined text-base ">visibility</i>
+                                <a href="#" class="text-gray-500 hover:text-gray-100">
+                                  <i onclick="main.ShowPassword(this);" class="material-icons-outlined text-base">visibility</i>
                                 </a>
-                                <a href="# " class="text-yellow-400 hover:text-gray-100 mx-2 ">
-                                  <i class="material-icons-outlined text-base ">edit</i>
+                                <a href="#" class="text-yellow-400 hover:text-gray-100 mx-2">
+                                  <i class="material-icons-outlined text-base">edit</i>
                                 </a>
-                                <a href="# " class="text-red-400 hover:text-gray-100">
-                                  <i class="material-icons-round text-base ">delete_outline</i>
+                                <a href="#" class="text-red-400 hover:text-gray-100">
+                                  <i class="material-icons-round text-base">delete_outline</i>
                                 </a>
                               </td>
                         </tr>
@@ -185,17 +185,17 @@
                             <td class="border-2 border-black duration-500 transition text-center">Lager</td>
                             <td class="border-2 border-black duration-500 transition text-center">Inaktiv</td>
                             <td class="border-2 border-black duration-500 transition text-center">-</td>
-                            <td class="border-2 border-black duration-500 transition text-center">-</td>
+                            <td class="border-2 border-black duration-500 transition text-center">Nein</td>
                             <td class="border-2 border-black duration-500 transition text-center"><input type="password" class="bpasswd" value="Hallo"></td>
                             <td class="icons">
-                                <a href="# " class="text-gray-500 hover:text-gray-100">
+                                <a href="#" class="text-gray-500 hover:text-gray-100">
                                   <i class="material-icons-outlined text-base" onclick="main.ShowPassword(this);">visibility</i>
                                 </a>
-                                <a href="# " class="text-yellow-400 hover:text-gray-100 mx-2 ">
-                                  <i class="material-icons-outlined text-base ">edit</i>
+                                <a href="#" class="text-yellow-400 hover:text-gray-100 mx-2">
+                                  <i class="material-icons-outlined text-base" onclick="main.EditEntry(this);">edit</i>
                                 </a>
-                                <a href="# " class="text-red-400 hover:text-gray-100">
-                                  <i class="material-icons-round text-base ">delete_outline</i>
+                                <a href="#" class="text-red-400 hover:text-gray-100">
+                                  <i class="material-icons-round text-base" onclick="main.DelEntry(this);">delete_outline</i>
                                 </a>
                               </td>
                           </tr>
@@ -205,19 +205,19 @@
             </span>
 
         </div>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/2.8.0/alpine.js "></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/2.8.0/alpine.js"></script>
         <!-- This example requires Tailwind CSS v2.0+ -->
         <div id="my-modal" style="display: none;" class="fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
             <div class="flex items-end justify-center min-h-screen pt-8 px-8 pb-20 text-center sm:block sm:p-0">
                 <!--
         Background overlay, show/hide based on modal state.
   
-        Entering: "ease-out duration-300"
-          From: "opacity-0"
-          To: "opacity-100"
-        Leaving: "ease-in duration-200"
-          From: "opacity-100"
-          To: "opacity-0"
+        Entering:"ease-out duration-300"
+          From:"opacity-0"
+          To:"opacity-100"
+        Leaving:"ease-in duration-200"
+          From:"opacity-100"
+          To:"opacity-0"
       -->
                 <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
 
@@ -227,12 +227,12 @@
                 <!--
         Modal panel, show/hide based on modal state.
   
-        Entering: "ease-out duration-300"
-          From: "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-          To: "opacity-100 translate-y-0 sm:scale-100"
-        Leaving: "ease-in duration-200"
-          From: "opacity-100 translate-y-0 sm:scale-100"
-          To: "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+        Entering:"ease-out duration-300"
+          From:"opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+          To:"opacity-100 translate-y-0 sm:scale-100"
+        Leaving:"ease-in duration-200"
+          From:"opacity-100 translate-y-0 sm:scale-100"
+          To:"opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
       -->
                 <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-7xl sm:w-full">
                     <div class="bg-white px-8 pt-5 pb-4 sm:p-6 sm:pb-4 w-20">
@@ -256,15 +256,15 @@
                                     <p class="text-sm text-gray-500">
                                         Bitte geben Sie die Seriennummern der zusätzlichen Hardware an.
                                         <input id="HardwareSearchInput" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" type="text" placeholder="Seriennummer">
-                                        <table class=" table-auto ">
+                                        <table class=" table-auto">
                                             <thead>
                                                 <tr>
                                                     <th class="px-4 py-2"></th>
-                                                    <th class="px-4 py-2 ">IT-Nr</th>
-                                                    <th class="px-4 py-2 ">Seriennr</th>
-                                                    <th class="px-4 py-2 ">Typ</th>
-                                                    <th class="px-4 py-2 ">Hersteller</th>
-                                                    <th class="px-4 py-2 ">Status</th>
+                                                    <th class="px-4 py-2">IT-Nr</th>
+                                                    <th class="px-4 py-2">Seriennr</th>
+                                                    <th class="px-4 py-2">Typ</th>
+                                                    <th class="px-4 py-2">Hersteller</th>
+                                                    <th class="px-4 py-2">Status</th>
                                                 </tr>
                                             </thead>
                                             <tbody style="overflow-y: scroll;">
@@ -276,15 +276,15 @@
                                                     <td class="border-t border-gray-200 px-4 py-2">Test</td>
                                                     <td class="border-t border-gray-200 px-4 py-2">Test</td>
                                                     <td class="border-t border-gray-200 px-4 py-2"><input type="password" value="Hallo"></td>
-                                                    <td class="p-3 ">
-                                                        <a href="# " class="text-gray-500 hover:text-gray-100 mr-2 ">
-                                                            <i class="material-icons-outlined text-base ">visibility</i>
+                                                    <td class="p-3">
+                                                        <a href="#" class="text-gray-500 hover:text-gray-100 mr-2">
+                                                            <i class="material-icons-outlined text-base">visibility</i>
                                                         </a>
-                                                        <a href="# " class="text-yellow-400 hover:text-gray-100 mx-2 ">
-                                                            <i class="material-icons-outlined text-base ">edit</i>
+                                                        <a href="#" class="text-yellow-400 hover:text-gray-100 mx-2">
+                                                            <i class="material-icons-outlined text-base">edit</i>
                                                         </a>
-                                                        <a href="# " class="text-red-400 hover:text-gray-100 ml-2 ">
-                                                            <i class="material-icons-round text-base ">delete_outline</i>
+                                                        <a href="#" class="text-red-400 hover:text-gray-100 ml-2">
+                                                            <i class="material-icons-round text-base">delete_outline</i>
                                                         </a>
                                                     </td>
                                         </table>
@@ -293,13 +293,13 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse ">
+                    <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                         <button id="ok-btn" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2
-                                            focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm ">
+                                            focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
             Schließen
           </button>
                         <!-- <button id="cancel-btn" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2
-                                            focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm ">
+                                            focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
             Cancel
           </button> -->
                     </div>
