@@ -17,15 +17,6 @@ uwu();
 console.log("ready");
 
 btn?.addEventListener('click', () => {
-    // content?.classList.toggle('-translate-x-0');
-    // content?.classList.toggle('md:translate-x-0');
-
-
-
-    // sidebar?.classList.toggle('-translate-x-0');
-    // sidebar?.classList.toggle('md:translate-x-0');
-
-
     sidebar?.classList.toggle('-ml-64');
 });
 
@@ -46,71 +37,12 @@ export const unfoc = async (element: HTMLTableRowElement) => {
     }
 }
 
-export const ConvToInput = async (element: HTMLTableCellElement) => {
-    let input = new HTMLInputElement();
-    input.type = element.getAttribute("name") || "unknown" as InputName;
-    switch (input.type as InputName) {
-        case "IT_Nr":
-            input.placeholder = "0X-IT00XXXX";
-            input.title = "01 => Laptop\n02 => Bildschirm\n03 => Konferenzerät\n04 => Phone";
-            break;
-        case "Seriennummer":
-            input.placeholder = "XXXXXXXXXXXX";
-            input.title = "Bitte hier die Seriennummer eingeben"
-            break;
-        case "Typ":
-            return;
-            //Der Typ sollte automatisch gesetzt werden
-            let sel = new HTMLSelectElement();
-            sel.title = "Bitte hier den Typ auswählen";
-            sel.options.add(new Option("Laptop", "01"));
-            break;
-        case "text": break;
-        default: break;
-    }
-    input.value = element.innerText;
-    input.placeholder = ""
-
-};
-
-const ConvToCell = async (element: HTMLInputElement) => {
-
-};
-
 const newRowNames =
-    [
-        "IT_Nr",
-        "Typ",
-        "Seriennummer"
-    ];
-
-// export const AddRow = async () => {
-
-//     await MoveRow();
-//     let row = document.createElement("tr");
-//     for (let i = 0; i < newRowNames.length; i++) {
-//         let cell = document.createElement("td");
-//         cell.classList.add("border-2");
-//         cell.classList.add("border-black");
-//         cell.setAttribute("name", newRowNames[i]);
-//         cell.setAttribute("onfocus", "main.ConvToInput(this);");
-//         cell.setAttribute("onblur", "main.ConvToCell(this);");
-//         row.appendChild(cell);
-//     }
-//     for (let i = 0; i < 5; i++) {
-//         let cell = document.createElement("td");
-//         cell.classList.add("border-2");
-//         cell.classList.add("border-black");
-//         cell.setAttribute("name", "text");
-//         cell.setAttribute("onfocus", "main.ConvToInput(this);");
-//         cell.setAttribute("onblur", "main.ConvToCell(this);");
-//         row.appendChild(cell);
-//     }
-//     /** Statt AppendChild, nutze insertBefore, um am Anfang (ganz oben) einzufügen */
-//     tbody.insertBefore(row, tbody.firstChild);
-// };
-
-
+[
+    "IT_Nr",
+    "Typ",
+    "Seriennummer"
+];
 export const AddRow = async () =>
 {
     const newRow = tbody.rows[1].cloneNode(true) as HTMLTableRowElement;
@@ -195,18 +127,6 @@ const getCellValue = (index: number) => {
     let cell = inputrow.cells[index];
     return cell.innerText;
 }
-
-export const checkITNr = async (element: HTMLTableCellElement) => {
-    if (element.innerText.length < 2) return;
-    let prefix = element.innerText.substring(0, 2);
-    switch (prefix) {
-        case "01": setInputType("PC"); break;
-        case "02": setInputType("Monitor"); break;
-        case "03": setInputType("Conference"); break;
-        case "04": setInputType("Phone"); break;
-    }
-}
-
 
 (() => {
     const select = document.getElementById("SelectInputTyp") as HTMLSelectElement;
@@ -404,33 +324,6 @@ export const CreateForm = (elem: HTMLOptionElement) =>
 
 }
 
-export const ShowPassword = (elem: HTMLElement) =>
-{
-    
-    const grandparent = elem.parentElement?.parentElement?.parentElement as HTMLTableRowElement;
-    const passwd = grandparent.getElementsByClassName("bpasswd")[0] as HTMLInputElement;
-    
-
-    if(passwd.type == "password") 
-    {
-        passwd.type = "text";
-        elem.innerHTML = "visibility_off";
-        return;
-    }
-    passwd.type = "password";
-    elem.innerHTML = "visibility";
-}
-
-export const GeneratePassword = (elem: HTMLElement) =>
-{
-    const grandparent = elem.parentElement as HTMLTableCellElement;
-    const passwd = grandparent.getElementsByTagName("input")[0] as HTMLInputElement;
-
-    passwd.value = genPasswd(15);
-    enableBtn();
-
-}
-
 setTimeout(() => {
     document.getElementById("DashBtn")?.click();
 }, 500);
@@ -472,17 +365,6 @@ export const ResetFields = () =>
         if((element as HTMLInputElement).id == "itinput") (element as HTMLInputElement).value = "01-IT00";
         else (element as HTMLInputElement).value = "";
     });
-}
-
-const genPasswd = (length: number) =>
-{
-    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\"\'§$%&/()=\\`´!#-_<>!+~?°^';
-    let passwd = "";
-    for(let i = 0; i < length; i++)
-    {
-        passwd += chars[Math.floor(Math.random() * chars.length)];
-    }
-    return passwd;
 }
 
 const itinput = document.getElementById("itinput") as HTMLInputElement;
