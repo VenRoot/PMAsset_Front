@@ -3,11 +3,11 @@ import { DevTypes, phoneTypes, Bildschirm, MonHersteller, Status } from "./inter
 export const PCTypen: DevTypes[] = Object.seal([
     "CAD",
     "T14",
-    "T30",
-    "T50",
-    "T70",
-    "T80",
-    "T90",
+    "T430",
+    "T450",
+    "T470",
+    "T480",
+    "T490",
     "Tower"
 ]);
 
