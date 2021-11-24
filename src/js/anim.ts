@@ -8,6 +8,7 @@ const thead = document.getElementById('thead') as HTMLTableElement;
 import { InputName } from "./interface";
 import { uwu } from "./cart.js";
 import { MonitorHersteller, PCTypen, PhoneTypen, StatusTypen } from "./values.js";
+import {FormSelect, StatusSelect, TypSelect} from "./templates.js";
 
 uwu();
 
@@ -16,7 +17,6 @@ uwu();
 console.log("ready");
 
 btn?.addEventListener('click', () => {
-    console.log('clicked');
     // content?.classList.toggle('-translate-x-0');
     // content?.classList.toggle('md:translate-x-0');
 
@@ -47,7 +47,6 @@ export const unfoc = async (element: HTMLTableRowElement) => {
 }
 
 export const ConvToInput = async (element: HTMLTableCellElement) => {
-    console.log("ConvToInput");
     let input = new HTMLInputElement();
     input.type = element.getAttribute("name") || "unknown" as InputName;
     switch (input.type as InputName) {
@@ -121,14 +120,28 @@ export const AddRow = async () =>
         if(index == 3) cell.innerText = "Bildschirm";
         if(index == 9) return;
     });
-    console.log(newRow);
     
     $("#tbody tr:first").after(newRow);
+    ResetFields();
 };
 
 const getInputValues = async () => 
 {
     let inputrow = tbody.rows[0];
+    let cells = Array.from(inputrow.cells);
+    let values = cells.map((cell, index) => {
+        if(index == 0) return (cell.children[0].children[0] as HTMLInputElement).value;
+        if(index == 3 || index == 9) return null;
+        if(index == 1 || index == 5 || index == 7) return (cell.children[0] as HTMLSelectElement).selectedOptions[0].value;
+        if(index == 8 )return (cell.children[1] as HTMLInputElement).value;
+        return (cell.children[0] as HTMLInputElement).value;
+    });
+    return values;
+}
+
+const getEditedValues = async (element: HTMLTableRowElement) =>
+{
+    let inputrow = element;
     let cells = Array.from(inputrow.cells);
     let values = cells.map((cell, index) => {
         if(index == 0) return (cell.children[0].children[0] as HTMLInputElement).value;
@@ -236,7 +249,6 @@ const setInputType = async (type: "PC" | "Monitor" | "Conference" | "Phone") => 
 };
 
 $("#itinput").keydown(function (e) {
-    console.log(e);
     if (/^\d+$/.test(e.key) == false && e.key != "Backspace") return e.preventDefault();
     let oldvalue = $(this).val() as string;
     let field = this as HTMLInputElement;
@@ -336,7 +348,6 @@ const classList =
 ];
 
 SNSearch.addEventListener("keyup", function () {
-    console.log("Hallo");
     let value = this.value.toUpperCase();
     if(value === undefined || value.length <3) return;
     // console.log(value);
@@ -397,9 +408,7 @@ export const ShowPassword = (elem: HTMLElement) =>
 {
     
     const grandparent = elem.parentElement?.parentElement?.parentElement as HTMLTableRowElement;
-    console.log(grandparent);
     const passwd = grandparent.getElementsByClassName("bpasswd")[0] as HTMLInputElement;
-    console.log(passwd);
     
 
     if(passwd.type == "password") 
@@ -415,7 +424,6 @@ export const ShowPassword = (elem: HTMLElement) =>
 export const GeneratePassword = (elem: HTMLElement) =>
 {
     const grandparent = elem.parentElement as HTMLTableCellElement;
-    console.log(grandparent);
     const passwd = grandparent.getElementsByTagName("input")[0] as HTMLInputElement;
 
     passwd.value = genPasswd(15);
@@ -423,19 +431,21 @@ export const GeneratePassword = (elem: HTMLElement) =>
 
 }
 
+setTimeout(() => {
+    document.getElementById("DashBtn")?.click();
+}, 500);
+
 const DoneBTN = document.getElementById("DoneBTN");
 
 export const enableBtn = () =>
 {
-    console.log("00");
     
     if(validateInput()) {
-        console.log(11);
         
         if(DoneBTN != null) 
         {
-            console.log(12)
             DoneBTN.removeAttribute("disabled");
+            DoneBTN.setAttribute("onclick", "main.AddRow()");
             DoneBTN.parentElement?.classList.add("text-green-400");
             DoneBTN.parentElement?.classList.remove("text-red-400");
             DoneBTN.innerHTML = "done";
@@ -443,12 +453,10 @@ export const enableBtn = () =>
     }
     else
     {
-        console.log(21);
         //user darf nicht fortfahren
         if(DoneBTN != null) 
         {
-            console.log(22)
-            DoneBTN.setAttribute("disabled", "");
+            DoneBTN.removeAttribute("onclick");
             DoneBTN.parentElement?.classList.remove("text-green-400");
             DoneBTN.parentElement?.classList.add("text-red-400");
             DoneBTN.innerHTML = "close";
@@ -520,7 +528,7 @@ document.onkeydown = (e) =>
         console.log("%cEtwas hier einzufügen könnte die Seite verhunzen oder Angreifern Zugang verschaffen!", 'font-size: 30px; font-weight: bold;');
         keys.fuse = true;
     }
-    console.log(keys);
+    // console.log(keys);
     
 };
 
@@ -530,4 +538,74 @@ document.onkeyup = (e) =>
     if(e.key === "Shift") keys.shift = false;
     if(e.key === "i") keys.i = false;
     if(e.key === "F12") keys.F12 = false;
+}
+
+
+export const EditEntry = (elem: HTMLElement) =>
+{
+
+    elem.innerHTML = "done";
+    elem.classList.remove("text-yellow-400");
+    elem.classList.add("text-green-400");
+    elem.setAttribute("onclick", "main.SaveEntry(this)");
+
+    const grandparent = elem.parentElement?.parentElement?.parentElement as HTMLTableRowElement;
+    
+    Array.from(grandparent.cells).forEach((cell, i) => {
+
+        switch(i)
+        {
+            case 1: TypSelect.selectedIndex = PCTypen.indexOf(cell.innerHTML as any);TypSelect.value = cell.innerHTML; cell.innerHTML="";  cell.appendChild(TypSelect); console.log(cell); break;
+            case 3: break; cell.children[0].classList.remove("disabled"); break;
+            case 5: StatusSelect.value = cell.innerHTML; cell.innerHTML=""; cell.appendChild(StatusSelect); console.warn(cell); break;
+            case 7: FormSelect.value = cell.innerHTML; cell.innerHTML=""; cell.appendChild(FormSelect); break;
+            case 8: cell.children[0].classList.remove("disabled"); break;
+            case 9: break;
+            default: const inp = document.createElement("input"); 
+            inp.classList.add("text-center") 
+            inp.value = cell.innerText; 
+            cell.innerHTML = ""; 
+            cell.appendChild(inp); 
+            break;
+        }
+    });
+}
+
+export const SaveEntry = (elem: HTMLElement) =>
+{
+    elem.innerHTML = "edit";
+    elem.classList.remove("text-green-400");
+    elem.classList.add("text-yellow-400");
+    elem.setAttribute("onclick", "main.EditEntry(this)");
+
+    const grandparent = elem.parentElement?.parentElement?.parentElement as HTMLTableRowElement;
+    
+    Array.from(grandparent.cells).forEach((cell, i) => {
+
+        switch(i)
+        {
+            case 1: case 5: case 7: cell.innerHTML = (cell.children[0] as HTMLSelectElement).value; break;
+            case 3: break; cell.children[0].classList.add("disabled"); break;
+            case 8: cell.children[0].classList.add("disabled"); break;
+            case 9: break;
+            default: cell.innerHTML = (cell.children[0] as HTMLInputElement).value; break;
+        }
+    });
+};
+
+export const DelEntry = (elem: HTMLElement) =>
+{
+    if(!prompt("Wirklich löschen?")) return;
+
+    const grandparent = elem.parentElement?.parentElement?.parentElement as HTMLTableRowElement;
+    grandparent.remove();
+}
+
+export const EditColor = () =>
+{
+    for(let i = 0; i < tbody.rows.length; i++)
+    {
+        tbody.rows[i].classList.remove("bg-blue-200");
+        if(!isEven(i)) tbody.rows[i].classList.add("bg-blue-200");
+    }
 }
