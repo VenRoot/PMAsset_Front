@@ -32,11 +32,11 @@ const server = https.createServer(options, async (req, res) => {
 
             if(fs.existsSync(requrl)) { res.writeHead(200); return res.end(fs.readFileSync(requrl)); }
             res.writeHead(404); 
-            return res.end(fs.readFileSync("/out/404.html"));
+            return res.end(fs.readFileSync(path.join(__dirname, "../", "out/404.html")));
             
         }
         res.writeHead(404);
-        return res.end(fs.readFileSync("/out/404.html"));
+        return res.end(fs.readFileSync(path.join(__dirname, "../", "out/404.html")));
     }
     console.log(requrl);
     if(fs.existsSync(requrl))
@@ -51,10 +51,16 @@ const server = https.createServer(options, async (req, res) => {
     else
     {
         res.writeHead(404);
-        return res.end(fs.readFileSync("/out/404.html"));
+        return res.end(fs.readFileSync(path.join(__dirname, "../", "out/404.html")));
     }
 }).listen(Number(process.env.PORT) || 3000, "0.0.0.0", undefined, undefined).on("listening", () => {
     console.log(`Server listening on port ${process.env.PORT || 3000}`);
+});
+
+process.on("uncaughtException", () =>
+{
+    server.listen(Number(process.env.PORT) || 3000, "0.0.0.0", undefined, undefined).on("listening", () => {
+        console.log(`Server listening on port ${process.env.PORT || 3000}`);});
 });
 
 //create a function to handle requests and send response
