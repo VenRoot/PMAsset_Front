@@ -16,19 +16,24 @@ export interface equipment
 
 };
 
-type ITNr = `IT${number}`;
+type ITNr = `IT${"00"}${number}`;
+
+const x: ITNr = "IT001244"
 
 export interface Gerät
 {
     seriennummer: string;
     it_nr: ITNr;
     status: Status;
+    standort: string;
     besitzer?: string;
 }
 
 export interface PC extends Gerät
 {
     type: DevTypes;
+    form: boolean;
+    password: string;
 }
 
 export interface Bildschirm extends Gerät
