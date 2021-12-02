@@ -13,6 +13,11 @@
     <script defer type="module">
         import * as main from"./js/main.js"; window.main = main; 
     </script>
+    <style>
+      .table {
+        border-spacing: 60px 20px;
+      }
+    </style>
 </head>
 
 <body translate="no" class="">
@@ -48,9 +53,9 @@
             <!-- nav -->
             <nav class="">
                 <a href="#" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3">Übersicht</a>
-                <a href="pc" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3">PC</a>
+                <a href="PC" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3">PC</a>
                 <a href="./Bildschirm/" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3">Bildschirm</a>
-                <a href="./Phones/" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3">Phones</a>
+                <a href="./Phone/" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3">Phones</a>
                 <a href="./Konferenz/" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3">Konferenzeräte</a>
                 <a class="block py-2.5 px-4"></a>
                 <a href="create" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3 font-bold">Antrag erstellen</a>
@@ -70,138 +75,53 @@
                   </svg>
             </button> Dashboard
             <div class="flex justify-between items-center">
-                <div class="flex-1">
-                    <h1 class="text-2xl font-bold text-center">Suchen Sie nach einer IT-Nummer</h1>
-                </div>
-                <div class="flex-1 self-center">
-                    <div class="flex items-center self-center">
-                        <div class="flex-1">
-                            <input type="text" class="bg-white text-gray p-2 rounded-full w-full" placeholder="Search">
-                        </div>
-                        <div class="flex-1">
-                            <button class="bg-blue-700 text-white p-2 rounded-full w-full">Search</button>
-                        </div>
-                    </div>
-                </div>
             </div>
             <span>
-                <div>
-                    <table class="table text-gray-400 border-separate space-y-6 text-sm" id="table">
-                        <thead id="thead" class="bg-blue-500 text-white">
-                          <tr class="bg-blend-darken">
-                            <th class="p-3 text-center">IT Nr</th>
-                            <th class="p-3 text-center">Typ</th>
-                            <th class="p-3 text-center">Seriennummer</th>
-                            <th class="p-3 text-center">Equipment</th>
-                            <th class="p-3 text-center">Standort</th>
-                            <th class="p-3 text-center">Status</th>
-                            <th class="p-3 text-center">Mitarbeiter</th>
-                            <th class="p-3 text-center">Form</th>
-                            <th class="p-3 text-center">BIOS Passwort</th>
-                            <th class="p-3 text-center">Aktionen</th>
-
-                          </tr>
-                        </thead>
-                        <tbody class="border-2 border-black" id="tbody">
-                            <tr style="height: 36px" onkeyup="main.enableBtn();">
-                                <th class="border-2 border-black" name="IT_Nr"><div><input id="itinput" type="text" onkeypress="main.checkITNr(this);" class="w-full text-center temp"  placeholder="0X-IT00XXXX" maxlength="11" size="11" value="01-IT00" title="01 => Laptop&#13;02 => Bildschirm&#13;03 => Konferenzerät&#13;04 => Phone"></div></th>
-                                <th class="border-2 border-black" name="Typ"><select id="SelectInputTyp"></select></th>
-                                <th class="border-2 border-black" name="Seriennummer"><input type="text" class="w-full temp" placeholder="XXXXXXXXXXXXXXX" style="font-size: 11px;" title="Bitte hier die Seriennummer eingeben"></th>
-                                <th class="border-2 border-black" name="Equipment"><button class="w-full text-center" onclick="alert('Doofsack');" id="open-btn">Hinzufügen</button></th>
-                                <th class="border-2 border-black" name="text"><input class="w-full text-center temp" type="text"></th>
-                                <th class="border-2 border-black" name="text"><select id="SelectInputStatus" class="w-full text-center" type="text"></select></th>
-                                <th class="border-2 border-black" name="Mitarbeiter"><input class="w-full text-center temp" type="text"></th>
-                                <th class="border-2 border-black" name="Fomular"><select name="" class="text-center" id="FormSelect">
-                                    <option value="Nein" selected>Nein</option>
-                                    <option value="Ja" onselect="CreateForm(this);">Ja</option>
-                                </select></th>
-                                <th class="border-2 border-black" name="Passwort">
-                                    <a href="#" onclick="main.GeneratePassword(this);" class="text-green-600 hover:text-green-300">
-                                        <i class="material-icons-outlined">vpn_key</i>
-                                    </a>
-                                    <input class="w-full text-center temp" id="bpasswd" type="text">
-                                </th>
-                                <th class="icons">
-                                    <a href="#" class="text-gray-500 hover:text-gray-100">
-                                      <i onclick="main.ShowPassword(this);" class="material-icons-outlined text-base">info</i>
-                                    </a>
-                                    <a href="#" class="text-red-400 hover:text-gray-100 mx-2">
-                                      <i class="material-icons-outlined text-base" onclick="alert('Hello');" disabled id="DoneBTN">close</i>
-                                    </a>
-                                    <a href="#" onclick="main.ResetFields()" class="text-red-400 hover:text-gray-100">
-                                      <i class="material-icons-round text-base">settings_backup_restore</i>
-                                    </a>
-                                  </th>
-                            </tr>
-                          <tr onmouseover="main.foc(this);" onmouseout="main.unfoc(this);">
-                            <td class="border-2 border-black duration-500 transition text-center">IT003721</td>
-                            <td class="border-2 border-black duration-500 transition text-center">T14</td>
-                            <td class="border-2 border-black duration-500 transition text-center">3483467834</td>
-                            <td class="border-2 border-black duration-500 transition text-center"><a href="#" class="text-red-900 hover:text-green-900">Bildschirm</a></td>
-                            <td class="border-2 border-black duration-500 transition text-center">Aichtal</td>
-                            <td class="border-2 border-black duration-500 transition text-center">Aktiv</td>
-                            <td class="border-2 border-black duration-500 transition text-center"><a href="#" class="text-red-900 hover:text-green-900">Name Name</a></td>
-                            <td class="border-2 border-black duration-500 transition text-center"><a href="#" class="text-red-900 hover:text-green-900">Ja</a></td>
-                            <td class="border-2 border-black duration-500 transition text-center"><input type="password" class="bpasswd" value="Passwort123"></td>
-                            <td class="icons">
-                                <a href="#" class="text-gray-500 hover:text-gray-100">
-                                  <i onclick="main.ShowPassword(this);" class="material-icons-outlined text-base">visibility</i>
-                                </a>
-                                <a href="#" class="text-yellow-400 hover:text-gray-100 mx-2">
-                                  <i class="material-icons-outlined text-base">edit</i>
-                                </a>
-                                <a href="#" class="text-red-400 hover:text-gray-100">
-                                  <i class="material-icons-round text-base">delete_outline</i>
-                                </a>
-                              </td>                       
-                        </tr>
-                          <tr class="bg-blue-200" onmouseover="main.foc(this);" onmouseout="main.unfoc(this);">
-                            <td class="border-2 border-black duration-500 transition text-center">IT003839</td>
-                            <td class="border-2 border-black duration-500 transition text-center">T490</td>
-                            <td class="border-2 border-black duration-500 transition text-center">2812794902</td>
-                            <td class="border-2 border-black duration-500 transition text-center"><a href="#" title="Seriennummer" class="text-red-900 hover:text-green-900">Bildschirm</a></td>
-                            <td class="border-2 border-black duration-500 transition text-center">Aichtal</td>
-                            <td class="border-2 border-black duration-500 transition text-center">Aktiv</td>
-                            <td class="border-2 border-black duration-500 transition text-center"><a href="#" class="text-red-900 hover:text-green-900">Name Name</a></td>
-                            <td class="border-2 border-black duration-500 transition text-center"><a href="#" class="text-red-900 hover:text-green-900">Ja</a></td>
-                            <td class="border-2 border-black duration-500 transition text-center"><input type="password" class="bpasswd" value="Hallo"></td>
-                            <td class="icons">
-                                <a href="#" class="text-gray-500 hover:text-gray-100">
-                                  <i onclick="main.ShowPassword(this);" class="material-icons-outlined text-base">visibility</i>
-                                </a>
-                                <a href="#" class="text-yellow-400 hover:text-gray-100 mx-2">
-                                  <i class="material-icons-outlined text-base">edit</i>
-                                </a>
-                                <a href="#" class="text-red-400 hover:text-gray-100">
-                                  <i class="material-icons-round text-base">delete_outline</i>
-                                </a>
-                              </td>
-                        </tr>
-                          <tr onmouseover="main.foc(this);" onmouseout="main.unfoc(this);">
-                            <td class="border-2 border-black duration-500 transition text-center">IT003820</td>
-                            <td class="border-2 border-black duration-500 transition text-center">T490</td>
-                            <td class="border-2 border-black duration-500 transition text-center">2819472834</td>
-                            <td class="border-2 border-black duration-500 transition text-center"><a href="#" class="text-red-900 hover:text-green-900">Bildschirm</a></td>
-                            <td class="border-2 border-black duration-500 transition text-center">Lager</td>
-                            <td class="border-2 border-black duration-500 transition text-center">Inaktiv</td>
-                            <td class="border-2 border-black duration-500 transition text-center">-</td>
-                            <td class="border-2 border-black duration-500 transition text-center">Nein</td>
-                            <td class="border-2 border-black duration-500 transition text-center"><input type="password" class="bpasswd" value="Hallo"></td>
-                            <td class="icons">
-                                <a href="#" class="text-gray-500 hover:text-gray-100">
-                                  <i class="material-icons-outlined text-base" onclick="main.ShowPassword(this);">visibility</i>
-                                </a>
-                                <a href="#" class="text-yellow-400 hover:text-gray-100 mx-2">
-                                  <i class="material-icons-outlined text-base" onclick="main.EditEntry(this);">edit</i>
-                                </a>
-                                <a href="#" class="text-red-400 hover:text-gray-100">
-                                  <i class="material-icons-round text-base" onclick="main.DelEntry(this);">delete_outline</i>
-                                </a>
-                              </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                </div>
+              <table class="border-none table table-auto border-separate mx-8 my-8 self-center items-center">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>Gesamt</th>
+                    <th>Aktiv</th>
+                    <th>Inaktiv</th>
+                    <th>Bestellt</th>
+                    <th>Bestand</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>PCs</td>
+                    <td>200</td>
+                    <td>100</td>
+                    <td>50</td>
+                    <td>50</td>
+                    <td>100</td>
+                  </tr>
+                  <tr>
+                    <td>Bilschirme</td>
+                    <td>200</td>
+                    <td>100</td>
+                    <td>50</td>
+                    <td>50</td>
+                    <td>100</td>
+                  </tr>
+                  <tr>
+                    <td>Phones</td>
+                    <td>200</td>
+                    <td>100</td>
+                    <td>50</td>
+                    <td>50</td>
+                    <td>100</td>
+                  </tr>
+                  <tr>
+                    <td>Konferenz</td>
+                    <td>200</td>
+                    <td>100</td>
+                    <td>50</td>
+                    <td>50</td>
+                    <td>100</td>
+                </tbody>
+              </table>
             </span>
 
         </div>
