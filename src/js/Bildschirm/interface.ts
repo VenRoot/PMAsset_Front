@@ -16,9 +16,9 @@ export interface equipment
 
 };
 
-type ITNr = `IT${"00"}${number}`;
+type ITNr = `${"01"|"02"|"03"|"04"}-IT${"00"}${number}`;
 
-const x: ITNr = "IT001244"
+const x: ITNr = "01-IT001244"
 
 export interface Gerät
 {
