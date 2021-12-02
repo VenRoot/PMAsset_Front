@@ -15,6 +15,11 @@ const server = https.createServer(options, async (req, res) => {
     const urlstring = url.parse(req.url);
     if(urlstring.pathname && urlstring.pathname != "/" && !urlstring.pathname.endsWith(".html")) {
         console.log("Ist keine HTML");
+        if(urlstring.pathname.endsWith("/css/styles.pure.css"))
+        {
+            res.writeHead(200, {'Content-Type': 'text/css'});
+            return res.end(fs.readFileSync(path.join(__dirname, "../out/css/styles.pure.css")));
+        }
         console.log(urlstring.pathname);
         console.log(requrl);
         if(fs.existsSync(requrl)) {
