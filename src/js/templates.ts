@@ -1,17 +1,50 @@
-import {PCTypen, StatusTypen, PhoneTypen, MonitorTypen, } from "./values.js";
+import {PCTypen, StatusTypen, PhoneTypen, MonitorTypen } from "./values.js";
 
 export const TypSelect = document.createElement('select');
 export const StatusSelect = document.createElement('select');
-export const PhoneSelect = document.createElement('select');
 export const EquipmentBtn = document.createElement('button');
 export const FormSelect = document.createElement('select');
 
-PCTypen.forEach(typ => {
-    const option = document.createElement('option');
-    option.value = typ;
-    option.text = typ;
-    TypSelect.appendChild(option);
-});
+
+
+if(document.location.pathname.includes('/Bildschirm'))
+{
+    MonitorTypen.forEach(typ => {
+        const option = document.createElement('option');
+        option.value = typ;
+        option.text = typ;
+        TypSelect.appendChild(option);
+    });
+
+}
+else if(document.location.pathname.includes('/pc'))
+{
+    PCTypen.forEach(typ => {
+        const option = document.createElement('option');
+        option.value = typ;
+        option.text = typ;
+        TypSelect.appendChild(option);
+    });
+
+}
+else if(document.location.pathname.includes('/Phone'))
+{
+    PhoneTypen.forEach(typ => {
+        const option = document.createElement('option');
+        option.value = typ;
+        option.text = typ;
+        TypSelect.appendChild(option);
+    });
+
+}
+else if(document.location.pathname.includes('/Konferenz'))
+{
+
+}
+else
+{
+
+}
 
 StatusTypen.forEach(typ => {
     const option = document.createElement('option');
@@ -20,12 +53,6 @@ StatusTypen.forEach(typ => {
     StatusSelect.appendChild(option);
 });
 
-PhoneTypen.forEach(typ => {
-    const option = document.createElement('option');
-    option.value = typ;
-    option.text = typ;
-    PhoneSelect.appendChild(option);
-});
 FormSelect.options.add(new Option('Ja', 'Ja'));
 FormSelect.options.add(new Option('Nein', 'Nein'));
 

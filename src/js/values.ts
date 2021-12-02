@@ -47,13 +47,10 @@ export const PhoneTypen: phoneTypes[] = Object.seal([
     "iPhone 13 Pro Max"
 ]);
 
-export const MonitorHersteller: MonHersteller[] = Object.seal([
+export const MonitorTypen: MonHersteller[] = Object.seal([
     "Samsung",
     "LG",
     "Dell"
 ]);
 
 
-export const MonitorTypen: Bildschirm[] = Object.seal([
-
-]);

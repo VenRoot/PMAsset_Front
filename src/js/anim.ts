@@ -2,12 +2,12 @@ const btn = document.querySelector('.mobile-menu-button');
 const content = document.querySelector('#content');
 const sidebar = document.querySelector('.sidebar');
 const table = document.getElementById("table") as HTMLTableElement;
-const tbody = document.getElementById('tbody') as HTMLTableElement;
+export const tbody = document.getElementById('tbody') as HTMLTableElement;
 const thead = document.getElementById('thead') as HTMLTableElement;
 
 import { InputName } from "./interface";
 import { uwu } from "./cart.js";
-import { MonitorHersteller, PCTypen, PhoneTypen, StatusTypen } from "./values.js";
+import { PCTypen, StatusTypen } from "./values.js";
 import {FormSelect, StatusSelect, TypSelect} from "./templates.js";
 
 uwu();
@@ -43,35 +43,39 @@ const newRowNames =
     "Typ",
     "Seriennummer"
 ];
-export const AddRow = async () =>
-{
-    const newRow = tbody.rows[1].cloneNode(true) as HTMLTableRowElement;
-    let values = await getInputValues();
-    Array.from(newRow.cells).forEach(async (cell, index) => {
-        if(index == 0) cell.innerText = (values[index] as string).slice(3);
-        if(index == 3) cell.innerText = "Bildschirm";
-        if(index == 9) return;
-    });
-    
-    $("#tbody tr:first").after(newRow);
-    ResetFields();
-};
 
-const getInputValues = async () => 
+export const getInputValues = async (type: "PC" | "Bildschirm" | "Phone" | "Konferenz") => 
 {
     let inputrow = tbody.rows[0];
     let cells = Array.from(inputrow.cells);
-    let values = cells.map((cell, index) => {
-        if(index == 0) return (cell.children[0].children[0] as HTMLInputElement).value;
-        if(index == 3 || index == 9) return null;
-        if(index == 1 || index == 5 || index == 7) return (cell.children[0] as HTMLSelectElement).selectedOptions[0].value;
-        if(index == 8 )return (cell.children[1] as HTMLInputElement).value;
-        return (cell.children[0] as HTMLInputElement).value;
-    });
-    return values;
+
+    if(type == "PC")
+    {
+        let values = cells.map((cell, index) => {
+            if(index == 0) return (cell.children[0].children[0] as HTMLInputElement).value;
+            if(index == 3 || index == 9) return null;
+            if(index == 1 || index == 5 || index == 7) return (cell.children[0] as HTMLSelectElement).selectedOptions[0].value;
+            if(index == 8 )return (cell.children[1] as HTMLInputElement).value;
+            return (cell.children[0] as HTMLInputElement).value;
+        });
+        return values as string[];
+    }
+    else if(type == "Bildschirm")
+    {
+
+    }
+    else if(type == "Phone")
+    {
+
+    }
+    else if(type == "Konferenz")
+    {
+
+    }
+    
 }
 
-const getEditedValues = async (element: HTMLTableRowElement) =>
+export const getEditedValues = async (element: HTMLTableRowElement) =>
 {
     let inputrow = element;
     let cells = Array.from(inputrow.cells);
@@ -149,23 +153,6 @@ export const AddEquipment = () => {
     popup.style.position = "fixed";
     popup.style.visibility = "visible";
     document.body.appendChild(popup);
-};
-
-
-const setInputType = async (type: "PC" | "Monitor" | "Conference" | "Phone") => {
-    const select = document.getElementById("SelectInputTyp") as HTMLSelectElement;
-    const EquipmentCell = document.getElementsByName("Equipment")[0] as HTMLTableCellElement;
-    switch (type) {
-        case "PC":
-            PCTypen.forEach(element => select.options.add(new Option(element, PCTypen.indexOf(element).toString())));
-            break;
-
-        case "Monitor":
-            const sel = document.createElement("select");
-            tbody.rows[0].cells[3].appendChild(sel);
-            thead.rows[0].cells[3].innerText = "Hersteller";
-            MonitorHersteller.forEach(element => sel.options.add(new Option(element, MonitorHersteller.indexOf(element).toString())));
-    }
 };
 
 $("#itinput").keydown(function (e) {
@@ -407,7 +394,7 @@ document.onkeydown = (e) =>
     {
         console.warn('%cStop!', 'color: red; font-size: 60px; font-weight: bold;');
         console.log("%cFalls dich jemand dazu aufgefordert hat, etwas zu kopieren und hier einzufügen, handelt es sich in 11 von 10 Fällen um einen Betrugsversuch.", 'font-size: 30px; font-weight: bold;');
-        console.log("%cEtwas hier einzufügen könnte die Seite verhunzen oder Angreifern Zugang verschaffen!", 'font-size: 30px; font-weight: bold;');
+        console.log("%cEtwas hier einzufügen könnte dazu führen, dass Angreifer möglicherweise mithilfe einer sogenannten Self-XSS-Attacke deine Identität und die Daten stehlen.", 'font-size: 30px; font-weight: bold;');
         keys.fuse = true;
     }
     // console.log(keys);
