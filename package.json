@@ -24,7 +24,8 @@
     "description": "",
     "devDependencies": {
         "@types/jquery": "^3.5.9",
-        "@types/node": "^16.11.10"
+        "@types/node": "^16.11.10",
+        "xhr2": "^0.2.1"
     },
     "dependencies": {
         "jquery": "^3.6.0"
