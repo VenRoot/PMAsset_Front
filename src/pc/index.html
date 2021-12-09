@@ -2,7 +2,13 @@
 <html lang="de">
 
 <head>
-    <link href="../css/tailwind.min.css" rel="stylesheet">
+  <script>
+    if(sessionStorage.getItem("SessionID") == null ||
+      sessionStorage.getItem("Username") == null) document.location.href = "../login.html";
+  </script>
+    <link href="./css/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/material.css">
+    <link rel="stylesheet" href="./css/table.css">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -48,13 +54,13 @@
                 <a href="../" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3">Übersicht</a>
                 <a href="#" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3">PC</a>
                 <a href="../Bildschirm/" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3">Bildschirm</a>
-                <a href="../Phones/" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3">Phones</a>
+                <a href="../Phone/" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3">Phones</a>
                 <a href="../Konferenz/" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3">Konferenzeräte</a>
                 <a class="block py-2.5 px-4"></a>
-                <a href="create" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3 font-bold">Antrag erstellen</a>
+                <a href="../create" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3 font-bold">Antrag erstellen</a>
             </nav>
             <div class="col-span-1 h-96 flex flex-col justify-between items-end">
-                <button href="Laptops" class=" absolute bottom-10 self-center align-bottom py-2.5 px-4 bg-red-900 white transition duration-200 hover:bg-black rounded-lg">Logout</button>
+                <button onclick="main.logout();" class=" absolute bottom-10 self-center align-bottom py-2.5 px-4 bg-red-900 white transition duration-200 hover:bg-black rounded-lg">Logout</button>
             </div>
         </aside>
         <!-- </div> -->
