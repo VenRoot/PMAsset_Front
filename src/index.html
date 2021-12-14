@@ -2,6 +2,9 @@
 <html lang="de">
 
 <head>
+    <script>
+        if(sessionStorage.getItem("username") == null || sessionStorage.getItem("SessionID") == null) { sessionStorage.setItem("redirect", document.location.href); window.location.href = "login.html"; }
+    </script>
     <link href="./css/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="./css/material.css">
     <link rel="stylesheet" href="./css/table.css">
@@ -11,7 +14,18 @@
     <title>Asset-Management</title>
     <script defer src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script defer type="module">
-        import * as main from"./js/main.js"; window.main = main; 
+        import * as main from"./js/main.js"; window.main = main;
+        main.checkUser();
+        try
+        {
+            let x = sessionStorage.getItem("username").split("@")[0].split(".");
+            //make first letter uppercase
+            x.forEach((e, i) => x[i] = e.charAt(0).toUpperCase() + e.slice(1));
+            document.getElementById("SidebarUsername").innerHTML = `${x[0]} ${x[1]}`;
+        }
+        catch(e) { console.error(e); }
+
+        
     </script>
     <style>
       .table {
@@ -26,7 +40,7 @@
 
         <div class="bg-gray-800 text-gray-100 flex justify-between md:hidden">
             <!-- logo -->
-            <a href="#" class="block p-4 text-white font-bold">Better Dev</a>
+            <!-- <a href="#" class="block p-4 text-white font-bold" id="SidebarUsername">Better Dev</a> -->
             <!-- mobile menu button -->
             <!-- <button class=" mobile-menu-button p-4 focus:outline-none focus:bg-gray-700">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -47,7 +61,7 @@
               </svg>
                 <span>
                     <row class="text-2xl font-extrabold"><p>Willkomen,</p></row>
-                    <row class="text-2xl font-extrabold"><p>Better Dev</p></row>
+                    <row class="text-2xl font-extrabold"><p id="SidebarUsername">Better Dev</p></row>
                 </span>
             </a>
             <!-- nav -->
@@ -61,7 +75,7 @@
                 <a href="create" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3 font-bold">Antrag erstellen</a>
             </nav>
             <div class="col-span-1 h-96 flex flex-col justify-between items-end">
-                <button href="Laptops" class=" absolute bottom-10 self-center align-bottom py-2.5 px-4 bg-red-900 white transition duration-200 hover:bg-black rounded-lg">Logout</button>
+                <button href="login.html" class=" absolute bottom-10 self-center align-bottom py-2.5 px-4 bg-red-900 white transition duration-200 hover:bg-black rounded-lg">Logout</button>
             </div>
         </aside>
         <!-- </div> -->
