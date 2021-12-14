@@ -7,19 +7,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Asset-Management</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script type="module">
-        import * as main from "./js/main.js"; window.main = main; console.log(window.main);
+    <script defer type="module">
         import * as login from "./js/login.js"; window.login = login; console.log(window.login);
+        if(sessionStorage.getItem("redirect"))
+        {
+          let _ = sessionStorage.getItem("redirect");
+          sessionStorage.clear();
+          sessionStorage.setItem("redirect", _);
+        }
+        else sessionStorage.clear();
     </script>
     <title>Login</title>
 </head>
 <body>
     <!-- Make a giant log div -->
-    <textarea id="logs">
+    <textarea id="Log" class="w-full">
         
     </textarea>
     <!-- component -->
 <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col">
+  <!-- Make a headline with a smaller headline underneath it -->
+  <h1 class="text-black text-xl">Azure Login</h1>
+  <h2 class="text-gray-600 text-xs">Melden Sie sich mit Ihren Microsoft Daten an</h2> <br> <br>
+
     <div class="mb-4">
       <label class="block text-grey-darker text-sm font-bold mb-2" for="username">
         Username
@@ -34,7 +44,7 @@
       <p class="text-red text-xs italic">Bitte geben Sie ein Passwort ein</p>
     </div>
     <div class="flex items-center justify-between">
-      <button class="bg-blue hover:bg-blue-dark text-white font-bold py-2 px-4 rounded" type="button" onclick="login.login(document.getElementById('username').value, document.getElementById('password').value);">
+      <button class="bg-blue hover:bg-blue-dark text-black font-bold py-2 px-4 rounded" type="button" onclick="login.login(document.getElementById('username').value, document.getElementById('password').value);">
         Anmelden
       </button>
       <!-- <a class="inline-block align-baseline font-bold text-sm text-blue hover:text-blue-darker" href="#">
