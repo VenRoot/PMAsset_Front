@@ -53,4 +53,3 @@ export const MonitorTypen: MonHersteller[] = Object.seal([
     "Dell"
 ]);
 
-

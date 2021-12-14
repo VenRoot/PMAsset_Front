@@ -12,6 +12,8 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 server/certs/*
 out/
 *.js
+!postcss.config.js
+!tailwind.config.js
 
 # Runtime data
 pids
