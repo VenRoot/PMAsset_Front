@@ -133,6 +133,7 @@ const getCellValue = (index: number) => {
 }
 
 (() => {
+    if (window.location.href.indexOf("login.html") != -1) return;
     const select = document.getElementById("SelectInputTyp") as HTMLSelectElement;
     PCTypen.forEach(element => select.options.add(new Option(element, element)));
 

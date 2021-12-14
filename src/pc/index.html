@@ -2,6 +2,14 @@
 <html lang="de">
 
 <head>
+    <script>
+      if(sessionStorage.getItem("username") == null || sessionStorage.getItem("SessionID") == null) 
+      {
+        //Add current site to history and redirect to login
+        sessionStorage.setItem("redirect", window.location.href);
+        window.location.href = "login.html";
+      }
+    </script>
     <link href="./css/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="./css/material.css">
     <link rel="stylesheet" href="./css/table.css">
@@ -13,6 +21,11 @@
     <script defer type="module">
         import * as main from"../js/main.js"; window.main = main; 
         import * as PC from "../js/PC/main.js"; window.PC = PC;
+        main.checkUser();
+        let x = sessionStorage.getItem("username").split("@")[0].split(".");
+        //make first letter uppercase
+        x.forEach((e, i) => x[i] = e.charAt(0).toUpperCase() + e.slice(1));
+        document.getElementById("SidebarUsername").innerHTML = x[0] + " " + x[1];
     </script>
 </head>
 
@@ -22,7 +35,7 @@
 
         <div class="bg-gray-800 text-gray-100 flex justify-between md:hidden">
             <!-- logo -->
-            <a href="#" class="block p-4 text-white font-bold">Better Dev</a>
+            <!-- <a href="#" class="block p-4 text-white font-bold" id="SidebarUsername">Better Dev</a> -->
             <!-- mobile menu button -->
             <!-- <button class=" mobile-menu-button p-4 focus:outline-none focus:bg-gray-700">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -43,7 +56,7 @@
               </svg>
                 <span>
                     <row class="text-2xl font-extrabold"><p>Willkomen,</p></row>
-                    <row class="text-2xl font-extrabold"><p>Better Dev</p></row>
+                    <row class="text-2xl font-extrabold"><p id="SidebarUsername">Better Dev</p></row>
                 </span>
             </a>
             <!-- nav -->
