@@ -1,4 +1,4 @@
-import https from "https";
+import https from "http2";
 import fs from "fs";
 import path from "path";
 import url from "url";
@@ -8,10 +8,11 @@ const options = {
     cert: fs.readFileSync(path.join(__dirname, "certs/cert.pem"))
 };
 
-const server = https.createServer(options, async (req, res) => {
+const server = https.createSecureServer(options, async (req, res) => {
     console.log('Aktuelle Path: '+__dirname);
     let requrl = path.join(__dirname, `../out/${req.url?.substr(1)}`);
     if(req.url === undefined) return;
+    res.setHeader('Cache-control', 'public, max-age=31536000');
     const urlstring = url.parse(req.url);
     if(urlstring.pathname && urlstring.pathname != "/" && !urlstring.pathname.endsWith(".html")) {
         console.log("Ist keine HTML");
