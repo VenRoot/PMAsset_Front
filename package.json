@@ -23,8 +23,8 @@
     "homepage": "https://github.com/VenRoot/PMAsset_Front#readme",
     "description": "",
     "devDependencies": {
-        "@types/jquery": "^3.5.9",
-        "@types/node": "^16.11.10"
+        "@types/jquery": "^3.5.10",
+        "@types/node": "^16.11.12"
     },
     "dependencies": {
         "jquery": "^3.6.0"
