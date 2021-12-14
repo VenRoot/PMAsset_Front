@@ -4,11 +4,12 @@
     "main": "index.js",
     "scripts": {
         "build:linux.old": "tsc && cp -r ./src/* ./out/ ",
-        "build": "npm run clean && tsc && ./copy.sh",
+        "build": "npm run clean && tsc && ./copy.sh && npm run optimize",
         "start": "npm run build && node server/index.js",
-        "build:windows": "tsc && copy.cmd",
+        "build:windows": "tsc && copy.cmd && npm run optimize",
         "start:windows": "npm run build:windows && node server/index.js",
-        "clean": "rm -rf ./out"
+        "clean": "rm -rf ./out",
+        "optimize": "npx tailwindcss -i ./src/css/tailwind.min.css -o ./out/css/tailwind.min.css"
     },
     "repository": {
         "type": "git",
@@ -24,9 +25,13 @@
     "description": "",
     "devDependencies": {
         "@types/jquery": "^3.5.10",
-        "@types/node": "^16.11.12"
+        "@types/node": "^16.11.12",
+        "cssnano": "^5.0.12",
+        "postcss": "^8.4.5",
+        "postcss-cli": "^9.1.0"
     },
     "dependencies": {
-        "jquery": "^3.6.0"
+        "jquery": "^3.6.0",
+        "tailwindcss": "^3.0.2"
     }
 }
