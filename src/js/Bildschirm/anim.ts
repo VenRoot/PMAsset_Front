@@ -1,5 +1,6 @@
 import {enableBtn, getInputValues, ResetFields, tbody} from "../anim.js";
-import {PC} from "../interface";
+import {Bildschirm, Item, PC} from "../interface";
+import { setData } from "./backend.js";
 
 const genPasswd = (length: number) =>
 {
@@ -43,36 +44,42 @@ export const GeneratePassword = (elem: HTMLElement) =>
 
 const getDevices = async() =>
 {
-    const devices:PC[] = [
+    const devices:Bildschirm[] = [
         {
+            model: "Gallo",
+            kind: "Monitor",
             it_nr: "IT002021",
-            type: "T490",
+            type: "27",
+            hersteller: "LG",
             seriennummer: "473476367843",
             standort: "Aichtal",
             status: "Aktiv",
             besitzer: "Name1 Name2",
-            form: false,
-            password: "A8d?s#rc2O~4_Pp"           
+            form: "C:\\Users\\Name1\\Desktop\\Form.pdf"           
         },
         {
-            it_nr: "IT002022",
-            type: "T490",
-            seriennummer: "656756756",
+            kind: "Monitor",
+            it_nr: "IT002021",
+            type: "32",
+            hersteller: "Samsung",
+            model: "Dingens",
+            seriennummer: "473476367843",
             standort: "Aichtal",
             status: "Aktiv",
-            besitzer: "Name3 Name4",
-            form: false,
-            password: "r^S5\\p3´Tzou0nQ"           
+            besitzer: "Name1 Name2",
+            form: "C:\\Users\\Name1\\Desktop\\Form.pdf"           
         },
         {
-            it_nr: "IT002023",
-            type: "T490",
-            seriennummer: "35254322323",
+            kind: "Monitor",
+            it_nr: "IT002021",
+            type: "22",
+            hersteller: "Samsung",
+            model: "Dingens",
+            seriennummer: "473476367843",
             standort: "Aichtal",
             status: "Aktiv",
-            besitzer: "Name5 Name6",
-            form: true,
-            password: "(nB°$imc8X%_§M#"           
+            besitzer: "Name1 Name2",
+            form: "C:\\Users\\Name1\\Desktop\\Form.pdf"           
         }
     ]
 
@@ -89,24 +96,63 @@ export const SearchDevice = async(it_nr: string) =>
  {
     const devices = await getDevice(it_nr);
     console.log(devices);
-     devices.forEach(device =>
-        {
-            AddRow([device.it_nr, device.type, device.seriennummer,"", device.standort, device.status, device.besitzer || "", device.form ? "Ja" : "Nein", device.password]);
-        });
+     devices.forEach(device =>AddRow(device));
  }
 
- export const AddRow = async (_values?: string[]) =>
+//  export const AddRow = async (_values?: string[]) =>
+// {
+//     const newRow = tbody.rows[1].cloneNode(true) as HTMLTableRowElement;
+//     let values = await getInputValues("Bildschirm") as Bildschirm;
+//     if(_values) values = _values;
+//     if(values == undefined) return;
+//     console.log(values);
+//     Array.from(newRow.cells).forEach(async (cell, index) => {
+//         if(index == 0) cell.innerText = values![index].slice(3);
+//         else if(index == 3) cell.innerText = "Bildschirm";
+//         else if(index == 9) return;
+//         else cell.innerText = values![index];
+//     });
+    
+//     $("#tbody tr:first").after(newRow);
+//     ResetFields();
+// };
+
+export const AddRow = async (_values?: Bildschirm) =>
 {
+    
     const newRow = tbody.rows[1].cloneNode(true) as HTMLTableRowElement;
-    let values = await getInputValues("Bildschirm");
-    if(_values) values = _values;
-    if(values == undefined) return;
-    Array.from(newRow.cells).forEach(async (cell, index) => {
-        if(index == 0) cell.innerText = ((values as string[])[index]).slice(3);
-        if(index == 3) cell.innerText = "Bildschirm";
-        if(index == 9) return;
+    let values = await getInputValues("Bildschirm") as Bildschirm;
+
+    if(!_values)
+    {   
+        //Es wurden keine Values mitgegeben, also... in die DB
+        setData(values, {method: "PUT", device: values});
+    }
+    //Set the values into the new row
+    Object.keys(values).forEach(key =>
+    {
+        const template = newRow.getElementsByTagName("td")[key as any];
+        switch(key)
+        {
+            case "it_nr": template.innerText = values.it_nr as any; break;
+            case "type": template.innerText = values.type as any; break;
+            case "hersteller": template.innerText = values.hersteller as any; break;
+            case "seriennummer": template.innerText = values.seriennummer as any; break;
+            case "standort": template.innerText = values.standort as any; break;
+            case "status": template.innerText = values.status as any; break;
+            case "besitzer":
+            const a = document.createElement("a");
+            a.href = "#";
+            a.classList.add("text-red-900", "hover:text-green-900");
+            template.innerText = values.besitzer as any;
+            break;
+            case "form": template.innerText = values.form as any; break;
+            case "model": template.innerText = values.model as any; break;
+        }
     });
     
+    //Add the new row to the table
     $("#tbody tr:first").after(newRow);
+    //Reset the values in the input fields
     ResetFields();
-};
+}

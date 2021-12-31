@@ -1,5 +1,6 @@
-import {enableBtn, getInputValues, ResetFields, tbody} from "../anim.js";
-import {PC} from "../interface";
+import {enableBtn, foc, getInputValues, ResetFields, tbody} from "../anim.js";
+import {Item, PC} from "../interface";
+import { setData } from "./backend.js";
 
 const genPasswd = (length: number) =>
 {
@@ -45,34 +46,43 @@ const getDevices = async() =>
 {
     const devices:PC[] = [
         {
+            kind: "PC",
             it_nr: "IT002021",
+            hersteller: "Lenovo",
+            equipment: ["IT002892"],
             type: "T490",
             seriennummer: "473476367843",
             standort: "Aichtal",
             status: "Aktiv",
             besitzer: "Name1 Name2",
-            form: false,
-            password: "A8d?s#rc2O~4_Pp"           
+            form: "C:\\Users\\Name1\\Desktop\\Form.pdf",
+            passwort: "A8d?s#rc2O~4_Pp"           
         },
         {
+            kind: "PC",
             it_nr: "IT002022",
+            hersteller: "Lenovo",
+            equipment: ["IT002931"],
             type: "T490",
             seriennummer: "656756756",
             standort: "Aichtal",
             status: "Aktiv",
             besitzer: "Name3 Name4",
-            form: false,
-            password: "r^S5\\p3´Tzou0nQ"           
+            form: "C:\\Users\\Name3\\Desktop\\Form.pdf",
+            passwort: "r^S5\\p3´Tzou0nQ"           
         },
         {
+            kind: "PC",
             it_nr: "IT002023",
+            hersteller: "Lenovo",
+            equipment: ["IT002023"],
             type: "T490",
             seriennummer: "35254322323",
             standort: "Aichtal",
             status: "Aktiv",
             besitzer: "Name5 Name6",
-            form: true,
-            password: "(nB°$imc8X%_§M#"           
+            form: "C:\\Users\\Name5\\Desktop\\Form.pdf",
+            passwort: "(nB°$imc8X%_§M#"           
         }
     ]
 
@@ -89,24 +99,180 @@ export const SearchDevice = async(it_nr: string) =>
  {
     const devices = await getDevice(it_nr);
     console.log(devices);
-     devices.forEach(device =>
-        {
-            AddRow([device.it_nr, device.type, device.seriennummer,"", device.standort, device.status, device.besitzer || "", device.form ? "Ja" : "Nein", device.password]);
-        });
+    ClearTable();
+     devices.forEach(device => AddRow(device));
  }
 
- export const AddRow = async (_values?: string[]) =>
+ const MakeTemplate = async (values: PC): Promise<HTMLTableRowElement> =>
+ {
+
+
+    const template = document.createElement("tr");
+    template.setAttribute("onmouseover", "main.foc(this)");
+    template.setAttribute("onmouseout", "main.unfoc(this)");
+
+
+    //Make a loop where we clone the template, put the values in and append it to the temp variable
+    Object.keys(values).forEach(key =>
+    {
+        const temp = document.createElement("td");
+        temp.classList.add("border-2", "border-black", "duration-500", "transition", "text-center");
+        switch(key)
+        {
+            case "it_nr": temp.innerText = values.it_nr as any; temp.id = "IT_NR"; break;
+            case "type": temp.innerText = values.type as any; temp.id="TYP"; break;
+            case "hersteller": temp.innerText = values.hersteller as any; temp.id="HERSTELLER"; break;
+            case "seriennummer": temp.innerText = values.seriennummer as any; temp.id="SERIENNUMMER"; break;
+            case "standort": temp.innerText = values.standort as any; temp.id="STANDORT"; break;
+            case "status": temp.innerText = values.status as any; temp.id="STATUS"; break;
+            case "equipment": temp.innerText = values.equipment as any; temp.id="EQUIPMENT"; break;
+            case "besitzer": 
+            const a = document.createElement("a");
+            a.href = "#";
+            a.classList.add("text-red-900", "hover:text-green-900");
+            temp.innerText = values.besitzer as any; 
+            temp.id="BESITZER";
+            break;
+            case "form": temp.innerText = values.form as any; temp.id="FORM"; break;
+            case "passwort": 
+            const pwf = document.createElement("input"); pwf.type = "password"; pwf.disabled = true; pwf.value = values.passwort as any; pwf.classList.add("bpasswd");
+            temp.innerHTML = pwf.outerHTML; temp.id="PASSWORT"; break;
+        }
+        template.appendChild(temp); 
+    });
+    const sortedtemplate = document.createElement("tr");
+    sortedtemplate.setAttribute("onmouseover", "main.foc(this)");
+    sortedtemplate.setAttribute("onmouseout", "main.unfoc(this)");
+    const queries = ["#IT_NR", "#TYP", "#HERSTELLER", "#SERIENNUMMER", "#EQUIPMENT", "#STANDORT", "#STATUS", "#BESITZER", "#FORM", "#PASSWORT"];
+    queries.forEach(query => sortedtemplate.appendChild(template.querySelector(query) as HTMLTableCellElement));
+
+    const icons = createIcons();
+    sortedtemplate.appendChild(icons);
+
+    return sortedtemplate;
+ }
+
+ export const createIcons = () => {
+    const icons = document.createElement("td"); icons.classList.add("icons");
+    const a1 = document.createElement("a");
+    const a2 = document.createElement("a");
+    const a3 = document.createElement("a");
+    const i1 = document.createElement("i"); i1.classList.add("mx-2");
+    const i2 = document.createElement("i"); i2.classList.add("mx-2");
+    // const i3 = document.createElement("i");
+
+    a1.classList.add("text-gray-500", "text-gray-500", "hover:text-gray-100"); a1.href = "#";
+    a2.classList.add("text-yellow-400",  "hover:text-gray-100", "mx-2"); a2.href = "#";
+    a3.classList.add("text-red-400", "hover:text-gray-100"); a3.href = "#";
+
+    i1.classList.add("material-icons-outlined", "text-base"); i1.innerText = "visibility"; i1.setAttribute("onclick", "PC.ShowPassword(this);");
+    i2.classList.add("material-icons-outlined", "text-base"); i2.innerText = "edit"; i2.setAttribute("onclick", "main.EditEntry(this);");
+    // i3.classList.add("material-icons-round", "text-base"); i3.innerText = "delete_outline";
+
+    a1.appendChild(i1);
+    a2.appendChild(i2);
+    // a3.appendChild(i3);
+
+    icons.appendChild(a1);
+    icons.appendChild(a2);
+    icons.appendChild(a3);
+
+    return icons;
+ }
+
+
+ export const AddRow = async (_values?: PC) =>
 {
-    const newRow = tbody.rows[1].cloneNode(true) as HTMLTableRowElement;
-    let values = await getInputValues("PC");
-    if(_values) values = _values;
-    if(values == undefined) return;    
-    Array.from(newRow.cells).forEach(async (cell, index) => {
-        if(index == 0) cell.innerText = ((values as string[])[index]).slice(3);
-        if(index == 3) cell.innerText = "Bildschirm";
-        if(index == 9) return;
+    
+    // const newRow = tbody.rows[1].cloneNode(true) as HTMLTableRowElement;
+    let values = await getInputValues("PC") as PC;
+    
+
+    if(!_values)
+    {   
+        //@ts-ignore
+        if(values.equipment === undefined) values.equipment = null;
+        //Es wurden keine Values mitgegeben, also... in die DB
+        setData(values, {method: "PUT", device: values});
+    }
+    else values = _values;
+
+    //@ts-ignore
+    if(values.equipment === undefined) values.equipment = null;
+    console.warn(values);
+    const newRow = await MakeTemplate(values);
+    //Set the values into the new row
+    Object.keys(values).forEach((key, index) =>
+        {
+            if(key == "kind") return;
+            const template = newRow.getElementsByTagName("td")[index];
+
+            switch(index)
+            {
+                case 0: template.innerText = values.it_nr as any; break;
+                case 1: template.innerText = values.type as any; break;
+                case 2: template.innerText = values.hersteller as any; break;
+                case 3: template.innerText = values.seriennummer as any; break;
+                case 4: template.innerText = values.equipment as any; break;
+                case 5: template.innerText = values.standort as any; break;
+                case 6: template.innerText = values.status as any; break;
+                case 7: template.innerText = values.besitzer as any; break;
+                case 8: template.innerText = values.form as any; break;
+                case 9: (template.children[0] as HTMLInputElement).value = values.passwort as any; break;
+            }
+
+        // switch(key)
+        // {
+        //     case "it_nr": template.innerText = values.it_nr as any; break;
+        //     case "type": template.innerText = values.type as any; break;
+        //     case "hersteller": template.innerText = values.hersteller as any; break;
+        //     case "seriennummer": template.innerText = values.seriennummer as any; break;
+        //     case "standort": template.innerText = values.standort as any; break;
+        //     case "status": template.innerText = values.status as any; break;
+        //     case "besitzer":
+        //     const a = document.createElement("a");
+        //     a.href = "#";
+        //     a.classList.add("text-red-900", "hover:text-green-900");
+        //     template.innerText = values.besitzer as any;
+        //     break;
+        //     case "form": template.innerText = values.form as any; break;
+        //     case "passwort": template.innerText = values.passwort as any; break;
+        // }
     });
     
+    //Add the new row to the table
     $("#tbody tr:first").after(newRow);
+    //Reset the values in the input fields
     ResetFields();
+    
+
+    
+    // if(_values) values = _values;
+    // if(values == undefined) return;    
+    // Array.from(newRow.cells).forEach(async (cell, index) => {
+    //     if(index == 0) cell.innerText = ((values as string[])[index]).slice(3);
+    //     else if(index == 3) cell.innerText = "Bildschirm";
+    //     else if(index == 6) cell.innerText = values![6];
+    //     else if(index == 8) { 
+    //         let input = document.createElement("input"); 
+    //         input.type = "password";
+    //         input.classList.add("bpasswd");
+    //         input.value = values![8] || "";
+    //         cell.innerHTML = "";
+    //         cell.appendChild(input);
+    //  }
+    //     else if(index == 9) return;
+    //     else cell.innerText = values![index];
+    // });
+    
+    
 };
+
+//Remove all childs of tbody except the first row
+export const ClearTable = () =>
+{
+    while(tbody.childElementCount > 1)
+    {
+        tbody.removeChild(tbody.lastElementChild!);
+    }
+}

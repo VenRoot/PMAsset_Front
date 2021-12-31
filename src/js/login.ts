@@ -1,4 +1,4 @@
-import {getKey, getEntries, ShowError, request, response} from "./backend.js";
+import {getKey, getEntries, ShowError, request, insertRequest} from "./backend.js";
 
 
 export const Continue = async (ms: number) => {

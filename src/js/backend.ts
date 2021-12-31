@@ -1,4 +1,6 @@
-export const request = (subdomain: string, auth: request, callback: Function) =>
+import { pullrequest, pushrequest, response } from "./interface";
+
+export const request = (subdomain: string, auth: pullrequest, callback: Function) =>
 {
     const xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function () {
@@ -11,8 +13,8 @@ export const request = (subdomain: string, auth: request, callback: Function) =>
             else callback(null, JSON.parse(xmlhttp.responseText));
         }
     };
-    console.log("https://192.168.207.229:5000/"+subdomain);
-    xmlhttp.open("GET", "https://192.168.207.229:5000/"+subdomain, true);
+    console.log("https://localhost:5000/"+subdomain);
+    xmlhttp.open("GET", "https://localhost:5000/"+subdomain, true);
     console.log(auth);
     
     switch(auth.method)
@@ -24,7 +26,8 @@ export const request = (subdomain: string, auth: request, callback: Function) =>
         break;
 
         case "getEntries": if(!auth.SessionID || !auth.username) throw new Error("Missing parameters");
-        xmlhttp.setRequestHeader("req", JSON.stringify({SessionID: auth.SessionID, username: auth.username})); break;
+        xmlhttp.setRequestHeader("auth", JSON.stringify({type: "check", SessionID: auth.SessionID, username: auth.username}));
+        xmlhttp.setRequestHeader("req", JSON.stringify({type: auth.type})); break;
 
         case "check": if(!auth.SessionID || !auth.username) throw new Error("Missing parameters");
         xmlhttp.setRequestHeader("auth", JSON.stringify({type: "check", SessionID: auth.SessionID, username: auth.username})); break;
@@ -32,6 +35,36 @@ export const request = (subdomain: string, auth: request, callback: Function) =>
     xmlhttp.send(null);
 }
 
+/**
+ * 
+ * @param subdomain 
+ * @param auth 
+ * @param callback 
+ */
+export const insertRequest = (subdomain: string, auth: pushrequest, callback: Function) =>
+{
+    const xmlhttp = new XMLHttpRequest();
+    //push data to the backend
+    xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState == 4)
+        {
+            if (xmlhttp.status >= 200 && xmlhttp.status < 300) callback(JSON.parse(xmlhttp.responseText), null);
+            //ERROR
+            else callback(null, JSON.parse(xmlhttp.responseText));
+        }
+    };
+    xmlhttp.open(auth.method, "https://127.0.0.1:5000/"+subdomain, true);
+
+    xmlhttp.setRequestHeader("auth", JSON.stringify({SessionID: auth.SessionID, username: auth.username}));
+    switch(auth.method)
+    {
+        case "PUT": case "POST": case "DELETE": 
+        if(!auth.SessionID || !auth.username) throw new Error("Missing parameters");
+        xmlhttp.setRequestHeader("device", JSON.stringify({device: auth.device}));
+        break;
+    }
+    xmlhttp.send(null);
+}
 
 export const checkUser = async() =>
 {
@@ -93,19 +126,7 @@ export const getEntries = async (auth: {SessionID: string, username: string}) =>
     });
 };
 
-export interface response {
-    DATA: string;
-}
-
-type method = "newKey" | "getEntries" | "auth" | "check";
-
-interface request
-{
-    method: method;
-    SessionID?: string;
-    username?: string;
-    password?: string;
-}
+//Extend the interface with a password property if the method is changepasswd
 
 async function req()
 {
