@@ -101,7 +101,7 @@ export const checkUser = async() =>
             if(err.message.toLocaleLowerCase() === "user is not logged in")
             {
                 alert("Key und Username ungültig! Bitte melden Sie sich erneut an!");
-                window.location.href = "login.html";
+                window.location.href = "/login.html";
                 return false;
             }
         }
