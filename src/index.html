@@ -32,6 +32,33 @@
         border-spacing: 60px 20px;
       }
     </style>
+    <script defer type="module">
+        import * as PC from "./js/pc/main.js"; window.PC = PC;
+        PC.getData();
+        console.log(PC.devices);
+        const foo = function (myInterval) {
+    clearInterval(myInterval);
+};
+            let x = setInterval(() => {
+                if(PC.devices.length > 0)
+                {
+                    clearInterval(x);
+                    console.log("NEUE VALUES");
+                    console.log(PC.devices);
+                    changeValues(PC.devices);
+                    foo(x);
+                    
+                }
+            }, 600);
+
+        function changeValues(devices)
+        {
+            document.getElementById("GesamtPCs").innerText = devices.filter(e => e.kind == "PC").length;
+            document.getElementById("AktivPCs").innerText = devices.filter(e => e.kind == "PC").filter(e => e.status == "Aktiv").length;
+            document.getElementById("InaktivPCs").innerText = devices.filter(e => e.kind == "PC").filter(e => e.status == "Inaktiv").length;
+
+        }
+    </script>
 </head>
 
 <body translate="no" class="">
@@ -105,11 +132,11 @@
                 <tbody>
                   <tr>
                     <td>PCs</td>
-                    <td>200</td>
-                    <td>100</td>
-                    <td>50</td>
-                    <td>50</td>
-                    <td>100</td>
+                    <td id="GesamtPCs">200</td>
+                    <td id="AktivPCs">100</td>
+                    <td id="InaktivPCs">50</td>
+                    <td id="">50</td>
+                    <td id="InaktivPCs">100</td>
                   </tr>
                   <tr>
                     <td>Bilschirme</td>

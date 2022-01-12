@@ -17,7 +17,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Asset-Management</title>
-    <script defer src="../js/jquery-3.6.0.min.js"></script>
+    <script src="../js/jquery-3.6.0.min.js"></script>
     <script defer type="module">
         import * as main from"../js/main.js"; window.main = main; 
         import * as PC from "../js/PC/main.js"; window.PC = PC;
@@ -85,15 +85,12 @@
             </button> Dashboard
             <div class="flex justify-between items-center">
                 <div class="flex-1">
-                    <h1 class="text-2xl font-bold text-center">Suchen Sie nach einer IT-Nummer</h1>
+                    <h1 class="text-2xl font-bold text-center">Suchen Sie nach einer IT-Nummer, um zu filtern</h1>
                 </div>
                 <div class="flex-1 self-center">
                     <div class="flex items-center self-center">
                         <div class="flex-1">
-                            <input type="text" class="bg-white text-gray p-2 rounded-full w-full" onkeyup="PC.SearchDevice(this.value);" placeholder="Search">
-                        </div>
-                        <div class="flex-1">
-                            <button class="bg-blue-700 text-white p-2 rounded-full w-full">Search</button>
+                            <input type="text" class="bg-white text-gray p-2 rounded-full" onkeyup="PC.SearchDevice(this.value);" placeholder="Search">
                         </div>
                     </div>
                 </div>
@@ -123,7 +120,7 @@
                                 <th class="border-2 border-black " name="Typ"><select id="SelectInputTyp"></select></th>
                                 <th class="border-2 border-black " name="Hersteller"><select id="SelectHerstellerTyp"></select></th>
                                 <th class="border-2 border-black " name="Seriennummer"><input type="text" id="SeriennummerInput" class="w-full temp" placeholder="XXXXXXXXXXXXXXX" style="font-size: 11px;" title="Bitte hier die Seriennummer eingeben"></th>
-                                <th class="border-2 border-black " name="Equipment"><button class="w-full text-center" onclick="alert('Doofsack');" id="open-btn">Hinzufügen</button></th>
+                                <th class="border-2 border-black " name="Equipment"><button class="w-full text-center" id="open-btn" onclick="main.openform(this.parentElement.parentElement);">Hinzufügen</button></th>
                                 <th class="border-2 border-black " name="text"><input class="w-full text-center temp" id="StandortInput" type="text"></th>
                                 <th class="border-2 border-black " name="text"><select id="SelectInputStatus" class="w-full text-center" type="text"></select></th>
                                 <th class="border-2 border-black " name="Mitarbeiter"><input class="w-full text-center temp" id="BesitzerInput" type="text"></th>
@@ -275,7 +272,7 @@
                                     <p class="text-sm text-gray-500">
                                         Bitte geben Sie die Seriennummern der zusätzlichen Hardware an.
                                         <input id="HardwareSearchInput" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" type="text" placeholder="Seriennummer">
-                                        <table class=" table-auto">
+                                        <table class="table-auto">
                                             <thead>
                                                 <tr>
                                                     <th class="px-4 py-2"></th>
@@ -283,40 +280,35 @@
                                                     <th class="px-4 py-2">Seriennr</th>
                                                     <th class="px-4 py-2">Typ</th>
                                                     <th class="px-4 py-2">Hersteller</th>
+                                                    <th class="px-4 py-2">Modell</th>
                                                     <th class="px-4 py-2">Status</th>
                                                 </tr>
                                             </thead>
-                                            <tbody style="overflow-y: scroll;">
-                                                <tr id="HardwareSearchResult">
+                                            <tbody id="MonTBody" style="overflow-y: scroll;">
+                                                <tr class="HardwareSearchResult">
                                                     <td class="border-t border-gray-200 px-4 py-2"><input type="checkbox"> </td>
                                                     <td class="border-t border-gray-200 px-4 py-2">Test</td>
                                                     <td class="border-t border-gray-200 px-4 py-2">Test</td>
                                                     <td class="border-t border-gray-200 px-4 py-2">Test</td>
                                                     <td class="border-t border-gray-200 px-4 py-2">Test</td>
                                                     <td class="border-t border-gray-200 px-4 py-2">Test</td>
-                                                    <td class="border-t border-gray-200 px-4 py-2"><input type="password" value="Hallo"></td>
-                                                    <td class="p-3">
-                                                        <a href="#" class="text-gray-500 hover:text-gray-100 mr-2">
-                                                            <i class="material-icons-outlined text-base">visibility</i>
-                                                        </a>
-                                                        <a href="#" class="text-yellow-400 hover:text-gray-100 mx-2">
-                                                            <i class="material-icons-outlined text-base">edit</i>
-                                                        </a>
-                                                        <a href="#" class="text-red-400 hover:text-gray-100 ml-2">
-                                                            <i class="material-icons-round text-base">delete_outline</i>
-                                                        </a>
-                                                    </td>
+                                                    <td class="border-t border-gray-200 px-4 py-2">Test</td>
+                                                  </tr>
+                                            </tbody>
                                         </table>
+                                        <!-- <button class="rounded bg-green-600 object-fill">Hinzufügen</button>
+                                        <button class="rounded bg-red-600 object-fill">Abbrechen</button> -->
                                     </p>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                        <button id="ok-btn" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2
-                                            focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
-            Schließen
-          </button>
+                      <button id="ok-btn" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-black hover:bg-green-700 focus:outline-none focus:ring-2
+                      focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm" onclick="PC.DoneMon();">Anwenden</button>
+
+                      <button id="cancel-btn" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2
+                                            focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">Abbrechen</button>
                         <!-- <button id="cancel-btn" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2
                                             focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
             Cancel
@@ -326,5 +318,10 @@
             </div>
         </div>
 </body>
+<script defer>
+$(document).ready(() => {
+  PC.getData();
+})
 
+</script>
 </html>
