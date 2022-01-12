@@ -28,8 +28,8 @@ export interface Gerät
     it_nr: ITNr;
     status: Status;
     standort: string;
-    besitzer?: string;
-    form?: string;
+    besitzer: string;
+    form: string;
 }
 
 export interface PC extends Gerät
@@ -45,6 +45,7 @@ export interface Bildschirm extends Gerät
 {
     kind: "Monitor";
     type: MonTypes;
+    attached: string;
     hersteller: "Samsung" | "LG" | "Dell"
     model: string;
 }

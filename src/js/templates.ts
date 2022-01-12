@@ -1,4 +1,4 @@
-import {PCTypen, StatusTypen, PhoneTypen, MonitorTypen, PCHerstellerTypen } from "./values.js";
+import {PCTypen, StatusTypen, PhoneTypen, MonitorTypen, PCHerstellerTypen, MonTypen } from "./values.js";
 
 export const TypSelect = document.createElement('select');
 export const HerstellerSelect = document.createElement('select');
@@ -8,14 +8,23 @@ export const FormSelect = document.createElement('select');
 
 
 
-if(document.location.pathname.includes('/Bildschirm'))
+if(document.location.pathname.toLocaleLowerCase().includes('bildschirm'))
 {
-    MonitorTypen.forEach(typ => {
+    MonTypen.forEach(typ => {
         const option = document.createElement('option');
         option.value = typ;
         option.text = typ;
         TypSelect.appendChild(option);
     });
+
+    MonitorTypen.forEach(typ => {
+        const option = document.createElement('option');
+        option.value = typ;
+        option.text = typ;
+        HerstellerSelect.appendChild(option);
+    });
+
+    (document.getElementById("SelectHerstellerTyp") as HTMLSelectElement).appendChild(HerstellerSelect);
 
 }
 else if(document.location.pathname.toLowerCase().includes('/pc'))
