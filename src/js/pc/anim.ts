@@ -1,4 +1,4 @@
-import {enableBtn, foc, getInputValues, ResetFields, tbody} from "../anim.js";
+import {ClearTable, enableBtn, foc, getInputValues, ResetFields, tbody} from "../anim.js";
 import {Bildschirm, Item, PC} from "../interface";
 import { getData, getMonitors, setData } from "./backend.js";
 
@@ -42,53 +42,6 @@ export const GeneratePassword = (elem: HTMLElement) =>
 
 export let devices:PC[] = [];
 export const setDevices = async(dev:PC[]) => devices = dev; 
-
-const getDevices = async() =>
-{
-    const devices:PC[] = [
-        {
-            kind: "PC",
-            it_nr: "IT002021",
-            hersteller: "Lenovo",
-            equipment: ["IT002892"],
-            type: "T490",
-            seriennummer: "473476367843",
-            standort: "Aichtal",
-            status: "Aktiv",
-            besitzer: "Name1 Name2",
-            form: "C:\\Users\\Name1\\Desktop\\Form.pdf",
-            passwort: "A8d?s#rc2O~4_Pp"           
-        },
-        {
-            kind: "PC",
-            it_nr: "IT002022",
-            hersteller: "Lenovo",
-            equipment: ["IT002931"],
-            type: "T490",
-            seriennummer: "656756756",
-            standort: "Aichtal",
-            status: "Aktiv",
-            besitzer: "Name3 Name4",
-            form: "C:\\Users\\Name3\\Desktop\\Form.pdf",
-            passwort: "r^S5\\p3´Tzou0nQ"           
-        },
-        {
-            kind: "PC",
-            it_nr: "IT002023",
-            hersteller: "Lenovo",
-            equipment: ["IT002023"],
-            type: "T490",
-            seriennummer: "35254322323",
-            standort: "Aichtal",
-            status: "Aktiv",
-            besitzer: "Name5 Name6",
-            form: "C:\\Users\\Name5\\Desktop\\Form.pdf",
-            passwort: "(nB°$imc8X%_§M#"           
-        }
-    ]
-
-    return devices;
-}
 
 export const getDevice = async(it_nr: string) =>
 {
@@ -138,8 +91,11 @@ export const SearchDevice = async(it_nr: string) =>
             const pwf = document.createElement("input"); pwf.type = "password"; pwf.disabled = true; pwf.value = values.passwort as any; pwf.classList.add("bpasswd");
             temp.innerHTML = pwf.outerHTML; temp.id="PASSWORT"; break;
         }
+        console.log(temp); 
+        
         template.appendChild(temp); 
     });
+    console.log(template);
     const sortedtemplate = document.createElement("tr");
     sortedtemplate.setAttribute("onmouseover", "main.foc(this)");
     sortedtemplate.setAttribute("onmouseout", "main.unfoc(this)");
@@ -388,14 +344,6 @@ export const SearchDevice = async(it_nr: string) =>
     
 };
 
-//Remove all childs of tbody except the first row
-export const ClearTable = () =>
-{
-    while(tbody.childElementCount > 1)
-    {
-        tbody.removeChild(tbody.lastElementChild!);
-    }
-}
 
 
 //Make a function which gets the Monitors from the backend and log them
@@ -415,3 +363,166 @@ export const GetMonitors = async (currentRow: string) =>
         console.log(entry);
     });
 }
+
+
+// Grabs all the Elements by their IDs which we had given them
+let modal = document.getElementById("my-modal") as HTMLDivElement;
+
+let okbtn = document.getElementById("ok-btn") as HTMLButtonElement;
+
+export const openform = (row: HTMLTableRowElement) => {
+
+    GetMonitors(currentRow);
+    if(row.children[0]?.children[0]?.children[0]?.hasAttribute("value")) changeCurrentRow((row.children[0]!.children[0]!.children[0]! as HTMLInputElement).value);
+    else changeCurrentRow(row.children[0].textContent as string);
+
+    
+    if(currentRow == "IT00") return alert("Dies IT-Nr ist nicht vollständig");
+    modal.style.display = "block";
+    console.log(currentRow);
+};
+
+//We want the modal to close when the OK button is clicked
+if(document.location.pathname.toLocaleLowerCase().includes("/pc")) okbtn.onclick = function () {
+    modal.style.display = "none";
+
+    let mons = [];
+    //Check if the checkboxes are checked
+    Array.prototype.forEach.call(document.getElementsByClassName("moncheckbox"), (element: HTMLInputElement) => {
+        if(element.checked)
+        {
+            const Mon_ITNR = element.parentElement!.parentElement!.children[1].textContent as string;
+            mons.push(Mon_ITNR);
+        }
+    });
+
+    //Set the new equipment in the database
+    
+
+    //Untick all the checkboxes in the modal
+    //Egal, weil das Element sich eh neu aufbauen wird
+    // Array.prototype.forEach.call(document.getElementsByClassName("moncheckbox"), function (item: HTMLInputElement) {
+    //     item.checked = false;
+    // });
+}
+
+// The modal will close when the user clicks anywhere outside the modal
+if(document.location.pathname.toLocaleLowerCase().includes("/pc")) window.onclick = function (event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+
+const SNSearch = document.getElementById("HardwareSearchInput") as HTMLInputElement;
+const HWSearch = document.getElementById("HardwareSearchResult") as HTMLTableRowElement;
+
+const classList =
+[
+    "border-2",
+    "border-black",
+    "duration-500",
+    "transition",
+    "text-center"
+];
+
+if(document.location.pathname.toLocaleLowerCase().includes("/pc")) SNSearch.addEventListener("keyup", function () {
+    let value = this.value.toUpperCase();
+    if(value === undefined || value.length <3) return;
+    // console.log(value);
+    HWSearch.innerHTML = "";
+    let result:BSP[] = [];
+    if(value.startsWith("IT")) result = BSPDev.filter(element => element.ITNr.startsWith("02-"+value));
+    else if(value.startsWith("02-IT")) result = BSPDev.filter(element => element.ITNr.startsWith(value));
+    else result = BSPDev.filter(element => element.SN.startsWith(value));
+    console.log(result);
+    let checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    result.forEach(element => {
+        let tr = document.createElement("tr");
+
+        let td1 = document.createElement("td");
+        let td2 = document.createElement("td");
+        let td3 = document.createElement("td");
+        let td4 = document.createElement("td");
+        let td5 = document.createElement("td");
+        let td6 = document.createElement("td");
+
+        td1.innerHTML = checkbox.outerHTML;
+        td2.innerText = element.ITNr;
+        td3.innerText = element.SN;
+        td4.innerText = "Bildschirm";
+        td5.innerText = element.Hersteller;
+        td6.innerText = element.Status;
+
+        classList.forEach(element => {
+            td1.classList.add(element)
+            td2.classList.add(element)
+            td3.classList.add(element)
+            td4.classList.add(element)
+            td5.classList.add(element)
+            td6.classList.add(element);
+        });
+        
+        tr.appendChild(td1);
+        tr.appendChild(td2);
+        tr.appendChild(td3);
+        tr.appendChild(td4);
+        tr.appendChild(td5);
+        tr.appendChild(td6);
+
+        HWSearch.appendChild(tr);
+    });
+});
+
+interface BSP {
+    ITNr: string;
+    SN: string;
+    Hersteller: string;
+    Status: string;
+}
+
+const BSPDev:BSP[] = 
+[
+    {
+        ITNr: "02-IT002021",
+        SN: "218737823892",
+        Hersteller: "Samsung",
+        Status: "Inaktiv"
+    },
+    {
+        ITNr: "02-IT002022",
+        SN: "218737823434",
+        Hersteller: "Samsung",
+        Status: "Inaktiv"
+    },
+    {
+        ITNr: "02-IT002023",
+        SN: "218737848293",
+        Hersteller: "Samsung",
+        Status: "Inaktiv"
+    },
+    {
+        ITNr: "02-IT002024",
+        SN: "218737899843",
+        Hersteller: "Samsung",
+        Status: "Inaktiv"
+    },
+    {
+        ITNr: "02-IT002025",
+        SN: "218737833445",
+        Hersteller: "Samsung",
+        Status: "Inaktiv"
+    },
+    {
+        ITNr: "02-IT002026",
+        SN: "218737811234",
+        Hersteller: "Samsung",
+        Status: "Inaktiv"
+    },
+    {
+        ITNr: "02-IT002027",
+        SN: "218737822345",
+        Hersteller: "Samsung",
+        Status: "Inaktiv"
+    }
+];

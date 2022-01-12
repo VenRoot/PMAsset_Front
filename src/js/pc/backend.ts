@@ -1,6 +1,7 @@
+import { ClearTable } from "../anim.js";
 import {insertRequest, request, ShowError} from "../backend.js";
 import { Item, PC, Bildschirm, pushrequest } from "../interface.js";
-import { AddRow, ClearTable, devices, setDevices } from "./anim.js";
+import { AddRow, devices, setDevices } from "./anim.js";
 import { res_data, res_monitor } from "./interface.js";
 
 export const Monitors:Bildschirm[] = [];
@@ -38,8 +39,11 @@ export const getMonitors = ():Promise<Bildschirm[]> =>
                 hersteller: element.HERSTELLER as any,
                 model: element.MODEL as any,
                 it_nr: element.ITNR as any,
+                besitzer: element.BESITZER || "",
+                attached: element.ATTACHED,
                 seriennummer: element.SN as any,
                 status: element.STATUS as any,
+                form: element.FORM as any,
                 standort: "0" as any
             });
             Monitors.push({
@@ -47,8 +51,11 @@ export const getMonitors = ():Promise<Bildschirm[]> =>
                 type: element.TYPE as any,
                 hersteller: element.HERSTELLER as any,
                 model: element.MODEL as any,
+                attached: element.ATTACHED,
+                besitzer: element.BESITZER || "",
                 it_nr: element.ITNR as any,
                 seriennummer: element.SN as any,
+                form: element.FORM as any,
                 status: element.STATUS as any,
                 standort: "0" as any
             });
@@ -86,12 +93,12 @@ export const getData = async () =>
                     it_nr: element.ITNR as any,
                     type: element.TYPE as any,
                     hersteller: element.HERSTELLER as any,
-                    besitzer: element.BESITZER,
+                    besitzer: element.BESITZER || "",
                     seriennummer: element.SN,
                     passwort: element.PASSWORT,
                     status: element.STATUS as any,
                     standort: element.STANDORT,
-                    form: element.FORM,
+                    form: element.FORM as any,
                     equipment: element.EQUIPMENT!                    
                 }
             )

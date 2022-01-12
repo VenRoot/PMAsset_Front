@@ -18,6 +18,7 @@ export interface res_monitor
     ITNR: string;
     SN: string;
     HERSTELLER: string;
+    ATTACHED: string;
     TYPE: string;
     STATUS: string;
     BESITZER: string;
