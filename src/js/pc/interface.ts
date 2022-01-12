@@ -12,3 +12,15 @@ export interface res_data {
     TYPE: string;
     STANDORT: string;
 }
+
+export interface res_monitor
+{
+    ITNR: string;
+    SN: string;
+    HERSTELLER: string;
+    TYPE: string;
+    STATUS: string;
+    BESITZER: string;
+    MODEL: string;
+    FORM: string;
+}

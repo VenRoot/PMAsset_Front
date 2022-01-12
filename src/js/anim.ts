@@ -9,6 +9,7 @@ import { Bildschirm, InputName, PC, PCHersteller } from "./interface";
 import { uwu } from "./cart.js";
 import { PCHerstellerTypen, PCTypen, StatusTypen } from "./values.js";
 import {FormSelect, StatusSelect, TypSelect} from "./templates.js";
+import { changeCurrentRow, currentRow, GetMonitors } from "./pc/anim.js";
 
 uwu();
 
@@ -176,6 +177,7 @@ const getCellValue = (index: number) => {
 
 (() => {
     if (window.location.href.indexOf("login.html") != -1) return;
+    if(window.location.pathname == "/") return;
     const select = document.getElementById("SelectInputTyp") as HTMLSelectElement;
     PCTypen.forEach(element => select.options.add(new Option(element, element)));
 
@@ -215,17 +217,42 @@ $("#itinput").keydown(function (e) {
 // Grabs all the Elements by their IDs which we had given them
 let modal = document.getElementById("my-modal") as HTMLDivElement;
 
-let openbtn = document.getElementById("open-btn") as HTMLButtonElement;
-
 let okbtn = document.getElementById("ok-btn") as HTMLButtonElement;
 
-// We want the modal to open when the Open button is clicked
-openbtn.onclick = function () {
+export const openform = (row: HTMLTableRowElement) => {
+
+    GetMonitors(currentRow);
+    if(row.children[0]?.children[0]?.children[0]?.hasAttribute("value")) changeCurrentRow((row.children[0]!.children[0]!.children[0]! as HTMLInputElement).value);
+    else changeCurrentRow(row.children[0].textContent as string);
+
+    
+    if(currentRow == "IT00") return alert("Dies IT-Nr ist nicht vollständig");
     modal.style.display = "block";
-}
+    console.log(currentRow);
+};
+
 //We want the modal to close when the OK button is clicked
 okbtn.onclick = function () {
     modal.style.display = "none";
+
+    let mons = [];
+    //Check if the checkboxes are checked
+    Array.prototype.forEach.call(document.getElementsByClassName("moncheckbox"), (element: HTMLInputElement) => {
+        if(element.checked)
+        {
+            const Mon_ITNR = element.parentElement!.parentElement!.children[1].textContent as string;
+            mons.push(Mon_ITNR);
+        }
+    });
+
+    //Set the new equipment in the database
+    
+
+    //Untick all the checkboxes in the modal
+    //Egal, weil das Element sich eh neu aufbauen wird
+    // Array.prototype.forEach.call(document.getElementsByClassName("moncheckbox"), function (item: HTMLInputElement) {
+    //     item.checked = false;
+    // });
 }
 
 // The modal will close when the user clicks anywhere outside the modal
@@ -462,10 +489,11 @@ export const EditEntry = (elem: HTMLElement) =>
     const grandparent = elem.parentElement?.parentElement?.parentElement as HTMLTableRowElement;
     
     Array.from(grandparent.cells).forEach((cell, i) => {
-
+        console.log(cell);
+        
         switch(i)
         {
-            case 1: TypSelect.selectedIndex = PCTypen.indexOf(cell.innerHTML as any);TypSelect.value = cell.innerHTML; cell.innerHTML="";  cell.appendChild(TypSelect); console.log(cell); break;
+            case 1: cell.innerHTML="";  cell.appendChild(document.getElementById("SelectInputTyp")?.cloneNode(true)!); console.log(cell); break;
             case 4: break; cell.children[0].classList.remove("disabled"); break;
             case 6: StatusSelect.value = cell.innerHTML; cell.innerHTML=""; cell.appendChild(StatusSelect); console.warn(cell); break;
             case 8: FormSelect.value = cell.innerHTML; cell.innerHTML=""; cell.appendChild(FormSelect); break;
@@ -495,9 +523,12 @@ export const SaveEntry = (elem: HTMLElement) =>
         switch(i)
         {
             case 1: case 5: case 7: cell.innerHTML = (cell.children[0] as HTMLSelectElement).value; break;
-            case 3: break; cell.children[0].classList.add("disabled"); break;
-            case 8: cell.children[0].classList.add("disabled"); break;
-            case 9: break;
+            //case 3: break; cell.children[0].classList.add("disabled"); break;
+            // case 8: cell.children[0].classList.add("disabled"); break;
+            case 8: cell.innerHTML = (cell.children[0] as HTMLSelectElement).value; break;
+            case 9: cell.children[0].setAttribute("disabled", ""); (cell.children[0] as HTMLInputElement).type = "password"; break;
+            case 4: break;
+            case 10: break;
             default: cell.innerHTML = (cell.children[0] as HTMLInputElement).value; break;
         }
     });

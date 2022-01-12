@@ -18,7 +18,7 @@ if(document.location.pathname.includes('/Bildschirm'))
     });
 
 }
-else if(document.location.pathname.includes('/pc'))
+else if(document.location.pathname.toLowerCase().includes('/pc'))
 {
     PCTypen.forEach(typ => {
         const option = document.createElement('option');

@@ -1,6 +1,6 @@
 import {enableBtn, foc, getInputValues, ResetFields, tbody} from "../anim.js";
-import {Item, PC} from "../interface";
-import { setData } from "./backend.js";
+import {Bildschirm, Item, PC} from "../interface";
+import { getData, getMonitors, setData } from "./backend.js";
 
 const genPasswd = (length: number) =>
 {
@@ -40,7 +40,8 @@ export const GeneratePassword = (elem: HTMLElement) =>
 
 }
 
-
+export let devices:PC[] = [];
+export const setDevices = async(dev:PC[]) => devices = dev; 
 
 const getDevices = async() =>
 {
@@ -91,16 +92,15 @@ const getDevices = async() =>
 
 export const getDevice = async(it_nr: string) =>
 {
-    const devices = await getDevices();
     return devices.filter(device => device.it_nr.includes(it_nr));
 }
 
 export const SearchDevice = async(it_nr: string) =>
  {
-    const devices = await getDevice(it_nr);
-    console.log(devices);
+    const devs = await getDevice(it_nr);
+    console.log(devs);
     ClearTable();
-     devices.forEach(device => AddRow(device));
+     devs.forEach(device => AddRow(device));
  }
 
  const MakeTemplate = async (values: PC): Promise<HTMLTableRowElement> =>
@@ -125,7 +125,7 @@ export const SearchDevice = async(it_nr: string) =>
             case "seriennummer": temp.innerText = values.seriennummer as any; temp.id="SERIENNUMMER"; break;
             case "standort": temp.innerText = values.standort as any; temp.id="STANDORT"; break;
             case "status": temp.innerText = values.status as any; temp.id="STATUS"; break;
-            case "equipment": temp.innerText = values.equipment as any; temp.id="EQUIPMENT"; break;
+            case "equipment": temp.id="EQUIPMENT"; break;
             case "besitzer": 
             const a = document.createElement("a");
             a.href = "#";
@@ -181,15 +181,114 @@ export const SearchDevice = async(it_nr: string) =>
  }
 
 
+ export const AddMonRow = (_values: Bildschirm) =>
+ {
+     const MonTBody = document.getElementById("MonTBody") as HTMLTableElement;
+     const tr = document.createElement("tr");
+     tr.classList.add("HardwareSearchResult");
+
+     const checkbox = document.createElement("td");
+     checkbox.classList.add("border-t", "border-gray-200", "px-4", "py-2");
+     let checkbox2 = document.createElement("input");
+     checkbox2.type = "checkbox";
+     checkbox2.classList.add("moncheckbox");
+     checkbox.append(checkbox2);
+
+
+     let td0 = document.createElement("td"); td0.classList.add("border-t", "border-gray-200", "px-4", "py-2");
+     let td1 = document.createElement("td"); td1.classList.add("border-t", "border-gray-200", "px-4", "py-2");
+     let td2 = document.createElement("td"); td2.classList.add("border-t", "border-gray-200", "px-4", "py-2");
+     let td3 = document.createElement("td"); td3.classList.add("border-t", "border-gray-200", "px-4", "py-2");
+     let td4 = document.createElement("td"); td4.classList.add("border-t", "border-gray-200", "px-4", "py-2");
+     let td5 = document.createElement("td"); td5.classList.add("border-t", "border-gray-200", "px-4", "py-2");
+
+     td0.innerText = _values.it_nr;
+     td1.innerText = _values.seriennummer;
+     td2.innerText = _values.type;
+     td3.innerText = _values.hersteller;
+     td4.innerText = _values.model;
+     td5.innerText = _values.status;
+     
+     tr.append(checkbox, td0, td1, td2, td3, td4, td5);
+     MonTBody.append(tr);
+     console.log(tr);
+ }
+
+ export let currentRow = "";
+ export const changeCurrentRow = (value: string) =>
+ {
+        currentRow = value;
+ } 
+
+ export const DoneMon = async () => {
+     const tbody = document.getElementById("MonTBody")!;
+     //Get the tr from the tbody and check if the checkbox in first td is ticked
+     for(let i = 0; i < tbody.children.length; i++)
+     {
+         const tr = tbody.children[i];
+         const checkbox = tr.children[0].children[0] as HTMLInputElement;
+         if(checkbox.checked)
+         {
+             const id = tr.children[1].innerHTML;
+            //  const seriennummer = tr.children[2].innerText;
+            //  const type = tr.children[3].innerText;
+            //  const hersteller = tr.children[4].innerText;
+            //  const model = tr.children[5].innerText;
+            //  const status = tr.children[6].innerText;
+            //  const bildschirm = new Bildschirm(id, seriennummer, type, hersteller, model, status);
+             const input = document.createElement("input");
+             input.classList.add("readonly");
+             //Right click on the input field, which will prompt the user to remove the input field
+            input.setAttribute("oncontextmenu", "if(confirm('Möchten Sie diesen Bildschirm vom PC trennen?')) {this.remove(); return false;}");
+
+             switch(currentRow)
+            {
+                case "input": document.getElementById("inputvalues")!.children[4].append(input); break;
+                default: 
+                //Get the row from the table where the itnr matches and add the input field
+                const row = SearchRowByTdInnerText(currentRow);
+                if(row == null) return alert("Error");
+                row.children[4].append(input);
+            }
+         }
+     }
+ }
+
+ export const SearchRowByTdInnerText = (value: string) =>
+ {
+        const tbody = document.getElementById("MonTBody")!;
+        for(let i = 0; i < tbody.children.length; i++)
+        {
+            const tr = tbody.children[i];
+            const td = tr.children[0];
+            if(td.textContent?.includes(value) || td.textContent == value)
+            {
+                return tr as HTMLTableRowElement;
+            }
+        }
+        return null;
+ }
+
+ 
+
+ export const RemoveInputField = (element: HTMLInputElement) => {
+     element.remove();
+ };
+
+ export const LinkWithPC = async (pcit: string, monit: string) => {
+
+ };
+
  export const AddRow = async (_values?: PC) =>
 {
-    
     // const newRow = tbody.rows[1].cloneNode(true) as HTMLTableRowElement;
-    let values = await getInputValues("PC") as PC;
+    let values:PC;
     
 
     if(!_values)
     {   
+        values = await getInputValues("PC") as PC;
+        if(devices.filter(e => e.it_nr == values.it_nr).length > 0) return alert("PC ist bereits in der Liste vorhanden!");
         //@ts-ignore
         if(values.equipment === undefined) values.equipment = null;
         //Es wurden keine Values mitgegeben, also... in die DB
@@ -199,6 +298,8 @@ export const SearchDevice = async(it_nr: string) =>
 
     //@ts-ignore
     if(values.equipment === undefined) values.equipment = null;
+    //@ts-ignore
+    if(typeof values.equipment == "string") values.equipment = JSON.parse(values.equipment);
     console.warn(values);
     const newRow = await MakeTemplate(values);
     //Set the values into the new row
@@ -213,7 +314,26 @@ export const SearchDevice = async(it_nr: string) =>
                 case 1: template.innerText = values.type as any; break;
                 case 2: template.innerText = values.hersteller as any; break;
                 case 3: template.innerText = values.seriennummer as any; break;
-                case 4: template.innerText = values.equipment as any; break;
+                case 4: 
+                const button = document.createElement("button");
+                button.id = "open-btn";
+                button.setAttribute("onclick", "main.openform(this.parentElement.parentElement);");
+                button.classList.add("w-full", "text-center");
+                button.innerText = "Hinzufügen";
+                template.append(button);
+
+                values.equipment.forEach(equipment =>
+                    {
+                        const input = document.createElement("input");
+                        input.value = equipment;
+                        input.classList.add("text-center");
+                        input.setAttribute("readonly", "");
+                        input.setAttribute("oncontextmenu", "if(confirm('Möchten Sie diesen Bildschirm vom PC trennen?')) {this.remove();} return false;");
+                        template.append(input);
+                        template.append(document.createElement("br"));
+                    });
+                
+                break;
                 case 5: template.innerText = values.standort as any; break;
                 case 6: template.innerText = values.status as any; break;
                 case 7: template.innerText = values.besitzer as any; break;
@@ -275,4 +395,23 @@ export const ClearTable = () =>
     {
         tbody.removeChild(tbody.lastElementChild!);
     }
+}
+
+
+//Make a function which gets the Monitors from the backend and log them
+export const GetMonitors = async (currentRow: string) =>
+{
+    document.getElementById("MonTBody")!.innerHTML = "";
+    const data = await getMonitors();
+    console.error(data);
+    if(!data) return console.log("Ich geh Mal");
+    
+    const notAvaiable = ["Bestellt", "Aktiv", "Defekt", "Verschrottet"];
+    
+    data.forEach(entry =>
+    {
+        if(notAvaiable.includes(entry.status)) return;
+        AddMonRow(entry);
+        console.log(entry);
+    });
 }

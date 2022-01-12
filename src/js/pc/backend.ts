@@ -1,7 +1,64 @@
 import {insertRequest, request, ShowError} from "../backend.js";
-import { Item, PC, pushrequest } from "../interface.js";
-import { AddRow, ClearTable } from "./anim.js";
-import { res_data } from "./interface.js";
+import { Item, PC, Bildschirm, pushrequest } from "../interface.js";
+import { AddRow, ClearTable, devices, setDevices } from "./anim.js";
+import { res_data, res_monitor } from "./interface.js";
+
+export const Monitors:Bildschirm[] = [];
+
+
+export const getMonitors = ():Promise<Bildschirm[]> =>
+{
+    return new Promise(async(resolve, reject) => {
+    const username = sessionStorage.getItem("username");
+    const SessionID = sessionStorage.getItem("SessionID");
+    let Mons: Bildschirm[] = [];
+    //Remove all entries from Monitors array
+    Monitors.splice(0, Monitors.length);
+
+    if(username === null || SessionID === null)
+    {
+        ShowError("You are not logged in");
+        return null;
+    }
+
+    request("getEntries", {method: "getEntries", SessionID: SessionID, username: username, type: "Monitor"}, async (res: {message: string, status: number}, err: {message: string, status: number}) => {
+        if(err)
+        {
+            ShowError(err.message, err.status);
+            reject(new Error(err.message));
+        }
+        console.log(res);
+
+        const data = JSON.parse(res.message) as res_monitor[];
+        
+        data.forEach((element) => {
+            Mons.push({
+                kind: "Monitor",
+                type: element.TYPE as any,
+                hersteller: element.HERSTELLER as any,
+                model: element.MODEL as any,
+                it_nr: element.ITNR as any,
+                seriennummer: element.SN as any,
+                status: element.STATUS as any,
+                standort: "0" as any
+            });
+            Monitors.push({
+                kind: "Monitor",
+                type: element.TYPE as any,
+                hersteller: element.HERSTELLER as any,
+                model: element.MODEL as any,
+                it_nr: element.ITNR as any,
+                seriennummer: element.SN as any,
+                status: element.STATUS as any,
+                standort: "0" as any
+            });
+        });
+        console.warn(Mons);
+        console.warn(Monitors);
+        resolve(Mons);
+    });
+    });    
+}
 
 //Fetch the data from the backend server
 export const getData = async () =>
@@ -35,16 +92,17 @@ export const getData = async () =>
                     status: element.STATUS as any,
                     standort: element.STANDORT,
                     form: element.FORM,
-                    equipment: element.EQUIPMENT as any                    
+                    equipment: element.EQUIPMENT!                    
                 }
             )
         });
-        pc.forEach(entry => AddRow(entry));
+        setDevices(pc);
+        //Check if the domain is the pc page
+        if(document.location.pathname.toLowerCase().includes("/pc")) pc.forEach(entry => AddRow(entry));
     });
-    ClearTable();
+    if(document.location.pathname.toLowerCase().includes("/pc")) ClearTable();
     return res;
 }
-
 
 export const setData = async (data: Item, method: pushrequest ) =>
 {
@@ -78,6 +136,16 @@ export const setData = async (data: Item, method: pushrequest ) =>
     else if(data.kind == "Monitor")
     {
     }
+}
+
+export const setEquipment = async (PCITNr: string, MonITNr: string[]) =>
+{
+    const username = window.sessionStorage.getItem("username");
+    const SessionID = window.sessionStorage.getItem("SessionID");
+
+    if(username == null || SessionID == null) throw new Error("No SessionID or username found");
+    
+
 
     
 }
