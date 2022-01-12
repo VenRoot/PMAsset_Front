@@ -2,7 +2,7 @@ import {getKey, getEntries, ShowError, request, insertRequest} from "./backend.j
 
 
 export const Continue = async (ms: number) => {
-    for(let i = 5; i > 0; i--)
+    for(let i = 3; i > 0; i--)
     {
         SetLog(`Authentifizierung erfolgreich! Sie werden in ${i} Sekunden weitergeleitet!`);
         await new Promise(r => setTimeout(r, 1000));
