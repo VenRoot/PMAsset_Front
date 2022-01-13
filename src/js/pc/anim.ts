@@ -240,20 +240,20 @@ export const SearchDevice = async(it_nr: string) =>
     // const newRow = tbody.rows[1].cloneNode(true) as HTMLTableRowElement;
     let values:PC;
     
+    
 
     if(!_values)
     {   
         values = await getInputValues("PC") as PC;
         if(devices.filter(e => e.it_nr == values.it_nr).length > 0) return alert("PC ist bereits in der Liste vorhanden!");
         //@ts-ignore
-        if(values.equipment === undefined) values.equipment = null;
+        if(values.equipment === undefined) values.equipment = [];
         //Es wurden keine Values mitgegeben, also... in die DB
         setData(values, {method: "PUT", device: values});
     }
     else values = _values;
 
-    //@ts-ignore
-    if(values.equipment === undefined) values.equipment = null;
+    if(!values.equipment) values.equipment = [];
     //@ts-ignore
     if(typeof values.equipment == "string") values.equipment = JSON.parse(values.equipment);
     console.warn(values);

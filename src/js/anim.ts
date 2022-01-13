@@ -5,7 +5,7 @@ const table = document.getElementById("table") as HTMLTableElement;
 export const tbody = document.getElementById('tbody') as HTMLTableElement;
 const thead = document.getElementById('thead') as HTMLTableElement;
 
-import { Bildschirm, InputName, PC, PCHersteller } from "./interface";
+import { Bildschirm, InputName, MonTypes, PC, PCHersteller, PCTypes, Status } from "./interface";
 import { uwu } from "./cart.js";
 import { PCHerstellerTypen, PCTypen, StatusTypen, MonitorTypen, PhoneTypen, MonTypen } from "./values.js";
 import {FormSelect, StatusSelect, TypSelect} from "./templates.js";
@@ -64,13 +64,13 @@ export const getInputValues = async (type: "PC" | "Bildschirm" | "Phone" | "Konf
         //@ts-ignore
         let pc:PC = {
             kind: "PC",
-            it_nr: (document.getElementById("itinput")as any).value,
-            type: (document.getElementById("SelectInputTyp")as HTMLSelectElement).selectedOptions[0].value as any,
-            hersteller: (document.getElementById("SelectHerstellerTyp")as HTMLSelectElement).selectedOptions[0].value as any,
+            it_nr: (document.getElementById("itinput") as HTMLInputElement).value as `IT00${number}`,
+            type: (document.getElementById("SelectInputTyp")as HTMLSelectElement).selectedOptions[0].value as PCTypes,
+            hersteller: (document.getElementById("SelectHerstellerTyp")as HTMLSelectElement).selectedOptions[0].value as PCHersteller,
             seriennummer: (document.getElementById("SeriennummerInput")as HTMLInputElement).value,
             // equipment: (document.getElementById("EquipmentInput")as HTMLInputElement).value,
             standort: (document.getElementById("StandortInput")as HTMLInputElement).value,
-            status: (document.getElementById("SelectInputStatus")as HTMLSelectElement).selectedOptions[0].value as any,
+            status: (document.getElementById("SelectInputStatus")as HTMLSelectElement).selectedOptions[0].value as Status,
             besitzer: (document.getElementById("BesitzerInput")as HTMLInputElement).value,
             form: (document.getElementById("FormSelect")as HTMLSelectElement).selectedOptions[0].value,
             passwort: (document.getElementById("bpasswd")as HTMLInputElement).value,
@@ -94,27 +94,27 @@ export const getInputValues = async (type: "PC" | "Bildschirm" | "Phone" | "Konf
     {
         let bildschirm:Bildschirm = {
             kind: "Monitor",
-            it_nr: (document.getElementById("itinput")as any).value,
+            it_nr: (document.getElementById("itinput") as HTMLInputElement).value as `IT00${number}`,
+            type: (document.getElementById("SelectInputTyp")as HTMLSelectElement).selectedOptions[0].value as MonTypes,
+            hersteller: (document.getElementById("SelectHerstellerTyp")as HTMLSelectElement).selectedOptions[0].value as "Samsung" | "LG" | "Dell",
             seriennummer: (document.getElementById("SeriennummerInput")as HTMLInputElement).value,
-            hersteller: (document.getElementById("SelectHerstellerTyp")as HTMLSelectElement).selectedOptions[0].value as any,
-            status: (document.getElementById("SelectInputStatus")as HTMLSelectElement).selectedOptions[0].value as any,
+            model: (document.getElementById("ModellnummerInput")as HTMLSelectElement).value,
+            // attached: (document.getElementById("AttachedInput")as HTMLInputElement).value as any,
             standort: (document.getElementById("StandortInput")as HTMLInputElement).value,
+            status: (document.getElementById("SelectInputStatus")as HTMLSelectElement).selectedOptions[0].value as Status,
             besitzer: (document.getElementById("BesitzerInput")as HTMLInputElement).value,
-            attached: (document.getElementById("attached")as HTMLInputElement).value as any,
             form: (document.getElementById("FormSelect")as HTMLSelectElement).selectedOptions[0].value,
-            model: (document.getElementById("SelectModel")as HTMLSelectElement).value,
-            type: (document.getElementById("SelectInputTyp")as HTMLSelectElement).selectedOptions[0].value as any,
         };
-        let values = cells.map((cell, index) => {
-            if(index == 0) return (cell.children[0].children[0] as HTMLInputElement).value;
-            if(index == 3 || index == 9) return null;
-            if(index == 1 || index == 5 || index == 7) return (cell.children[0] as HTMLSelectElement).selectedOptions[0].value;
-            if(index == 8 )return (cell.children[1] as HTMLInputElement).value;
-            return (cell.children[0] as HTMLInputElement).value;
-        });
-        console.log(values);
+        // let values = cells.map((cell, index) => {
+        //     if(index == 0) return (cell.children[0].children[0] as HTMLInputElement).value;
+        //     if(index == 3 || index == 9) return null;
+        //     if(index == 1 || index == 5 || index == 7) return (cell.children[0] as HTMLSelectElement).selectedOptions[0].value;
+        //     if(index == 8 )return (cell.children[1] as HTMLInputElement).value;
+        //     return (cell.children[0] as HTMLInputElement).value;
+        // });
+        // console.log(values);
         return bildschirm;
-        return values as string[];
+        // return values as string[];
     }
     else if(type == "Phone")
     {
@@ -247,7 +247,8 @@ export const enableBtn = () =>
         if(DoneBTN != null) 
         {
             DoneBTN.removeAttribute("disabled");
-            DoneBTN.setAttribute("onclick", "PC.AddRow()");
+            if(window.location.pathname.toLocaleLowerCase().includes("pc")) DoneBTN.setAttribute("onclick", "PC.AddRow();");
+            else if(window.location.pathname.toLocaleLowerCase().includes("bildschirm")) DoneBTN.setAttribute("onclick", "Bildschirm.AddRow();");
             DoneBTN.parentElement?.classList.add("text-green-400");
             DoneBTN.parentElement?.classList.remove("text-red-400");
             DoneBTN.innerHTML = "done";
@@ -284,10 +285,11 @@ export const validateInput = () =>
     let valid = true;
     
     Array.from(tbody.rows[0].cells).forEach(element => {
-        const parent = element.children;
-        if(parent == null) return;
-        Array.from(parent).forEach(el => {
+        const children = element.children;
+        if(children == null) return;
+        Array.from(children).forEach(el => {
             if(el.tagName != "INPUT" && el.tagName != "SELECT") return;
+            if(el.parentElement!.getAttribute("name") == "Attached") return;
             if((el as HTMLInputElement).value == "") valid = false;
 
         });

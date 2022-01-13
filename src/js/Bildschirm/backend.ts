@@ -35,9 +35,11 @@ export const getData = async() =>
             if(PCs.filter(pc => pc.equipment.includes(element.ITNR)))
             {
                 console.log(PCs);
-                console.log((PCs.filter(pc => pc.equipment.includes(element.ITNR))[0].it_nr as unknown as string));
+                console.log(element);
                 
-                element.ATTACHED = (PCs.filter(pc => pc.equipment.includes(element.ITNR))[0].it_nr as unknown as string);
+                console.log((PCs.filter(pc => pc.equipment.includes(element.ITNR))?.[0]?.it_nr || "-"));
+                
+                element.ATTACHED = (PCs.filter(pc => pc.equipment.includes(element.ITNR))?.[0]?.it_nr || "-");
             }
             Monitors.push({
                 kind: "Monitor",
@@ -69,12 +71,12 @@ export const setData = async (data: Bildschirm, method: pushrequest) =>
     if(username == null || SessionID == null) throw new Error("No SessionID or username found");
     insertRequest("setData", {method: method.method, SessionID: SessionID, username: username, device: {
         kind: "Monitor",
-        hersteller: "LG",
+        hersteller: data.hersteller,
         it_nr: data.it_nr,
         type: data.type,
         seriennummer: data.seriennummer,
         model: data.model,
-        attached: data.attached,
+        attached: data.attached || "",
         standort: data.standort,
         status: data.status,
         besitzer: data.besitzer || "",

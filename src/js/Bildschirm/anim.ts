@@ -27,7 +27,7 @@ const MakeTemplate = async(values: Bildschirm): Promise<HTMLTableRowElement> =>
             const temp = document.createElement("td");
             if(key == "kind") return;
             temp.classList.add("border-2", "border-black", "duration-500", "transition", "text-center");
-            // console.warn(key);
+            console.warn(key);
             switch(key)
             {
                 case "it_nr": temp.innerText = values.it_nr; temp.id = "IT_NR"; break;
@@ -35,7 +35,7 @@ const MakeTemplate = async(values: Bildschirm): Promise<HTMLTableRowElement> =>
                 case "hersteller": temp.innerText = values.hersteller; temp.id="HERSTELLER"; break;
                 case "model": temp.innerText = values.model; temp.id = "MODEL"; break;
                 case "seriennummer": temp.innerText = values.seriennummer; temp.id="SERIENNUMMER"; break;
-                case "attached": temp.innerText = values.attached; temp.id="ATTACHED"; break;
+                case "attached": temp.innerText = values.attached || "-"; temp.id="ATTACHED"; break;
                 case "standort": temp.innerText = values.standort; temp.id="STANDORT"; break;
                 case "status": temp.innerText = values.status as any; temp.id="STATUS"; break;
                 case "besitzer":
@@ -60,7 +60,7 @@ const MakeTemplate = async(values: Bildschirm): Promise<HTMLTableRowElement> =>
             console.warn(sortedtemplate);
             console.warn(template.querySelector(query));
             console.warn(query);
-            
+            if(query == "#ATTACHED" && !template.querySelector(query)) return;
             sortedtemplate.appendChild(template.querySelector(query) as HTMLTableCellElement)
         });
         const icons = createIcons();
@@ -96,6 +96,9 @@ export const AddRow = async (_values?: Bildschirm) =>
     }
     else values = _values;
 
+    console.log(values);
+    if(!values.attached) values.attached = "-";
+    
     const newRow = await MakeTemplate(values);
     //Set the values into the new row
     Object.keys(values).forEach((key, index) =>
@@ -104,15 +107,16 @@ export const AddRow = async (_values?: Bildschirm) =>
         const template = newRow.getElementsByTagName("td")[index];
         switch(index)
             {
-                case 0: template.innerText = values.it_nr as any; break;
-                case 1: template.innerText = values.type as any; break;
-                case 2: template.innerText = values.hersteller as any; break;
-                case 3: template.innerText = values.model as any; break;
-                case 4: template.innerText = values.seriennummer as any; break;
-                case 5: template.innerText = values.attached as any; break;
-                case 6: template.innerText = values.standort as any; break;
-                case 7: template.innerText = values.status as any; break;
-                case 8: template.innerText = values.besitzer as any; break;
+                case 0: template.innerText = values.it_nr; break;
+                case 1: template.innerText = values.type; break;
+                case 2: template.innerText = values.hersteller; break;
+                case 3: template.innerText = values.model; break;
+                case 4: template.innerText = values.seriennummer; break;
+                case 5: template.innerText = values.attached || ""; break;
+                case 6: template.innerText = values.standort; break;
+                case 7: template.innerText = values.status; break;
+                case 8: template.innerText = values.besitzer; break;
+                case 9: template.innerText = values.form; break;
             }
     });
     
@@ -168,7 +172,7 @@ export const SaveEntry = (elem: HTMLElement) =>
 
         switch(i)
         {
-            case 1: case 5: case 7: cell.innerHTML = (cell.children[0] as HTMLSelectElement).value; break;
+            case 1: case 7: cell.innerHTML = (cell.children[0] as HTMLSelectElement).value; break;
             //case 3: break; cell.children[0].classList.add("disabled"); break;
             // case 8: cell.children[0].classList.add("disabled"); break;
             case 8: case 9: cell.innerHTML = (cell.children[0] as HTMLSelectElement).value; break;
