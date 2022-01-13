@@ -6,6 +6,9 @@ export const StatusSelect = document.createElement('select');
 export const EquipmentBtn = document.createElement('button');
 export const FormSelect = document.createElement('select');
 
+StatusSelect.style.textAlignLast = "center";
+TypSelect.style.textAlignLast = "center";
+FormSelect.style.textAlignLast = "center";
 
 
 if(document.location.pathname.toLocaleLowerCase().includes('bildschirm'))
@@ -24,7 +27,7 @@ if(document.location.pathname.toLocaleLowerCase().includes('bildschirm'))
         HerstellerSelect.appendChild(option);
     });
 
-    (document.getElementById("SelectHerstellerTyp") as HTMLSelectElement).appendChild(HerstellerSelect);
+    // (document.getElementById("SelectHerstellerTyp")!.innerHTML) = HerstellerSelect.innerHTML;
 
 }
 else if(document.location.pathname.toLowerCase().includes('/pc'))
@@ -73,6 +76,6 @@ StatusTypen.forEach(typ => {
 });
 
 FormSelect.options.add(new Option('Ja', 'Ja'));
-FormSelect.options.add(new Option('Nein', 'Nein'));
+FormSelect.options.add(new Option('Nein', 'Nein', true));
 
 EquipmentBtn.textContent = "Liste öffnen";

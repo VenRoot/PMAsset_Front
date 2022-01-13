@@ -8,7 +8,7 @@ const thead = document.getElementById('thead') as HTMLTableElement;
 import { Bildschirm, InputName, MonTypes, PC, PCHersteller, PCTypes, Status } from "./interface";
 import { uwu } from "./cart.js";
 import { PCHerstellerTypen, PCTypen, StatusTypen, MonitorTypen, PhoneTypen, MonTypen } from "./values.js";
-import {FormSelect, StatusSelect, TypSelect} from "./templates.js";
+import {FormSelect, HerstellerSelect, StatusSelect, TypSelect} from "./templates.js";
 import { changeCurrentRow, currentRow, GetMonitors } from "./pc/anim.js";
 
 uwu();
@@ -195,15 +195,17 @@ const getCellValue = (index: number) => {
     else if(window.location.pathname.toLocaleLowerCase().includes("phone")) PhoneTypen.forEach(element => select.options.add(new Option(element, element)));
 
 
-    const select2 = document.getElementById("SelectInputStatus") as HTMLSelectElement;
-    StatusTypen.forEach(element => select2.options.add(new Option(element, element)));
+    const select2 = (document.getElementById("SelectInputStatus") as HTMLSelectElement);
+    select2.parentElement!.replaceChild(StatusSelect, select2);
+    
+    // StatusTypen.forEach(element => select2.options.add(new Option(element, element)));
 
     const select3 = document.getElementById("SelectHerstellerTyp") as HTMLSelectElement;
-    PCHerstellerTypen.forEach(element => select3.options.add(new Option(element, element)));
+    select3.parentElement!.replaceChild(HerstellerSelect, select3);
+    // PCHerstellerTypen.forEach(element => select3.options.add(new Option(element, element)));
 
-    Array.prototype.forEach.call(select2.options, function(item: HTMLOptionElement) {
-        item.style.textAlignLast = "center";
-    })
+    const select4 = document.getElementById("FormSelect") as HTMLSelectElement;
+    select4.parentElement!.replaceChild(FormSelect, select4);
 })();
 
 

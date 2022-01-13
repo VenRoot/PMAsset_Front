@@ -54,7 +54,7 @@ export interface response {
     DATA: string;
 }
 
-type method = "newKey" | "getEntries" | "auth" | "check";
+type method = "newKey" | "getEntries" | "auth" | "check" | "refresh";
 
 export interface pullrequest
 {
