@@ -45,7 +45,7 @@ export interface Bildschirm extends Gerät
 {
     kind: "Monitor";
     type: MonTypes;
-    attached: string;
+    attached?: string;
     hersteller: "Samsung" | "LG" | "Dell"
     model: string;
 }

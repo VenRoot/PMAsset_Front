@@ -1,6 +1,6 @@
 import { ClearTable } from "../anim.js";
 import {insertRequest, request, ShowError} from "../backend.js";
-import { Item, PC, Bildschirm, pushrequest } from "../interface.js";
+import { Item, PC, Bildschirm, pushrequest } from "../interface";
 import { AddRow, devices, setDevices } from "./anim.js";
 import { res_data, res_monitor } from "./interface.js";
 
@@ -121,7 +121,7 @@ export const setData = async (data: Item, method: pushrequest ) =>
     {
         insertRequest("setData", {method: method.method, SessionID: SessionID, username: username, device: {
             kind: "PC",
-            hersteller: "Lenovo",
+            hersteller: data.hersteller,
             it_nr: data.it_nr,
             type: data.type,
             seriennummer: data.seriennummer,
@@ -139,9 +139,6 @@ export const setData = async (data: Item, method: pushrequest ) =>
             }
             return res;
         });
-    }
-    else if(data.kind == "Monitor")
-    {
     }
 }
 

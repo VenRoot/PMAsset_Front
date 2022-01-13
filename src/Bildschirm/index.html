@@ -120,13 +120,16 @@
                                 <th class="border-2 border-black" name="IT_Nr"><div><input id="itinput" type="text" onkeypress="main.checkITNr(this);" class="w-full text-center temp"  placeholder="0X-IT00XXXX" maxlength="8" size="8" value="IT00" title="01 => Laptop&#13;02 => Bildschirm&#13;03 => Konferenzerät&#13;04 => Phone"></div></th>
                                 <th class="border-2 border-black" name="Typ"><select id="SelectInputTyp"></select></th>
                                 <th class="border-2 border-black" name="Hersteller"><select id="SelectHerstellerTyp"></select></th>
-                                <th class="border-2 border-black" name="Seriennummer"><input type="text" class="w-full temp" placeholder="XXXXXXXXXXXXXXX" style="font-size: 11px;" title="Bitte hier die Seriennummer eingeben"></th>
-                                <th class="border-2 border-black" name="Modellnummer"><input type="text" class="w-full temp" placeholder="XXXXXXXXXXXXXXX" style="font-size: 11px;" title="Bitte hier die Modellnummer eingeben"></th>
-                                <th class="border-2 border-black" name="Attached"><input type="text"></th>
-                                <th class="border-2 border-black" name="text"><input class="w-full text-center temp" type="text"></th>
+                                <th class="border-2 border-black" name="Seriennummer"><input type="text" id="SeriennummerInput" class="w-full temp" placeholder="XXXXXXXXXXXXXXX" style="font-size: 11px;" title="Bitte hier die Seriennummer eingeben"></th>
+                                <th class="border-2 border-black" name="Modellnummer"><input type="text" class="w-full temp" placeholder="XXXXXXXXXXXXXXX" style="font-size: 11px;" id="ModellnummerInput" title="Bitte hier die Modellnummer eingeben"></th>
+                                <th class="border-2 border-black" name="Attached"><input type="text" id="AttachedInput" disabled value="Bitte auf der PC-Seite verknüfen"></th>
+                                <th class="border-2 border-black" name="text"><input class="w-full text-center temp" id="StandortInput" type="text"></th>
                                 <th class="border-2 border-black" name="text"><select id="SelectInputStatus" class="w-full text-center" type="text"></select></th>
-                                <th class="border-2 border-black" name="Mitarbeiter"><input class="w-full text-center temp" type="text"></th>
-                                <th class="border-2 border-black" name="Formular"><input class="w-full text-center temp" type="text"></th>
+                                <th class="border-2 border-black" name="Mitarbeiter"><input class="w-full text-center temp" id="BesitzerInput" type="text"></th>
+                                <th class="border-2 border-black" name="Formular"><select class="w-full text-center temp" id="FormSelect">
+                                  <option value="Nein" selected>Nein</option>
+                                    <option value="Ja" onselect="CreateForm(this);">Ja</option>
+                                </select></th>
 
                                 <th class="icons">
                                     <a href="#" class="text-red-400 hover:text-gray-100 mx-2">
