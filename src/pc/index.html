@@ -120,7 +120,7 @@
                                 <th class="border-2 border-black" name="Typ"><select id="SelectInputTyp"></select></th>
                                 <th class="border-2 border-black" name="Hersteller"><select id="SelectHerstellerTyp"></select></th>
                                 <th class="border-2 border-black" name="Seriennummer"><input type="text" id="SeriennummerInput" class="w-full temp" placeholder="XXXXXXXXXXXXXXX" style="font-size: 11px;" title="Bitte hier die Seriennummer eingeben"></th>
-                                <th class="border-2 border-black" name="Equipment"><button class="w-full text-center" id="open-btn" onclick="main.openform(this.parentElement.parentElement);">Hinzufügen</button></th>
+                                <th class="border-2 border-black" name="Equipment"><button class="w-full text-center" id="open-btn" onclick="PC.openform(this.parentElement.parentElement);">Hinzufügen</button></th>
                                 <th class="border-2 border-black" name="text"><input class="w-full text-center temp" id="StandortInput" type="text"></th>
                                 <th class="border-2 border-black" name="text"><select id="SelectInputStatus" class="w-full text-center" type="text"></select></th>
                                 <th class="border-2 border-black" name="Mitarbeiter"><input class="w-full text-center temp" id="BesitzerInput" type="text"></th>
@@ -305,10 +305,10 @@
                     </div>
                     <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                       <button id="ok-btn" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-black hover:bg-green-700 focus:outline-none focus:ring-2
-                      focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm" onclick="PC.DoneMon();">Anwenden</button>
+                      focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm" onclick="PC.DoneMon(true);">Anwenden</button>
 
                       <button id="cancel-btn" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2
-                                            focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">Abbrechen</button>
+                                            focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm" onclick="PC.DoneMon(false);">Abbrechen</button>
                         <!-- <button id="cancel-btn" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2
                                             focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
             Cancel

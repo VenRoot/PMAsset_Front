@@ -137,8 +137,10 @@ export const SearchDevice = async(it_nr: string) =>
  }
 
 
- export const AddMonRow = (_values: Bildschirm) =>
+ export const AddMonRow = (_values: Bildschirm, currentPC: string) =>
  {
+     let pc = devices.find(device => device.it_nr == currentPC);
+     
      const MonTBody = document.getElementById("MonTBody") as HTMLTableElement;
      const tr = document.createElement("tr");
      tr.classList.add("HardwareSearchResult");
@@ -148,6 +150,9 @@ export const SearchDevice = async(it_nr: string) =>
      let checkbox2 = document.createElement("input");
      checkbox2.type = "checkbox";
      checkbox2.classList.add("moncheckbox");
+
+     if(pc && pc.equipment.includes(_values.it_nr)) checkbox2.checked = true;
+
      checkbox.append(checkbox2);
 
 
@@ -176,14 +181,14 @@ export const SearchDevice = async(it_nr: string) =>
         currentRow = value;
  } 
 
- export const DoneMon = async () => {
+ export const DoneMon = async (saveChanges: boolean) => {
      const tbody = document.getElementById("MonTBody")!;
      //Get the tr from the tbody and check if the checkbox in first td is ticked
      for(let i = 0; i < tbody.children.length; i++)
      {
          const tr = tbody.children[i];
          const checkbox = tr.children[0].children[0] as HTMLInputElement;
-         if(checkbox.checked)
+         if(checkbox.checked && saveChanges)
          {
              const id = tr.children[1].innerHTML;
             //  const seriennummer = tr.children[2].innerText;
@@ -273,7 +278,7 @@ export const SearchDevice = async(it_nr: string) =>
                 case 4: 
                 const button = document.createElement("button");
                 button.id = "open-btn";
-                button.setAttribute("onclick", "main.openform(this.parentElement.parentElement);");
+                button.setAttribute("onclick","PC.openform(this.parentElement.parentElement);");
                 button.classList.add("w-full", "text-center");
                 button.innerText = "Hinzufügen";
                 template.append(button);
@@ -359,7 +364,7 @@ export const GetMonitors = async (currentRow: string) =>
     data.forEach(entry =>
     {
         if(notAvaiable.includes(entry.status)) return;
-        AddMonRow(entry);
+        AddMonRow(entry, currentRow);
         console.log(entry);
     });
 }
