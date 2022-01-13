@@ -31,6 +31,10 @@ export const request = (subdomain: string, auth: pullrequest, callback: Function
 
         case "check": if(!auth.SessionID || !auth.username) throw new Error("Missing parameters");
         xmlhttp.setRequestHeader("auth", JSON.stringify({type: "check", SessionID: auth.SessionID, username: auth.username})); break;
+
+        case "refresh": if(!auth.SessionID || !auth.username) throw new Error("Missing parameters");
+        xmlhttp.setRequestHeader("auth", JSON.stringify({type: "check", SessionID: auth.SessionID, username: auth.username}));;
+        xmlhttp.setRequestHeader("Session", JSON.stringify({type: "check", SessionID: auth.SessionID, username: auth.username})); break;
     }
     xmlhttp.send(null);
 }
@@ -166,3 +170,20 @@ const countDevices = async () =>
 {
 
 };
+const refreshSession = () =>
+{
+    console.log("Refreshing session");
+    const SessionID = window.sessionStorage.getItem("SessionID") as string;
+    const username = window.sessionStorage.getItem("username") as string;
+    
+    if(SessionID && username)
+    {
+        request("refresh", {method: "refresh", SessionID: SessionID, username: username}, (res: {message: string, status: number}, err: response) => {
+            if(err) throw err;
+            if(res.status >= 200 && res.status < 300) return true;
+            ShowError("Ihre Session ist abgelaufen oder nicht gültig. Bitte neu anmelden", res.status);
+        });
+    }
+}
+
+setInterval(refreshSession, 1000 * 60 * 2);
