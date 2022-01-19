@@ -1,9 +1,9 @@
 import { pullrequest, pushrequest, response } from "./interface";
 
-export const request = (subdomain: string, auth: pullrequest, callback: Function) =>
+export const request = (subdomain: string, auth: pullrequest, callback: Function, optional?: any) =>
 {
     const xmlhttp = new XMLHttpRequest();
-    xmlhttp.onreadystatechange = function () {
+    xmlhttp.onreadystatechange = () => {
         if (xmlhttp.readyState == 4)
         {
             console.log(xmlhttp);
@@ -33,8 +33,12 @@ export const request = (subdomain: string, auth: pullrequest, callback: Function
         xmlhttp.setRequestHeader("auth", JSON.stringify({type: "check", SessionID: auth.SessionID, username: auth.username})); break;
 
         case "refresh": if(!auth.SessionID || !auth.username) throw new Error("Missing parameters");
-        xmlhttp.setRequestHeader("auth", JSON.stringify({type: "check", SessionID: auth.SessionID, username: auth.username}));;
+        xmlhttp.setRequestHeader("auth", JSON.stringify({type: "check", SessionID: auth.SessionID, username: auth.username}));
         xmlhttp.setRequestHeader("Session", JSON.stringify({type: "check", SessionID: auth.SessionID, username: auth.username})); break;
+
+        case "setMonitors": if(!auth.SessionID || !auth.username) throw new Error("Missing parameters");
+        xmlhttp.setRequestHeader("auth", JSON.stringify({type: "check", SessionID: auth.SessionID, username: auth.username}));
+        xmlhttp.setRequestHeader("data", JSON.stringify({PCITNr: optional.PCITNr,  MonITNr: optional.MonITNr, SessionID: auth.SessionID, username: auth.username}));
     }
     xmlhttp.send(null);
 }

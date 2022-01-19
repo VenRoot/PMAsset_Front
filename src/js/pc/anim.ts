@@ -1,6 +1,6 @@
 import {ClearTable, enableBtn, foc, getInputValues, ResetFields, tbody} from "../anim.js";
 import {Bildschirm, Item, PC} from "../interface";
-import { getData, getMonitors, setData } from "./backend.js";
+import { getData, getMonitors, setData, setEquipment } from "./backend.js";
 
 const genPasswd = (length: number) =>
 {
@@ -139,7 +139,12 @@ export const SearchDevice = async(it_nr: string) =>
 
  export const AddMonRow = (_values: Bildschirm, currentPC: string) =>
  {
+     //PC, der im Hauptmenü ausgewählt wurde
      let pc = devices.find(device => device.it_nr == currentPC);
+
+     let attached: string | null = null;
+     let hasAttached = devices.find(device => device.equipment.includes(_values.it_nr) && device.it_nr != currentPC);
+     //Prüfe, ob _values in devices.EQUIPMENT vorhanden ist
      
      const MonTBody = document.getElementById("MonTBody") as HTMLTableElement;
      const tr = document.createElement("tr");
@@ -147,9 +152,17 @@ export const SearchDevice = async(it_nr: string) =>
 
      const checkbox = document.createElement("td");
      checkbox.classList.add("border-t", "border-gray-200", "px-4", "py-2");
-     let checkbox2 = document.createElement("input");
+     const checkbox2 = document.createElement("input");
      checkbox2.type = "checkbox";
      checkbox2.classList.add("moncheckbox");
+
+     if(hasAttached) {
+        attached = hasAttached.it_nr;
+        checkbox2.setAttribute("disabled", "");
+        
+        //Make the tr look disabled
+        tr.classList.add("bg-gray-200", "cursor-not-allowed");
+    }
 
      if(pc && pc.equipment.includes(_values.it_nr)) checkbox2.checked = true;
 
@@ -162,6 +175,7 @@ export const SearchDevice = async(it_nr: string) =>
      let td3 = document.createElement("td"); td3.classList.add("border-t", "border-gray-200", "px-4", "py-2");
      let td4 = document.createElement("td"); td4.classList.add("border-t", "border-gray-200", "px-4", "py-2");
      let td5 = document.createElement("td"); td5.classList.add("border-t", "border-gray-200", "px-4", "py-2");
+     let td6 = document.createElement("td"); td6.classList.add("border-t", "border-gray-200", "px-4", "py-2");
 
      td0.innerText = _values.it_nr;
      td1.innerText = _values.seriennummer;
@@ -169,8 +183,9 @@ export const SearchDevice = async(it_nr: string) =>
      td3.innerText = _values.hersteller;
      td4.innerText = _values.model;
      td5.innerText = _values.status;
+     attached ? td6.innerText = `PC: ${attached}` : td6.innerText = "Nicht verknüpft";
      
-     tr.append(checkbox, td0, td1, td2, td3, td4, td5);
+     tr.append(checkbox, td0, td1, td2, td3, td4, td5, td6);
      MonTBody.append(tr);
      console.log(tr);
  }
@@ -183,41 +198,49 @@ export const SearchDevice = async(it_nr: string) =>
 
  export const DoneMon = async (saveChanges: boolean) => {
      const tbody = document.getElementById("MonTBody")!;
-     //Get the tr from the tbody and check if the checkbox in first td is ticked
+     const btn = document.createElement("button");
+     const Monitors = [];
+     btn.id="open-btn"; btn.setAttribute("onclick", "PC.openform(this.parentElement.parentElement)"); btn.classList.add("w-full", "text-center"); btn.innerText = "Hinzufügen"; 
+     const row = SearchRowByTdInnerText(currentRow);
+
+     let children: ChildNode;
+     switch(currentRow)
+     {
+         case "input": children = document.getElementById("inputvalues")!.children[4]; break;
+         default: 
+         //Get the row from the table where the itnr matches and add the input field
+         
+         if(row == null) return alert("Error");
+         children = row.children[4];
+     }
+     children.textContent = "";
+     children.appendChild(btn);
+
      for(let i = 0; i < tbody.children.length; i++)
      {
          const tr = tbody.children[i];
          const checkbox = tr.children[0].children[0] as HTMLInputElement;
-         if(checkbox.checked && saveChanges)
+         if(saveChanges && checkbox.checked)
          {
              const id = tr.children[1].innerHTML;
-            //  const seriennummer = tr.children[2].innerText;
-            //  const type = tr.children[3].innerText;
-            //  const hersteller = tr.children[4].innerText;
-            //  const model = tr.children[5].innerText;
-            //  const status = tr.children[6].innerText;
-            //  const bildschirm = new Bildschirm(id, seriennummer, type, hersteller, model, status);
+             Monitors.push(id);
              const input = document.createElement("input");
-             input.classList.add("readonly");
+             input.classList.add("readonly", "text-center");
+             input.value = id;
              //Right click on the input field, which will prompt the user to remove the input field
-            input.setAttribute("oncontextmenu", "if(confirm('Möchten Sie diesen Bildschirm vom PC trennen?')) {this.remove(); return false;}");
-
-             switch(currentRow)
-            {
-                case "input": document.getElementById("inputvalues")!.children[4].append(input); break;
-                default: 
-                //Get the row from the table where the itnr matches and add the input field
-                const row = SearchRowByTdInnerText(currentRow);
-                if(row == null) return alert("Error");
-                row.children[4].append(input);
-            }
+            input.setAttribute("oncontextmenu", "if(confirm('Möchten Sie diesen Bildschirm vom PC trennen?')) {this.remove();} return false;");
+            console.log(currentRow);
+            children.appendChild(input);
+            children.appendChild(document.createElement("br"));
          }
      }
+     setEquipment(currentRow, Monitors)
+     return null;
  }
 
  export const SearchRowByTdInnerText = (value: string) =>
  {
-        const tbody = document.getElementById("MonTBody")!;
+        const tbody = document.getElementById("tbody")!;
         for(let i = 0; i < tbody.children.length; i++)
         {
             const tr = tbody.children[i];
@@ -356,14 +379,18 @@ export const GetMonitors = async (currentRow: string) =>
 {
     document.getElementById("MonTBody")!.innerHTML = "";
     const data = await getMonitors();
-    console.error(data);
+    console.log(data);
     if(!data) return console.log("Ich geh Mal");
     
     const notAvaiable = ["Bestellt", "Aktiv", "Defekt", "Verschrottet"];
     
     data.forEach(entry =>
     {
-        if(notAvaiable.includes(entry.status)) return;
+        if(notAvaiable.includes(entry.status)) 
+        {
+            if(entry.status == "Aktiv" && entry.it_nr == currentRow) return AddMonRow(entry, currentRow);
+            return;
+        }
         AddMonRow(entry, currentRow);
         console.log(entry);
     });
@@ -374,24 +401,27 @@ export const GetMonitors = async (currentRow: string) =>
 let modal = document.getElementById("my-modal") as HTMLDivElement;
 
 let okbtn = document.getElementById("ok-btn") as HTMLButtonElement;
+let cancelbtn = document.getElementById("cancel-btn") as HTMLButtonElement;
 
 export const openform = (row: HTMLTableRowElement) => {
 
-    GetMonitors(currentRow);
     if(row.children[0]?.children[0]?.children[0]?.hasAttribute("value")) changeCurrentRow((row.children[0]!.children[0]!.children[0]! as HTMLInputElement).value);
     else changeCurrentRow(row.children[0].textContent as string);
-
+    
     
     if(currentRow == "IT00") return alert("Dies IT-Nr ist nicht vollständig");
+    GetMonitors(currentRow);
     modal.style.display = "block";
     console.log(currentRow);
 };
 
 //We want the modal to close when the OK button is clicked
-if(document.location.pathname.toLocaleLowerCase().includes("/pc")) okbtn.onclick = function () {
+export const hideModal =  async function (saveChanges:boolean) {
+    
     modal.style.display = "none";
-
-    let mons = [];
+    if(!saveChanges) return;
+    await DoneMon(saveChanges);
+    let mons: string[] = [];
     //Check if the checkboxes are checked
     Array.prototype.forEach.call(document.getElementsByClassName("moncheckbox"), (element: HTMLInputElement) => {
         if(element.checked)
@@ -399,17 +429,17 @@ if(document.location.pathname.toLocaleLowerCase().includes("/pc")) okbtn.onclick
             const Mon_ITNR = element.parentElement!.parentElement!.children[1].textContent as string;
             mons.push(Mon_ITNR);
         }
+        element.checked = false;
     });
 
-    //Set the new equipment in the database
-    
-
-    //Untick all the checkboxes in the modal
-    //Egal, weil das Element sich eh neu aufbauen wird
-    // Array.prototype.forEach.call(document.getElementsByClassName("moncheckbox"), function (item: HTMLInputElement) {
-    //     item.checked = false;
-    // });
+    setEquipment(currentRow, mons);
 }
+
+// //We want the modal to close when the Cancel button is clicked
+// const hideModal = function () {
+//     modal.style.display = "none";
+//     Array.prototype.forEach.call(document.getElementsByClassName("moncheckbox"), (element: HTMLInputElement) => element.checked = false);
+// }
 
 // The modal will close when the user clicks anywhere outside the modal
 if(document.location.pathname.toLocaleLowerCase().includes("/pc")) window.onclick = function (event) {

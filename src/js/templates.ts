@@ -75,7 +75,7 @@ StatusTypen.forEach(typ => {
     StatusSelect.appendChild(option);
 });
 
-FormSelect.options.add(new Option('Ja', 'Ja'));
 FormSelect.options.add(new Option('Nein', 'Nein', true));
+FormSelect.options.add(new Option('Ja', 'Ja'));
 
 EquipmentBtn.textContent = "Liste öffnen";
