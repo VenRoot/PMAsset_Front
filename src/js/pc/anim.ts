@@ -228,7 +228,7 @@ export const SearchDevice = async(it_nr: string) =>
              input.classList.add("readonly", "text-center");
              input.value = id;
              //Right click on the input field, which will prompt the user to remove the input field
-            input.setAttribute("oncontextmenu", "if(confirm('Möchten Sie diesen Bildschirm vom PC trennen?')) {this.remove();} return false;");
+            input.setAttribute(`oncontextmenu`, `if(confirm('Möchten Sie diesen Bildschirm vom PC trennen?')) { PC.removeMon(this); this.remove();} return false;`);
             console.log(currentRow);
             children.appendChild(input);
             children.appendChild(document.createElement("br"));
@@ -253,7 +253,19 @@ export const SearchDevice = async(it_nr: string) =>
         return null;
  }
 
- 
+ export const removeMon = (input: HTMLInputElement) =>
+ {
+     const ITNr = input.parentElement!.parentElement!.children[0].innerHTML!;
+     if(ITNr.includes("IT"))
+     {
+            const dev = devices.filter(device => device.it_nr == ITNr);
+            if(dev)  
+            {
+                input.remove();
+                setEquipment(ITNr, dev[0].equipment.filter(equipment => equipment != input.value));    
+            }
+     }
+ }
 
  export const RemoveInputField = (element: HTMLInputElement) => {
      element.remove();
@@ -312,7 +324,7 @@ export const SearchDevice = async(it_nr: string) =>
                         input.value = equipment;
                         input.classList.add("text-center");
                         input.setAttribute("readonly", "");
-                        input.setAttribute("oncontextmenu", "if(confirm('Möchten Sie diesen Bildschirm vom PC trennen?')) {this.remove();} return false;");
+                        input.setAttribute("oncontextmenu", "if(confirm('Möchten Sie diesen Bildschirm vom PC trennen?')) { PC.removeMon(this); } return false;");
                         template.append(input);
                         template.append(document.createElement("br"));
                     });
