@@ -5,10 +5,11 @@ const table = document.getElementById("table") as HTMLTableElement;
 export const tbody = document.getElementById('tbody') as HTMLTableElement;
 const thead = document.getElementById('thead') as HTMLTableElement;
 
-import { InputName } from "./interface";
+import { Bildschirm, InputName, MonTypes, PC, PCHersteller, PCTypes, Status } from "./interface";
 import { uwu } from "./cart.js";
-import { PCTypen, StatusTypen } from "./values.js";
-import {FormSelect, StatusSelect, TypSelect} from "./templates.js";
+import { PCHerstellerTypen, PCTypen, StatusTypen, MonitorTypen, PhoneTypen, MonTypen } from "./values.js";
+import {FormSelect, HerstellerSelect, StatusSelect, TypSelect} from "./templates.js";
+import { changeCurrentRow, currentRow, GetMonitors } from "./pc/anim.js";
 
 uwu();
 
@@ -19,6 +20,15 @@ console.log("ready");
 btn?.addEventListener('click', () => {
     sidebar?.classList.toggle('-ml-64');
 });
+
+//Remove all childs of tbody except the first row
+export const ClearTable = () =>
+{
+    while(tbody.childElementCount > 1)
+    {
+        tbody.removeChild(tbody.lastElementChild!);
+    }
+}
 
 
 export const foc = async (element: HTMLTableRowElement) => {
@@ -51,18 +61,60 @@ export const getInputValues = async (type: "PC" | "Bildschirm" | "Phone" | "Konf
 
     if(type == "PC")
     {
-        let values = cells.map((cell, index) => {
-            if(index == 0) return (cell.children[0].children[0] as HTMLInputElement).value;
-            if(index == 3 || index == 9) return null;
-            if(index == 1 || index == 5 || index == 7) return (cell.children[0] as HTMLSelectElement).selectedOptions[0].value;
-            if(index == 8 )return (cell.children[1] as HTMLInputElement).value;
-            return (cell.children[0] as HTMLInputElement).value;
-        });
-        return values as string[];
+        //@ts-ignore
+        let pc:PC = {
+            kind: "PC",
+            it_nr: (document.getElementById("itinput") as HTMLInputElement).value as `IT00${number}`,
+            type: (document.getElementById("SelectInputTyp")as HTMLSelectElement).selectedOptions[0].value as PCTypes,
+            hersteller: (document.getElementById("SelectHerstellerTyp")as HTMLSelectElement).selectedOptions[0].value as PCHersteller,
+            seriennummer: (document.getElementById("SeriennummerInput")as HTMLInputElement).value,
+            // equipment: (document.getElementById("EquipmentInput")as HTMLInputElement).value,
+            standort: (document.getElementById("StandortInput")as HTMLInputElement).value,
+            status: (document.getElementById("SelectInputStatus")as HTMLSelectElement).selectedOptions[0].value as Status,
+            besitzer: (document.getElementById("BesitzerInput")as HTMLInputElement).value,
+            form: (document.getElementById("FormSelect")as HTMLSelectElement).selectedOptions[0].value,
+            passwort: (document.getElementById("bpasswd")as HTMLInputElement).value,
+        };
+        
+
+
+        // let values = cells.map((cell, index) => {
+        //     if(index == 0) return (cell.children[0].children[0] as HTMLInputElement).value;
+        //     if(index == 3 || index == 9) return null;
+        //     if(index == 1 || index == 5 || index == 7) return (cell.children[0] as HTMLSelectElement).selectedOptions[0].value;
+        //     if(index == 8 )return (cell.children[1] as HTMLInputElement).value;
+        //     return (cell.children[0] as HTMLInputElement).value;
+        // });
+        // console.log(values);
+        
+        return pc;
+        // return values as string[];
     }
     else if(type == "Bildschirm")
     {
-
+        let bildschirm:Bildschirm = {
+            kind: "Monitor",
+            it_nr: (document.getElementById("itinput") as HTMLInputElement).value as `IT00${number}`,
+            type: (document.getElementById("SelectInputTyp")as HTMLSelectElement).selectedOptions[0].value as MonTypes,
+            hersteller: (document.getElementById("SelectHerstellerTyp")as HTMLSelectElement).selectedOptions[0].value as "Samsung" | "LG" | "Dell",
+            seriennummer: (document.getElementById("SeriennummerInput")as HTMLInputElement).value,
+            model: (document.getElementById("ModellnummerInput")as HTMLSelectElement).value,
+            // attached: (document.getElementById("AttachedInput")as HTMLInputElement).value as any,
+            standort: (document.getElementById("StandortInput")as HTMLInputElement).value,
+            status: (document.getElementById("SelectInputStatus")as HTMLSelectElement).selectedOptions[0].value as Status,
+            besitzer: (document.getElementById("BesitzerInput")as HTMLInputElement).value,
+            form: (document.getElementById("FormSelect")as HTMLSelectElement).selectedOptions[0].value,
+        };
+        // let values = cells.map((cell, index) => {
+        //     if(index == 0) return (cell.children[0].children[0] as HTMLInputElement).value;
+        //     if(index == 3 || index == 9) return null;
+        //     if(index == 1 || index == 5 || index == 7) return (cell.children[0] as HTMLSelectElement).selectedOptions[0].value;
+        //     if(index == 8 )return (cell.children[1] as HTMLInputElement).value;
+        //     return (cell.children[0] as HTMLInputElement).value;
+        // });
+        // console.log(values);
+        return bildschirm;
+        // return values as string[];
     }
     else if(type == "Phone")
     {
@@ -110,6 +162,7 @@ const MoveRow = async () => {
         let cell = document.createElement("td");
         tdRowClasses.forEach(element => cell.classList.add(element));
         cell.setAttribute("name", newRowNames[i]);
+        
         cell.innerText = getCellValue(i);
         newrow.appendChild(cell);
     }
@@ -134,15 +187,25 @@ const getCellValue = (index: number) => {
 
 (() => {
     if (window.location.href.indexOf("login.html") != -1) return;
+    if(window.location.pathname == "/") return;
     const select = document.getElementById("SelectInputTyp") as HTMLSelectElement;
-    PCTypen.forEach(element => select.options.add(new Option(element, element)));
+    const Hersteller = document.getElementById("SelectHerstellerTyp") as HTMLSelectElement;
+    if(window.location.pathname.toLocaleLowerCase().includes("pc")) PCTypen.forEach(element => select.options.add(new Option(element, element)));
+    else if(window.location.pathname.toLocaleLowerCase().includes("bildschirm")) {MonTypen.forEach(element => select.options.add(new Option(element, element))); MonitorTypen.forEach(el => Hersteller.options.add(new Option(el, el))); }
+    else if(window.location.pathname.toLocaleLowerCase().includes("phone")) PhoneTypen.forEach(element => select.options.add(new Option(element, element)));
 
-    const select2 = document.getElementById("SelectInputStatus") as HTMLSelectElement;
-    StatusTypen.forEach(element => select2.options.add(new Option(element, element)));
 
-    Array.prototype.forEach.call(select2.options, function(item: HTMLOptionElement) {
-        item.style.textAlignLast = "center";
-    })
+    const select2 = (document.getElementById("SelectInputStatus") as HTMLSelectElement);
+    select2.parentElement!.replaceChild(StatusSelect, select2);
+    
+    // StatusTypen.forEach(element => select2.options.add(new Option(element, element)));
+
+    const select3 = document.getElementById("SelectHerstellerTyp") as HTMLSelectElement;
+    select3.parentElement!.replaceChild(HerstellerSelect, select3);
+    // PCHerstellerTypen.forEach(element => select3.options.add(new Option(element, element)));
+
+    const select4 = document.getElementById("FormSelect") as HTMLSelectElement;
+    select4.parentElement!.replaceChild(FormSelect, select4);
 })();
 
 
@@ -161,156 +224,16 @@ $("#itinput").keydown(function (e) {
     let oldvalue = $(this).val() as string;
     let field = this as HTMLInputElement;
     setTimeout(function () {
-        if (field.value.indexOf('01-IT00') !== 0) {
+        if (field.value.indexOf('IT00') !== 0) {
             $(field).val(oldvalue);
         }
     }, 1);
 });
 
-// Grabs all the Elements by their IDs which we had given them
-let modal = document.getElementById("my-modal") as HTMLDivElement;
 
-let openbtn = document.getElementById("open-btn") as HTMLButtonElement;
-
-let okbtn = document.getElementById("ok-btn") as HTMLButtonElement;
-
-// We want the modal to open when the Open button is clicked
-openbtn.onclick = function () {
-    modal.style.display = "block";
-}
-//We want the modal to close when the OK button is clicked
-okbtn.onclick = function () {
-    modal.style.display = "none";
-}
-
-// The modal will close when the user clicks anywhere outside the modal
-window.onclick = function (event) {
-    if (event.target == modal) {
-        modal.style.display = "none";
-    }
-}
-
-interface BSP {
-    ITNr: string;
-    SN: string;
-    Hersteller: string;
-    Status: string;
-}
-
-const BSPDev:BSP[] = 
-[
-    {
-        ITNr: "02-IT002021",
-        SN: "218737823892",
-        Hersteller: "Samsung",
-        Status: "Inaktiv"
-    },
-    {
-        ITNr: "02-IT002022",
-        SN: "218737823434",
-        Hersteller: "Samsung",
-        Status: "Inaktiv"
-    },
-    {
-        ITNr: "02-IT002023",
-        SN: "218737848293",
-        Hersteller: "Samsung",
-        Status: "Inaktiv"
-    },
-    {
-        ITNr: "02-IT002024",
-        SN: "218737899843",
-        Hersteller: "Samsung",
-        Status: "Inaktiv"
-    },
-    {
-        ITNr: "02-IT002025",
-        SN: "218737833445",
-        Hersteller: "Samsung",
-        Status: "Inaktiv"
-    },
-    {
-        ITNr: "02-IT002026",
-        SN: "218737811234",
-        Hersteller: "Samsung",
-        Status: "Inaktiv"
-    },
-    {
-        ITNr: "02-IT002027",
-        SN: "218737822345",
-        Hersteller: "Samsung",
-        Status: "Inaktiv"
-    }
-]
-
-const SNSearch = document.getElementById("HardwareSearchInput") as HTMLInputElement;
-const HWSearch = document.getElementById("HardwareSearchResult") as HTMLTableRowElement;
-
-const classList =
-[
-    "border-2",
-    "border-black",
-    "duration-500",
-    "transition",
-    "text-center"
-];
-
-SNSearch.addEventListener("keyup", function () {
-    let value = this.value.toUpperCase();
-    if(value === undefined || value.length <3) return;
-    // console.log(value);
-    HWSearch.innerHTML = "";
-    let result:BSP[] = [];
-    if(value.startsWith("IT")) result = BSPDev.filter(element => element.ITNr.startsWith("02-"+value));
-    else if(value.startsWith("02-IT")) result = BSPDev.filter(element => element.ITNr.startsWith(value));
-    else result = BSPDev.filter(element => element.SN.startsWith(value));
-    console.log(result);
-    let checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    result.forEach(element => {
-        let tr = document.createElement("tr");
-
-        let td1 = document.createElement("td");
-        let td2 = document.createElement("td");
-        let td3 = document.createElement("td");
-        let td4 = document.createElement("td");
-        let td5 = document.createElement("td");
-        let td6 = document.createElement("td");
-
-        td1.innerHTML = checkbox.outerHTML;
-        td2.innerText = element.ITNr;
-        td3.innerText = element.SN;
-        td4.innerText = "Bildschirm";
-        td5.innerText = element.Hersteller;
-        td6.innerText = element.Status;
-
-        classList.forEach(element => {
-            td1.classList.add(element)
-            td2.classList.add(element)
-            td3.classList.add(element)
-            td4.classList.add(element)
-            td5.classList.add(element)
-            td6.classList.add(element);
-        });
-        
-        tr.appendChild(td1);
-        tr.appendChild(td2);
-        tr.appendChild(td3);
-        tr.appendChild(td4);
-        tr.appendChild(td5);
-        tr.appendChild(td6);
-
-        HWSearch.appendChild(tr);
-    });
-});
 
 
 //Create a function which will take every HTML Element in the body and apply the "upper" class
-
-export const CreateForm = (elem: HTMLOptionElement) => 
-{
-
-}
 
 setTimeout(() => {
     document.getElementById("DashBtn")?.click();
@@ -326,7 +249,8 @@ export const enableBtn = () =>
         if(DoneBTN != null) 
         {
             DoneBTN.removeAttribute("disabled");
-            DoneBTN.setAttribute("onclick", "main.AddRow()");
+            if(window.location.pathname.toLocaleLowerCase().includes("pc")) DoneBTN.setAttribute("onclick", "PC.AddRow();");
+            else if(window.location.pathname.toLocaleLowerCase().includes("bildschirm")) DoneBTN.setAttribute("onclick", "Bildschirm.AddRow();");
             DoneBTN.parentElement?.classList.add("text-green-400");
             DoneBTN.parentElement?.classList.remove("text-red-400");
             DoneBTN.innerHTML = "done";
@@ -350,7 +274,7 @@ export const ResetFields = () =>
     const row = tbody.rows[0];
     //Get all elements with the class "temp" from the row and set their value to ""
     Array.from(row.getElementsByClassName("temp")).forEach(element => {
-        if((element as HTMLInputElement).id == "itinput") (element as HTMLInputElement).value = "01-IT00";
+        if((element as HTMLInputElement).id == "itinput") (element as HTMLInputElement).value = "IT00";
         else (element as HTMLInputElement).value = "";
     });
 }
@@ -363,10 +287,11 @@ export const validateInput = () =>
     let valid = true;
     
     Array.from(tbody.rows[0].cells).forEach(element => {
-        const parent = element.children;
-        if(parent == null) return;
-        Array.from(parent).forEach(el => {
+        const children = element.children;
+        if(children == null) return;
+        Array.from(children).forEach(el => {
             if(el.tagName != "INPUT" && el.tagName != "SELECT") return;
+            if(el.parentElement!.getAttribute("name") == "Attached") return;
             if((el as HTMLInputElement).value == "") valid = false;
 
         });
@@ -422,16 +347,17 @@ export const EditEntry = (elem: HTMLElement) =>
     const grandparent = elem.parentElement?.parentElement?.parentElement as HTMLTableRowElement;
     
     Array.from(grandparent.cells).forEach((cell, i) => {
-
+        console.log(cell);
+        
         switch(i)
         {
-            case 1: TypSelect.selectedIndex = PCTypen.indexOf(cell.innerHTML as any);TypSelect.value = cell.innerHTML; cell.innerHTML="";  cell.appendChild(TypSelect); console.log(cell); break;
-            case 3: break; cell.children[0].classList.remove("disabled"); break;
-            case 5: StatusSelect.value = cell.innerHTML; cell.innerHTML=""; cell.appendChild(StatusSelect); console.warn(cell); break;
-            case 7: FormSelect.value = cell.innerHTML; cell.innerHTML=""; cell.appendChild(FormSelect); break;
-            case 8: cell.children[0].classList.remove("disabled"); break;
-            case 9: break;
-            default: const inp = document.createElement("input"); 
+            case 1: cell.innerHTML="";  cell.appendChild(document.getElementById("SelectInputTyp")?.cloneNode(true)!); console.log(cell); break;
+            case 4: break; cell.children[0].classList.remove("disabled"); break;
+            case 6: StatusSelect.value = cell.innerHTML; cell.innerHTML=""; cell.appendChild(StatusSelect); console.warn(cell); break;
+            case 8: FormSelect.value = cell.innerHTML; cell.innerHTML=""; cell.appendChild(FormSelect); break;
+            case 9: cell.children[0].removeAttribute("disabled"); (cell.children[0] as HTMLInputElement).type = "text"; break;
+            case 10: break;
+            default: const inp = document.createElement("input");
             inp.classList.add("text-center") 
             inp.value = cell.innerText; 
             cell.innerHTML = ""; 
@@ -455,9 +381,12 @@ export const SaveEntry = (elem: HTMLElement) =>
         switch(i)
         {
             case 1: case 5: case 7: cell.innerHTML = (cell.children[0] as HTMLSelectElement).value; break;
-            case 3: break; cell.children[0].classList.add("disabled"); break;
-            case 8: cell.children[0].classList.add("disabled"); break;
-            case 9: break;
+            //case 3: break; cell.children[0].classList.add("disabled"); break;
+            // case 8: cell.children[0].classList.add("disabled"); break;
+            case 8: cell.innerHTML = (cell.children[0] as HTMLSelectElement).value; break;
+            case 9: cell.children[0].setAttribute("disabled", ""); (cell.children[0] as HTMLInputElement).type = "password"; break;
+            case 4: break;
+            case 10: break;
             default: cell.innerHTML = (cell.children[0] as HTMLInputElement).value; break;
         }
     });
@@ -479,3 +408,5 @@ export const EditColor = () =>
         if(!isEven(i)) tbody.rows[i].classList.add("bg-blue-200");
     }
 }
+
+//Check if the user hasn't m
