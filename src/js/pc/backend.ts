@@ -1,7 +1,7 @@
 import { ClearTable } from "../anim.js";
 import {insertRequest, request, ShowError} from "../backend.js";
 import { Item, PC, Bildschirm, pushrequest } from "../interface";
-import { AddRow, devices, setDevices } from "./anim.js";
+import { AddRow, devices, GetMonitors, setDevices } from "./anim.js";
 import { res_data, res_monitor } from "./interface.js";
 
 export const Monitors:Bildschirm[] = [];
@@ -103,11 +103,12 @@ export const getData = async () =>
                 }
             )
         });
+        if(document.location.pathname.toLowerCase().includes("/pc")) ClearTable();
         setDevices(pc);
         //Check if the domain is the pc page
         if(document.location.pathname.toLowerCase().includes("/pc")) pc.forEach(entry => AddRow(entry));
     });
-    if(document.location.pathname.toLowerCase().includes("/pc")) ClearTable();
+    
     return res;
 }
 
@@ -147,9 +148,18 @@ export const setEquipment = async (PCITNr: string, MonITNr: string[]) =>
     const username = window.sessionStorage.getItem("username");
     const SessionID = window.sessionStorage.getItem("SessionID");
 
-    if(username == null || SessionID == null) throw new Error("No SessionID or username found");
-    
+    if(!username || !SessionID) throw new Error("No SessionID or username found");
+
+    request("setMonitors", {method: "setMonitors", SessionID: SessionID, username: username}, async (res: {message: string, status: number}, err: {message: string, status: number}) => {
+        getData();
+     }, {
+        PCITNr: PCITNr, MonITNr: MonITNr
+    })
+
+}
 
 
+export const refreshPCs = async () =>
+{
     
 }
