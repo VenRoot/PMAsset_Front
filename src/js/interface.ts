@@ -1,5 +1,3 @@
-
-
 export type InputName = "IT_Nr" | "Typ" | "Seriennummer" | "text";
 
 export type phoneTypes = "iPhone 6" | "iPhone 6S" | "iPhone 6 Plus" | "iPhone 6S Plus" | "iPhone SE" | "iPhone 7" | "iPhone 7 Plus" | "iPhone 7S" | "iPhone 7S Plus" | "iPhone 8" | "iPhone 8 Plus" | "iPhone X" | "iPhone XS" | "iPhone XS Max" | "iPhone XR" | "iPhone 11" | "iPhone 11 Pro" | "iPhone 11 Pro Max" | "iPhone SE 2. Gen" | "iPhone 12" | "iPhone 13" | "iPhone 13 Mini" | "iPhone 13 Pro" | "iPhone 13 Pro Max";
@@ -20,7 +18,7 @@ export interface equipment
 
 type ITNr = `IT${"00"}${number}`;
 
-export type Item = PC | Bildschirm;
+export type Item = PC | Bildschirm | Phone;
 
 export interface Gerät
 {
@@ -48,6 +46,12 @@ export interface Bildschirm extends Gerät
     attached?: string;
     hersteller: "Samsung" | "LG" | "Dell"
     model: string;
+}
+
+export interface Phone extends Gerät
+{
+    kind: "Phone";
+    model: phoneTypes; 
 }
 
 export interface response {

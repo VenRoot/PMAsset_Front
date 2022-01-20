@@ -145,7 +145,7 @@ export const ShowError = (message: string, code: number = -1) =>
 
 export const getEntries = async (auth: {SessionID: string, username: string}) =>
 {
-    let uwu = request("getEntries", {method: "getEntries", SessionID: auth.SessionID, username: auth.username}, (res: {message: string, status: number}, err: response) => {
+    request("getEntries", {method: "getEntries", SessionID: auth.SessionID, username: auth.username}, (res: {message: string, status: number}, err: response) => {
         if(err) throw err;
         try
         {

@@ -5,7 +5,7 @@ const table = document.getElementById("table") as HTMLTableElement;
 export const tbody = document.getElementById('tbody') as HTMLTableElement;
 const thead = document.getElementById('thead') as HTMLTableElement;
 
-import { Bildschirm, InputName, MonTypes, PC, PCHersteller, PCTypes, Status } from "./interface";
+import { Bildschirm, InputName, MonTypes, PC, PCHersteller, PCTypes, Phone, phoneTypes, Status } from "./interface";
 import { uwu } from "./cart.js";
 import { PCHerstellerTypen, PCTypen, StatusTypen, MonitorTypen, PhoneTypen, MonTypen } from "./values.js";
 import {FormSelect, HerstellerSelect, StatusSelect, TypSelect} from "./templates.js";
@@ -118,7 +118,17 @@ export const getInputValues = async (type: "PC" | "Bildschirm" | "Phone" | "Konf
     }
     else if(type == "Phone")
     {
-
+        let phone:Phone = {
+            kind: "Phone",
+            it_nr: (document.getElementById("itinput") as HTMLInputElement).value as `IT00${number}`,
+            model: (document.getElementById("SelectInputTyp")as HTMLSelectElement).value as phoneTypes,
+            seriennummer: (document.getElementById("SeriennummerInput")as HTMLInputElement).value,
+            standort: (document.getElementById("StandortInput")as HTMLInputElement).value,
+            status: (document.getElementById("SelectInputStatus")as HTMLSelectElement).selectedOptions[0].value as Status,
+            besitzer: (document.getElementById("BesitzerInput")as HTMLInputElement).value,
+            form: (document.getElementById("FormSelect")as HTMLSelectElement).selectedOptions[0].value
+        };
+        return phone;
     }
     else if(type == "Konferenz")
     {
@@ -196,15 +206,21 @@ const getCellValue = (index: number) => {
 
 
     const select2 = (document.getElementById("SelectInputStatus") as HTMLSelectElement);
+    StatusSelect.id = "SelectInputStatus";
     select2.parentElement!.replaceChild(StatusSelect, select2);
     
     // StatusTypen.forEach(element => select2.options.add(new Option(element, element)));
 
-    const select3 = document.getElementById("SelectHerstellerTyp") as HTMLSelectElement;
+    if(!window.location.pathname.toLocaleLowerCase().includes("phone")) 
+    {
+        const select3 = document.getElementById("SelectHerstellerTyp") as HTMLSelectElement;
+        HerstellerSelect.id = "SelectHerstellerTyp";
     select3.parentElement!.replaceChild(HerstellerSelect, select3);
+    }
     // PCHerstellerTypen.forEach(element => select3.options.add(new Option(element, element)));
 
     const select4 = document.getElementById("FormSelect") as HTMLSelectElement;
+    FormSelect.id = "FormSelect";
     select4.parentElement!.replaceChild(FormSelect, select4);
 })();
 
@@ -251,6 +267,7 @@ export const enableBtn = () =>
             DoneBTN.removeAttribute("disabled");
             if(window.location.pathname.toLocaleLowerCase().includes("pc")) DoneBTN.setAttribute("onclick", "PC.AddRow();");
             else if(window.location.pathname.toLocaleLowerCase().includes("bildschirm")) DoneBTN.setAttribute("onclick", "Bildschirm.AddRow();");
+            else if(window.location.pathname.toLocaleLowerCase().includes("phone")) DoneBTN.setAttribute("onclick", "phone.AddRow();");
             DoneBTN.parentElement?.classList.add("text-green-400");
             DoneBTN.parentElement?.classList.remove("text-red-400");
             DoneBTN.innerHTML = "done";
