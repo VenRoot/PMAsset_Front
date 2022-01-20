@@ -196,18 +196,18 @@ const getCellValue = (index: number) => {
     
     
     const select2 = (document.getElementById("SelectInputStatus") as HTMLSelectElement);
-    select2.id = "SelectInputStatus";
+    StatusSelect.id = "SelectInputStatus";
     select2.parentElement!.replaceChild(StatusSelect, select2);
     
     // StatusTypen.forEach(element => select2.options.add(new Option(element, element)));
     
     const select3 = document.getElementById("SelectHerstellerTyp") as HTMLSelectElement;
-    select3.id ="SelectHerstellerTyp";
+    HerstellerSelect.id ="SelectHerstellerTyp";
     select3.parentElement!.replaceChild(HerstellerSelect, select3);
     // PCHerstellerTypen.forEach(element => select3.options.add(new Option(element, element)));
 
     const select4 = document.getElementById("FormSelect") as HTMLSelectElement;
-    select4.id = "FormSelect";
+    FormSelect.id = "FormSelect";
     select4.parentElement!.replaceChild(FormSelect, select4);
 })();
 
