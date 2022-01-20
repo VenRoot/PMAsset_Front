@@ -5,7 +5,7 @@ const table = document.getElementById("table") as HTMLTableElement;
 export const tbody = document.getElementById('tbody') as HTMLTableElement;
 const thead = document.getElementById('thead') as HTMLTableElement;
 
-import { Bildschirm, InputName, MonTypes, PC, PCHersteller, PCTypes, Phone, phoneTypes, Status } from "./interface";
+import { Bildschirm, InputName, Konferenz, KonfHersteller, MonTypes, PC, PCHersteller, PCTypes, Phone, phoneTypes, Status } from "./interface";
 import { uwu } from "./cart.js";
 import { PCHerstellerTypen, PCTypen, StatusTypen, MonitorTypen, PhoneTypen, MonTypen } from "./values.js";
 import {FormSelect, HerstellerSelect, StatusSelect, TypSelect} from "./templates.js";
@@ -132,7 +132,18 @@ export const getInputValues = async (type: "PC" | "Bildschirm" | "Phone" | "Konf
     }
     else if(type == "Konferenz")
     {
-
+        let konferenz:Konferenz = {
+            kind: "Konferenz",
+            it_nr: (document.getElementById("itinput") as HTMLInputElement).value as `IT00${number}`,
+            hersteller: (document.getElementById("SelectHerstellerTyp")as HTMLSelectElement).selectedOptions[0].value as KonfHersteller,
+            model: (document.getElementById("SelectInputTyp")as HTMLInputElement).value as string,
+            seriennummer: (document.getElementById("SeriennummerInput")as HTMLInputElement).value,
+            standort: (document.getElementById("StandortInput")as HTMLInputElement).value,
+            status: (document.getElementById("SelectInputStatus")as HTMLSelectElement).selectedOptions[0].value as Status,
+            besitzer: (document.getElementById("BesitzerInput")as HTMLInputElement).value,
+            form: (document.getElementById("FormSelect")as HTMLSelectElement).selectedOptions[0].value
+        };
+        return konferenz;
     }
     
 }
@@ -268,6 +279,7 @@ export const enableBtn = () =>
             if(window.location.pathname.toLocaleLowerCase().includes("pc")) DoneBTN.setAttribute("onclick", "PC.AddRow();");
             else if(window.location.pathname.toLocaleLowerCase().includes("bildschirm")) DoneBTN.setAttribute("onclick", "Bildschirm.AddRow();");
             else if(window.location.pathname.toLocaleLowerCase().includes("phone")) DoneBTN.setAttribute("onclick", "phone.AddRow();");
+            else if(window.location.pathname.toLocaleLowerCase().includes("konferenz")) DoneBTN.setAttribute("onclick", "Konferenz.AddRow();");
             DoneBTN.parentElement?.classList.add("text-green-400");
             DoneBTN.parentElement?.classList.remove("text-red-400");
             DoneBTN.innerHTML = "done";

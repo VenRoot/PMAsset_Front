@@ -1,4 +1,4 @@
-import {PCTypen, StatusTypen, PhoneTypen, MonitorTypen, PCHerstellerTypen, MonTypen } from "./values.js";
+import {PCTypen, StatusTypen, PhoneTypen, MonitorTypen, PCHerstellerTypen, MonTypen, KonferenzHersteller } from "./values.js";
 
 export const TypSelect = document.createElement('select');
 export const HerstellerSelect = document.createElement('select');
@@ -49,7 +49,7 @@ else if(document.location.pathname.toLowerCase().includes('/pc'))
     (document.getElementById("SelectHerstellerTyp") as HTMLSelectElement).appendChild(HerstellerSelect);
 
 }
-else if(document.location.pathname.includes('/Phone'))
+else if(document.location.pathname.toLowerCase().includes('/phone'))
 {
     PhoneTypen.forEach(typ => {
         const option = document.createElement('option');
@@ -59,9 +59,14 @@ else if(document.location.pathname.includes('/Phone'))
     });
 
 }
-else if(document.location.pathname.includes('/Konferenz'))
+else if(document.location.pathname.toLocaleLowerCase().includes('/konferenz'))
 {
-
+    KonferenzHersteller.forEach(typ => {
+        const option = document.createElement('option');
+        option.value = typ;
+        option.text = typ;
+        HerstellerSelect.appendChild(option);
+    });
 }
 else
 {

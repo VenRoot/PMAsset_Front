@@ -73,32 +73,6 @@ export const insertRequest = (subdomain: string, auth: pushrequest, callback: Fu
     }
     xmlhttp.send(null);
 }
-
-export const setEquip = (PCITNr: string, MonITNr: string[], auth: pushrequest, callback: Function) =>
-{
-    const xmlhttp = new XMLHttpRequest();
-    xmlhttp.onreadystatechange = function () {
-        if (xmlhttp.readyState == 4)
-        {
-            if (xmlhttp.status >= 200 && xmlhttp.status < 300) callback(JSON.parse(xmlhttp.responseText), null);
-            //ERROR
-            else callback(null, JSON.parse(xmlhttp.responseText));
-        }
-    };
-    xmlhttp.open(auth.method, "https://localhost:5000/setEquipment", true);
-
-    xmlhttp.setRequestHeader("auth", JSON.stringify({SessionID: auth.SessionID, username: auth.username}));
-    switch(auth.method)
-    {
-        case "PUT": case "POST": case "DELETE": 
-        if(!auth.SessionID || !auth.username) throw new Error("Missing parameters");
-        xmlhttp.setRequestHeader("PC", JSON.stringify({device: PCITNr}));
-        xmlhttp.setRequestHeader("Monitor", JSON.stringify({device: MonITNr}));
-        break;
-    }
-    xmlhttp.send(null);
-}
-
 export const checkUser = async() =>
 {
     request("check", {method: "check", SessionID: window.sessionStorage.getItem("SessionID") as string, username: window.sessionStorage.getItem("username") as string}, (res: {message: string, status: number}, err:{message: string, status: number}) => {
