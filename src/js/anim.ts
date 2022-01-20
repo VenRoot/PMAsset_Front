@@ -193,18 +193,21 @@ const getCellValue = (index: number) => {
     if(window.location.pathname.toLocaleLowerCase().includes("pc")) PCTypen.forEach(element => select.options.add(new Option(element, element)));
     else if(window.location.pathname.toLocaleLowerCase().includes("bildschirm")) {MonTypen.forEach(element => select.options.add(new Option(element, element))); MonitorTypen.forEach(el => Hersteller.options.add(new Option(el, el))); }
     else if(window.location.pathname.toLocaleLowerCase().includes("phone")) PhoneTypen.forEach(element => select.options.add(new Option(element, element)));
-
-
+    
+    
     const select2 = (document.getElementById("SelectInputStatus") as HTMLSelectElement);
+    select2.id = "SelectInputStatus";
     select2.parentElement!.replaceChild(StatusSelect, select2);
     
     // StatusTypen.forEach(element => select2.options.add(new Option(element, element)));
-
+    
     const select3 = document.getElementById("SelectHerstellerTyp") as HTMLSelectElement;
+    select3.id ="SelectHerstellerTyp";
     select3.parentElement!.replaceChild(HerstellerSelect, select3);
     // PCHerstellerTypen.forEach(element => select3.options.add(new Option(element, element)));
 
     const select4 = document.getElementById("FormSelect") as HTMLSelectElement;
+    select4.id = "FormSelect";
     select4.parentElement!.replaceChild(FormSelect, select4);
 })();
 

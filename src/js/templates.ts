@@ -38,6 +38,7 @@ else if(document.location.pathname.toLowerCase().includes('/pc'))
         option.text = typ;
         TypSelect.appendChild(option);
     });
+    TypSelect.id = "SelectInputTyp";
 
     PCHerstellerTypen.forEach(typ => {
         const option = document.createElement('option');
