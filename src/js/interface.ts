@@ -18,7 +18,7 @@ export interface equipment
 
 type ITNr = `IT${"00"}${number}`;
 
-export type Item = PC | Bildschirm | Phone;
+export type Item = PC | Bildschirm | Phone | Konferenz;
 
 export interface Gerät
 {
@@ -53,6 +53,14 @@ export interface Phone extends Gerät
     kind: "Phone";
     model: phoneTypes; 
 }
+export interface Konferenz extends Gerät
+{
+    kind: "Konferenz";
+    hersteller: KonfHersteller;
+    model: string;
+}
+
+export type KonfHersteller = "Firma1" | "Firma2";
 
 export interface response {
     DATA: string;
