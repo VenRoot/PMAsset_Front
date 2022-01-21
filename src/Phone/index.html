@@ -2,14 +2,31 @@
 <html lang="de">
 
 <head>
+  <script>
+    if(sessionStorage.getItem("username") == null || sessionStorage.getItem("SessionID") == null) 
+    {
+      //Add current site to history and redirect to login
+      sessionStorage.setItem("redirect", window.location.href);
+      window.location.href = "login.html";
+    }
+  </script>
     <link href="../css/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/material.css">
+    <link rel="stylesheet" href="../css/table.css">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Asset-Management</title>
     <script src="../js/jquery-3.6.0.min.js"></script>
-    <script type="module">
-        import * as main from "../js/main.js"; window.main = main; console.log(window.main);
+    <script defer type="module">
+        import * as main from"../js/main.js"; window.main = main;
+        import * as phone from "../js/phone/main.js"; window.phone = phone;
+        main.checkUser();
+        console.log(window);
+        let x = sessionStorage.getItem("username").split("@")[0].split(".");
+        //make first letter uppercase
+        x.forEach((e, i) => x[i] = e.charAt(0).toUpperCase() + e.slice(1));
+        document.getElementById("SidebarUsername").innerHTML = x[0] + " " + x[1];
     </script>
 </head>
 
@@ -19,7 +36,7 @@
 
         <div class="bg-gray-800 text-gray-100 flex justify-between md:hidden">
             <!-- logo -->
-            <a href="#" class="block p-4 text-white font-bold">Better Dev</a>
+            <!-- <a href="#" class="block p-4 text-white font-bold">Better Dev</a> -->
             <!-- mobile menu button -->
             <!-- <button class=" mobile-menu-button p-4 focus:outline-none focus:bg-gray-700">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -32,7 +49,7 @@
         <!-- <div class="space-y-6 py-7 px-2 absolute"> -->
         <aside class="bg-blue-800 text-blue-100 flex-shrink-0 w-64 flex flex-col border-r transition-all duration-300" :class="{ '-ml-64': sidebarOpen }">
             <!-- logo -->
-            <a href=" #" class="text-white flex items-center space-x-2 px-4">
+            <a href="#" class="text-white flex items-center space-x-2 px-4">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42
     0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0
@@ -40,7 +57,7 @@
               </svg>
                 <span>
                     <row class="text-2xl font-extrabold"><p>Willkomen,</p></row>
-                    <row class="text-2xl font-extrabold"><p>Better Dev</p></row>
+                    <row class="text-2xl font-extrabold"><p id="SidebarUsername">Better Dev</p></row>
                 </span>
             </a>
             <!-- nav -->
@@ -51,10 +68,10 @@
                 <a href="#" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3">Phones</a>
                 <a href="../Konferenz/" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3">Konferenzeräte</a>
                 <a class="block py-2.5 px-4"></a>
-                <a href="../create" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3 font-bold">Antrag erstellen</a>
+                <a href="create" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3 font-bold">Antrag erstellen</a>
             </nav>
             <div class="col-span-1 h-96 flex flex-col justify-between items-end">
-                <button href="Laptops" class=" absolute bottom-10 self-center align-bottom py-2.5 px-4 bg-red-900 white transition duration-200 hover:bg-black rounded-lg">Logout</button>
+                <button href="../login.html" class=" absolute bottom-10 self-center align-bottom py-2.5 px-4 bg-red-900 white transition duration-200 hover:bg-black rounded-lg">Logout</button>
             </div>
         </aside>
         <!-- </div> -->
@@ -62,7 +79,7 @@
         <!-- content -->
         <div id="content" class="flex-1 text-2xl font-bold left-1">
             <!-- toggle button -->
-            <button class=" mobile-menu-button p-4 focus:outline-none focus:bg-gray-700" @click="sidebarOpen=! sidebarOpen">
+            <button id="DashBtn" class=" mobile-menu-button p-4 focus:outline-none focus:bg-gray-700" @click="sidebarOpen=! sidebarOpen">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                   </svg>
@@ -76,76 +93,98 @@
                         <div class="flex-1">
                             <input type="text" class="bg-white text-gray p-2 rounded-full w-full" placeholder="Search">
                         </div>
-                        <div class="flex-1">
-                            <button class="bg-blue-700 text-white p-2 rounded-full w-full">Search</button>
-                        </div>
                     </div>
                 </div>
             </div>
             <span>
                 <div>
-                    <table class="table-fixed w-full" id="table">
-                        <thead id="thead">
+                    <table class="table text-gray-400 border-separate space-y-6 text-sm" id="table">
+                        <thead id="thead" class="bg-blue-500 text-white">
                           <tr class="bg-blend-darken">
-                            <th class="w-1/8">IT Nr</th>
-                            <th class="w-1/8">Typ</th>
-                            <th class="w-1/8">Seriennummer</th>
-                            <th class="w-1/8">Equipment</th>
-                            <th class="w-1/8">Standort</th>
-                            <th class="w-1/8">Status</th>
-                            <th class="w-1/8">Mitarbeiter</th>
-                            <th class="w-1/8">Formular vorhanden</th>
-
+                            <th class="p-4 text-center">IT Nr</th>
+                            <th class="p-4 text-center">Modell</th>
+                            <th class="p-4 text-center">Seriennummer</th>
+                            <th class="p-4 text-center">Standort</th>
+                            <th class="p-4 text-center">Status</th>
+                            <th class="p-4 text-center">Besitzer</th>
+                            <th class="p-4 text-center">Formular</th>
+                            <th class="p-4 text-center">Aktionen</th>
                           </tr>
                         </thead>
                         <tbody class="border-2 border-black" id="tbody">
-                            <tr style="height: 36px">
-                                <th class="border-2 border-black" name="IT_Nr"><div><input id="itinput" type="text" onkeypress="main.checkITNr(this);" class="w-full text-center"  placeholder="0X-IT00XXXX" maxlength="11" size="11" value="01-IT00" title="01 => Laptop&#13;02 => Bildschirm&#13;03 => Konferenzerät&#13;04 => Phone"></div></th>
+                            <tr style="height: 36px" onkeyup="main.enableBtn();">
+                                <th class="border-2 border-black" name="IT_Nr"><div><input id="itinput" type="text" onkeypress="main.checkITNr(this);" class="w-full text-center temp"  placeholder="0X-IT00XXXX" maxlength="8" size="8" value="IT00" title="01 => Laptop&#13;02 => Bildschirm&#13;03 => Konferenzerät&#13;04 => Phone"></div></th>
                                 <th class="border-2 border-black" name="Typ"><select id="SelectInputTyp"></select></th>
-                                <th class="border-2 border-black" name="Seriennummer"><input type="text" class="w-full" placeholder="XXXXXXXXXXXXXXX" style="font-size: 11px;" title="Bitte hier die Seriennummer eingeben"></th>
-                                <th class="border-2 border-black" name="Equipment"><input class="w-full text-center" type="text"></th>
-                                <th class="border-2 border-black" name="text"><input class="w-full text-center" type="text"></th>
-                                <th class="border-2 border-black" name="text"><select class="w-full text-center" type="text"></select></th>
-                                <th class="border-2 border-black" name="text"><input class="w-full text-center" type="text"></th>
-                                <th class="border-2 border-black" name="text"><input class="w-full text-center" type="text"></th>
+                                <th class="border-2 border-black" name="Seriennummer"><input type="text" id="SeriennummerInput" class="w-full temp" placeholder="XXXXXXXXXXXXXXX" style="font-size: 11px;" title="Bitte hier die Seriennummer eingeben"></th>
+                                <th class="border-2 border-black" name="text"><input class="w-full text-center temp" id="StandortInput" type="text"></th>
+                                <th class="border-2 border-black" name="text"><select id="SelectInputStatus" class="w-full text-center" type="text"></select></th>
+                                <th class="border-2 border-black" name="Mitarbeiter"><input class="w-full text-center temp" id="BesitzerInput" type="text"></th>
+                                <th class="border-2 border-black" name="Formular"><select class="w-full text-center temp" id="FormSelect">
+                                  <option value="Nein" selected>Nein</option>
+                                    <option value="Ja" onselect="CreateForm(this);">Ja</option>
+                                </select></th>
+
+                                <th class="icons">
+                                    <a href="#" class="text-red-400 hover:text-gray-100 mx-2">
+                                      <i class="material-icons-outlined text-base" onclick="alert('Hello');" disabled id="DoneBTN">close</i>
+                                    </a>
+                                    <a href="#" onclick="main.ResetFields()" class="text-red-400 hover:text-gray-100">
+                                      <i class="material-icons-round text-base">settings_backup_restore</i>
+                                    </a>
+                                  </th>
                             </tr>
                           <tr onmouseover="main.foc(this);" onmouseout="main.unfoc(this);">
-                            <td class="border-2 border-black duration-500 transition text-center">IT003721</td>
-                            <td class="border-2 border-black duration-500 transition text-center">T14</td>
-                            <td class="border-2 border-black duration-500 transition text-center">3483467834</td>
-                            <td class="border-2 border-black duration-500 transition text-center"><a href="#" class="text-red-900 hover:text-green-900">Bildschirm</a></td>
-                            <td class="border-2 border-black duration-500 transition text-center">Aichtal</td>
-                            <td class="border-2 border-black duration-500 transition text-center">Aktiv</td>
-                            <td class="border-2 border-black duration-500 transition text-center"><a href="#" class="text-red-900 hover:text-green-900">Name Name</a></td>
-                            <td class="border-2 border-black duration-500 transition text-center"><a href="#" class="text-red-900 hover:text-green-900">Ja</a></td>                          
+                            <td class="border-2 border-black duration-500 transition text-center" id="IT_NR">IT0000</td>
+                            <td class="border-2 border-black duration-500 transition text-center" id="MODELL">0000</td>
+                            <td class="border-2 border-black duration-500 transition text-center" id="SERIENNUMMER">0000000</td>
+                            <td class="border-2 border-black duration-500 transition text-center" id="STANDORT">Aichtal</td>
+                            <td class="border-2 border-black duration-500 transition text-center" id="STATUS">Aktiv</td>
+                            <td class="border-2 border-black duration-500 transition text-center" id="BESITZER">User, User</td>
+                            <td class="border-2 border-black duration-500 transition text-center" id="FORM">Nein</td>
+                            <td class="icons">
+                                <a href="#" class="text-yellow-400 hover:text-gray-100 mx-2">
+                                  <i class="material-icons-outlined text-base">edit</i>
+                                </a>
+                              </td>                       
                         </tr>
-                          <tr class="bg-blue-200" onmouseover="main.foc(this);" onmouseout="main.unfoc(this);">
-                            <td class="border-2 border-black duration-500 transition text-center">IT003839</td>
-                            <td class="border-2 border-black duration-500 transition text-center">T490</td>
-                            <td class="border-2 border-black duration-500 transition text-center">2812794902</td>
-                            <td class="border-2 border-black duration-500 transition text-center"><a href="#" title="Seriennummer" class="text-red-900 hover:text-green-900">Bildschirm</a></td>
-                            <td class="border-2 border-black duration-500 transition text-center">Aichtal</td>
-                            <td class="border-2 border-black duration-500 transition text-center">Aktiv</td>
-                            <td class="border-2 border-black duration-500 transition text-center"><a href="#" class="text-red-900 hover:text-green-900">Name Name</a></td>
-                            <td class="border-2 border-black duration-500 transition text-center"><a href="#" class="text-red-900 hover:text-green-900">Ja</a></td>                          
-                        </tr>
-                          <tr onmouseover="main.foc(this);" onmouseout="main.unfoc(this);">
-                            <td class="border-2 border-black duration-500 transition text-center">IT003820</td>
-                            <td class="border-2 border-black duration-500 transition text-center">T490</td>
-                            <td class="border-2 border-black duration-500 transition text-center">2819472834</td>
-                            <td class="border-2 border-black duration-500 transition text-center"><a href="#" class="text-red-900 hover:text-green-900">Bildschirm</a></td>
-                            <td class="border-2 border-black duration-500 transition text-center">Lager</td>
-                            <td class="border-2 border-black duration-500 transition text-center">Inaktiv</td>
-                            <td class="border-2 border-black duration-500 transition text-center">-</td>
-                            <td class="border-2 border-black duration-500 transition text-center">-</td>
-                          </tr>
+                        <tr onmouseover="main.foc(this);" onmouseout="main.unfoc(this);">
+                          <td class="border-2 border-black duration-500 transition text-center" id="IT_NR">IT0000</td>
+                          <td class="border-2 border-black duration-500 transition text-center" id="MODELL">0000</td>
+                          <td class="border-2 border-black duration-500 transition text-center" id="SERIENNUMMER">0000000</td>
+                          <td class="border-2 border-black duration-500 transition text-center" id="STANDORT">Aichtal</td>
+                          <td class="border-2 border-black duration-500 transition text-center" id="STATUS">Aktiv</td>
+                          <td class="border-2 border-black duration-500 transition text-center" id="BESITZER">User, User</td>
+                          <td class="border-2 border-black duration-500 transition text-center" id="FORM">Nein</td>
+                          <td class="icons">
+                              <a href="#" class="text-yellow-400 hover:text-gray-100 mx-2">
+                                <i class="material-icons-outlined text-base">edit</i>
+                              </a>
+                            </td>                       
+                      </tr>                     
+                      <tr onmouseover="main.foc(this);" onmouseout="main.unfoc(this);">
+                        <td class="border-2 border-black duration-500 transition text-center" id="IT_NR">IT0000</td>
+                        <td class="border-2 border-black duration-500 transition text-center" id="MODELL">0000</td>
+                        <td class="border-2 border-black duration-500 transition text-center" id="SERIENNUMMER">0000000</td>
+                        <td class="border-2 border-black duration-500 transition text-center" id="STANDORT">Aichtal</td>
+                        <td class="border-2 border-black duration-500 transition text-center" id="STATUS">Aktiv</td>
+                        <td class="border-2 border-black duration-500 transition text-center" id="BESITZER">User, User</td>
+                        <td class="border-2 border-black duration-500 transition text-center" id="FORM">Nein</td>
+                        <td class="icons">
+                            <a href="#" class="text-yellow-400 hover:text-gray-100 mx-2">
+                              <i class="material-icons-outlined text-base">edit</i>
+                            </a>
+                          </td>                       
+                      </tr>
                         </tbody>
                       </table>
                 </div>
             </span>
-
         </div>
-        <script src="../js/alpine.js "></script>
+        <script src="../js/alpine.js"></script>
 </body>
-
+<script defer>
+  $(document).ready(() => {
+    phone.getData();
+  })
+</script>
 </html>

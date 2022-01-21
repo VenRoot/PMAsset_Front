@@ -5,7 +5,7 @@ const table = document.getElementById("table") as HTMLTableElement;
 export const tbody = document.getElementById('tbody') as HTMLTableElement;
 const thead = document.getElementById('thead') as HTMLTableElement;
 
-import { Bildschirm, InputName, MonTypes, PC, PCHersteller, PCTypes, Status } from "./interface";
+import { Bildschirm, InputName, Konferenz, KonfHersteller, MonTypes, PC, PCHersteller, PCTypes, Phone, phoneTypes, Status } from "./interface";
 import { uwu } from "./cart.js";
 import { PCHerstellerTypen, PCTypen, StatusTypen, MonitorTypen, PhoneTypen, MonTypen } from "./values.js";
 import {FormSelect, HerstellerSelect, StatusSelect, TypSelect} from "./templates.js";
@@ -15,7 +15,7 @@ uwu();
 
 //add our event listener for the click
 
-console.log("ready");
+console.debug("ready");
 
 btn?.addEventListener('click', () => {
     sidebar?.classList.toggle('-ml-64');
@@ -85,7 +85,7 @@ export const getInputValues = async (type: "PC" | "Bildschirm" | "Phone" | "Konf
         //     if(index == 8 )return (cell.children[1] as HTMLInputElement).value;
         //     return (cell.children[0] as HTMLInputElement).value;
         // });
-        // console.log(values);
+        // console.debug(values);
         
         return pc;
         // return values as string[];
@@ -112,17 +112,38 @@ export const getInputValues = async (type: "PC" | "Bildschirm" | "Phone" | "Konf
         //     if(index == 8 )return (cell.children[1] as HTMLInputElement).value;
         //     return (cell.children[0] as HTMLInputElement).value;
         // });
-        // console.log(values);
+        // console.debug(values);
         return bildschirm;
         // return values as string[];
     }
     else if(type == "Phone")
     {
-
+        let phone:Phone = {
+            kind: "Phone",
+            it_nr: (document.getElementById("itinput") as HTMLInputElement).value as `IT00${number}`,
+            model: (document.getElementById("SelectInputTyp")as HTMLSelectElement).value as phoneTypes,
+            seriennummer: (document.getElementById("SeriennummerInput")as HTMLInputElement).value,
+            standort: (document.getElementById("StandortInput")as HTMLInputElement).value,
+            status: (document.getElementById("SelectInputStatus")as HTMLSelectElement).selectedOptions[0].value as Status,
+            besitzer: (document.getElementById("BesitzerInput")as HTMLInputElement).value,
+            form: (document.getElementById("FormSelect")as HTMLSelectElement).selectedOptions[0].value
+        };
+        return phone;
     }
     else if(type == "Konferenz")
     {
-
+        let konferenz:Konferenz = {
+            kind: "Konferenz",
+            it_nr: (document.getElementById("itinput") as HTMLInputElement).value as `IT00${number}`,
+            hersteller: (document.getElementById("SelectHerstellerTyp")as HTMLSelectElement).selectedOptions[0].value as KonfHersteller,
+            model: (document.getElementById("SelectInputTyp")as HTMLInputElement).value as string,
+            seriennummer: (document.getElementById("SeriennummerInput")as HTMLInputElement).value,
+            standort: (document.getElementById("StandortInput")as HTMLInputElement).value,
+            status: (document.getElementById("SelectInputStatus")as HTMLSelectElement).selectedOptions[0].value as Status,
+            besitzer: (document.getElementById("BesitzerInput")as HTMLInputElement).value,
+            form: (document.getElementById("FormSelect")as HTMLSelectElement).selectedOptions[0].value
+        };
+        return konferenz;
     }
     
 }
@@ -200,10 +221,13 @@ const getCellValue = (index: number) => {
     select2.parentElement!.replaceChild(StatusSelect, select2);
     
     // StatusTypen.forEach(element => select2.options.add(new Option(element, element)));
-    
-    const select3 = document.getElementById("SelectHerstellerTyp") as HTMLSelectElement;
-    HerstellerSelect.id ="SelectHerstellerTyp";
+
+    if(!window.location.pathname.toLocaleLowerCase().includes("phone")) 
+    {
+        const select3 = document.getElementById("SelectHerstellerTyp") as HTMLSelectElement;
+        HerstellerSelect.id = "SelectHerstellerTyp";
     select3.parentElement!.replaceChild(HerstellerSelect, select3);
+    }
     // PCHerstellerTypen.forEach(element => select3.options.add(new Option(element, element)));
 
     const select4 = document.getElementById("FormSelect") as HTMLSelectElement;
@@ -254,6 +278,8 @@ export const enableBtn = () =>
             DoneBTN.removeAttribute("disabled");
             if(window.location.pathname.toLocaleLowerCase().includes("pc")) DoneBTN.setAttribute("onclick", "PC.AddRow();");
             else if(window.location.pathname.toLocaleLowerCase().includes("bildschirm")) DoneBTN.setAttribute("onclick", "Bildschirm.AddRow();");
+            else if(window.location.pathname.toLocaleLowerCase().includes("phone")) DoneBTN.setAttribute("onclick", "phone.AddRow();");
+            else if(window.location.pathname.toLocaleLowerCase().includes("konferenz")) DoneBTN.setAttribute("onclick", "Konferenz.AddRow();");
             DoneBTN.parentElement?.classList.add("text-green-400");
             DoneBTN.parentElement?.classList.remove("text-red-400");
             DoneBTN.innerHTML = "done";
@@ -326,7 +352,7 @@ document.onkeydown = (e) =>
         console.log("%cEtwas hier einzufügen könnte dazu führen, dass Angreifer möglicherweise mithilfe einer sogenannten Self-XSS-Attacke deine Identität und die Daten stehlen.", 'font-size: 30px; font-weight: bold;');
         keys.fuse = true;
     }
-    // console.log(keys);
+    // console.debug(keys);
     
 };
 
@@ -350,11 +376,11 @@ export const EditEntry = (elem: HTMLElement) =>
     const grandparent = elem.parentElement?.parentElement?.parentElement as HTMLTableRowElement;
     
     Array.from(grandparent.cells).forEach((cell, i) => {
-        console.log(cell);
+        console.debug(cell);
         
         switch(i)
         {
-            case 1: cell.innerHTML="";  cell.appendChild(document.getElementById("SelectInputTyp")?.cloneNode(true)!); console.log(cell); break;
+            case 1: cell.innerHTML="";  cell.appendChild(document.getElementById("SelectInputTyp")?.cloneNode(true)!); console.debug(cell); break;
             case 4: break; cell.children[0].classList.remove("disabled"); break;
             case 6: StatusSelect.value = cell.innerHTML; cell.innerHTML=""; cell.appendChild(StatusSelect); console.warn(cell); break;
             case 8: FormSelect.value = cell.innerHTML; cell.innerHTML=""; cell.appendChild(FormSelect); break;
