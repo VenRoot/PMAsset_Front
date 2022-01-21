@@ -15,7 +15,7 @@ uwu();
 
 //add our event listener for the click
 
-console.log("ready");
+console.debug("ready");
 
 btn?.addEventListener('click', () => {
     sidebar?.classList.toggle('-ml-64');
@@ -85,7 +85,7 @@ export const getInputValues = async (type: "PC" | "Bildschirm" | "Phone" | "Konf
         //     if(index == 8 )return (cell.children[1] as HTMLInputElement).value;
         //     return (cell.children[0] as HTMLInputElement).value;
         // });
-        // console.log(values);
+        // console.debug(values);
         
         return pc;
         // return values as string[];
@@ -112,7 +112,7 @@ export const getInputValues = async (type: "PC" | "Bildschirm" | "Phone" | "Konf
         //     if(index == 8 )return (cell.children[1] as HTMLInputElement).value;
         //     return (cell.children[0] as HTMLInputElement).value;
         // });
-        // console.log(values);
+        // console.debug(values);
         return bildschirm;
         // return values as string[];
     }
@@ -352,7 +352,7 @@ document.onkeydown = (e) =>
         console.log("%cEtwas hier einzufügen könnte dazu führen, dass Angreifer möglicherweise mithilfe einer sogenannten Self-XSS-Attacke deine Identität und die Daten stehlen.", 'font-size: 30px; font-weight: bold;');
         keys.fuse = true;
     }
-    // console.log(keys);
+    // console.debug(keys);
     
 };
 
@@ -376,11 +376,11 @@ export const EditEntry = (elem: HTMLElement) =>
     const grandparent = elem.parentElement?.parentElement?.parentElement as HTMLTableRowElement;
     
     Array.from(grandparent.cells).forEach((cell, i) => {
-        console.log(cell);
+        console.debug(cell);
         
         switch(i)
         {
-            case 1: cell.innerHTML="";  cell.appendChild(document.getElementById("SelectInputTyp")?.cloneNode(true)!); console.log(cell); break;
+            case 1: cell.innerHTML="";  cell.appendChild(document.getElementById("SelectInputTyp")?.cloneNode(true)!); console.debug(cell); break;
             case 4: break; cell.children[0].classList.remove("disabled"); break;
             case 6: StatusSelect.value = cell.innerHTML; cell.innerHTML=""; cell.appendChild(StatusSelect); console.warn(cell); break;
             case 8: FormSelect.value = cell.innerHTML; cell.innerHTML=""; cell.appendChild(FormSelect); break;

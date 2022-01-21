@@ -22,9 +22,9 @@ export const getData = async() =>
             ShowError(err.message, err.status);
             throw new Error(err.message);
         }
-        console.log(res);
+        console.debug(res);
 
-        console.log(res.message);
+        console.debug(res.message);
         const data = JSON.parse(res.message) as res_monitor[];
         //convert the data to the pc interface
         const Monitors: Bildschirm[] = [];
@@ -34,10 +34,10 @@ export const getData = async() =>
         data.forEach((element) => {
             if(PCs.filter(pc => pc.equipment.includes(element.ITNR)))
             {
-                console.log(PCs);
-                console.log(element);
+                console.debug(PCs);
+                console.debug(element);
                 
-                console.log((PCs.filter(pc => pc.equipment.includes(element.ITNR))?.[0]?.it_nr || "-"));
+                console.debug((PCs.filter(pc => pc.equipment.includes(element.ITNR))?.[0]?.it_nr || "-"));
                 
                 element.ATTACHED = (PCs.filter(pc => pc.equipment.includes(element.ITNR))?.[0]?.it_nr || "-");
             }
@@ -105,9 +105,9 @@ export const getPCs = async ():Promise<PC[]> =>
             ShowError(err.message, err.status);
             throw new Error(err.message);
         }
-        console.log(res);
+        console.debug(res);
         
-        console.log(res.message);
+        console.debug(res.message);
         const data = JSON.parse(res.message) as res_data[];
         //convert the data to the pc interface
         const pc: PC[] = [];

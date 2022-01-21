@@ -18,9 +18,9 @@ export const getData = async() =>
             ShowError(err.message, err.status);
             throw new Error(err.message);
         }
-        console.log(res);
+        console.debug(res);
 
-        console.log(res.message);
+        console.debug(res.message);
         const data = JSON.parse(res.message) as res_konferenz[];
         //convert the data to the pc interface
         const Konfis: Konferenz[] = [];
