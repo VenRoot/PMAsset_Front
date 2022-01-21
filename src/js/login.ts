@@ -25,7 +25,7 @@ export const login = async (username: string, password: string) =>
 {
 
     getKey((key: string) => {
-        console.log(key);
+        console.debug(key);
         if(!key) return ShowError("Es konnte kein Key abgerufen werden! Ist der Server down oder wird er blockiert?", 500);
 
         if(!username || !password) return ShowError("Bitte überprüfen Sie ihre Angaben");
@@ -38,7 +38,7 @@ export const login = async (username: string, password: string) =>
                 document.getElementById("password")?.classList.add("border-red-500");
                 ShowError(err.message, err.status);
             }
-            console.log(res);
+            console.debug(res);
             
             if(res.status >= 200 && res.status < 300) 
             {

@@ -1,4 +1,4 @@
-import { PCTypes, phoneTypes, Bildschirm, MonHersteller, Status, PCHersteller, MonTypes } from "./interface";
+import { PCTypes, phoneTypes, Bildschirm, MonHersteller, Status, PCHersteller, MonTypes, KonfHersteller } from "./interface";
 
 export const PCTypen: PCTypes[] = Object.seal([
     "CAD",
@@ -64,4 +64,9 @@ export const MonitorTypen: MonHersteller[] = Object.seal([
     "Samsung",
     "LG",
     "Dell"
+]);
+
+export const KonferenzHersteller: KonfHersteller[] = Object.seal([
+    "Firma1",
+    "Firma2"
 ]);

@@ -35,7 +35,7 @@
     <script defer type="module">
         import * as PC from "./js/pc/main.js"; window.PC = PC;
         PC.getData();
-        console.log(PC.devices);
+        console.debug(PC.devices);
         const foo = function (myInterval) {
     clearInterval(myInterval);
 };
@@ -43,8 +43,8 @@
                 if(PC.devices.length > 0)
                 {
                     clearInterval(x);
-                    console.log("NEUE VALUES");
-                    console.log(PC.devices);
+                    console.debug("NEUE VALUES");
+                    console.debug(PC.devices);
                     changeValues(PC.devices);
                     foo(x);
                     

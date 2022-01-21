@@ -51,7 +51,7 @@ export const getDevice = async(it_nr: string) =>
 export const SearchDevice = async(it_nr: string) =>
  {
     const devs = await getDevice(it_nr);
-    console.log(devs);
+    console.debug(devs);
     ClearTable();
      devs.forEach(device => AddRow(device));
  }
@@ -91,11 +91,11 @@ export const SearchDevice = async(it_nr: string) =>
             const pwf = document.createElement("input"); pwf.type = "password"; pwf.disabled = true; pwf.value = values.passwort as any; pwf.classList.add("bpasswd");
             temp.innerHTML = pwf.outerHTML; temp.id="PASSWORT"; break;
         }
-        console.log(temp); 
+        console.debug(temp); 
         
         template.appendChild(temp); 
     });
-    console.log(template);
+    console.debug(template);
     const sortedtemplate = document.createElement("tr");
     sortedtemplate.setAttribute("onmouseover", "main.foc(this)");
     sortedtemplate.setAttribute("onmouseout", "main.unfoc(this)");
@@ -187,7 +187,7 @@ export const SearchDevice = async(it_nr: string) =>
      
      tr.append(checkbox, td0, td1, td2, td3, td4, td5, td6);
      MonTBody.append(tr);
-     console.log(tr);
+     console.debug(tr);
  }
 
  export let currentRow = "";
@@ -229,7 +229,7 @@ export const SearchDevice = async(it_nr: string) =>
              input.value = id;
              //Right click on the input field, which will prompt the user to remove the input field
             input.setAttribute(`oncontextmenu`, `if(confirm('Möchten Sie diesen Bildschirm vom PC trennen?')) { PC.removeMon(this); this.remove();} return false;`);
-            console.log(currentRow);
+            console.debug(currentRow);
             children.appendChild(input);
             children.appendChild(document.createElement("br"));
          }
@@ -296,7 +296,7 @@ export const SearchDevice = async(it_nr: string) =>
     if(!values.equipment) values.equipment = [];
     //@ts-ignore
     if(typeof values.equipment == "string") values.equipment = JSON.parse(values.equipment);
-    console.warn(values);
+    console.debug(values);
     const newRow = await MakeTemplate(values);
     //Set the values into the new row
     Object.keys(values).forEach((key, index) =>
@@ -391,8 +391,8 @@ export const GetMonitors = async (currentRow: string) =>
 {
     document.getElementById("MonTBody")!.innerHTML = "";
     const data = await getMonitors();
-    console.log(data);
-    if(!data) return console.log("Ich geh Mal");
+    console.debug(data);
+    if(!data) return console.debug("Ich geh Mal");
     
     const notAvaiable = ["Bestellt", "Aktiv", "Defekt", "Verschrottet"];
     
@@ -404,7 +404,7 @@ export const GetMonitors = async (currentRow: string) =>
             return;
         }
         AddMonRow(entry, currentRow);
-        console.log(entry);
+        console.debug(entry);
     });
 }
 
@@ -424,7 +424,7 @@ export const openform = (row: HTMLTableRowElement) => {
     if(currentRow == "IT00") return alert("Dies IT-Nr ist nicht vollständig");
     GetMonitors(currentRow);
     modal.style.display = "block";
-    console.log(currentRow);
+    console.debug(currentRow);
 };
 
 //We want the modal to close when the OK button is clicked
@@ -475,13 +475,13 @@ const classList =
 if(document.location.pathname.toLocaleLowerCase().includes("/pc")) SNSearch.addEventListener("keyup", function () {
     let value = this.value.toUpperCase();
     if(value === undefined || value.length <3) return;
-    // console.log(value);
+    // console.debug(value);
     HWSearch.innerHTML = "";
     let result:BSP[] = [];
     if(value.startsWith("IT")) result = BSPDev.filter(element => element.ITNr.startsWith("02-"+value));
     else if(value.startsWith("02-IT")) result = BSPDev.filter(element => element.ITNr.startsWith(value));
     else result = BSPDev.filter(element => element.SN.startsWith(value));
-    console.log(result);
+    console.debug(result);
     let checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     result.forEach(element => {

@@ -1,10 +1,10 @@
 import {ClearTable, enableBtn, getInputValues, ResetFields, tbody} from "../anim.js";
-import {Bildschirm, Item, PC} from "../interface";
+import {Phone, Item,} from "../interface";
 import { FormSelect, StatusSelect } from "../templates.js";
 import { setData } from "./backend.js";
 
-export let devices:Bildschirm[] = [];
-export const setDevices = async(dev: Bildschirm[]) => devices = dev;
+export let devices:Phone[] = [];
+export const setDevices = async(dev: Phone[]) => devices = dev;
 
 export const getDevice = async(it_nr: string) => devices.filter(device => device.it_nr.includes(it_nr));
 
@@ -16,7 +16,7 @@ export const SearchDevice = async(it_nr: string) =>
      devs.forEach(device =>AddRow(device));
  }
 
-const MakeTemplate = async(values: Bildschirm): Promise<HTMLTableRowElement> =>
+const MakeTemplate = async(values: Phone): Promise<HTMLTableRowElement> =>
 {
     const template = document.createElement("tr");
     template.setAttribute("onmouseover", "main.foc(this);");
@@ -31,11 +31,8 @@ const MakeTemplate = async(values: Bildschirm): Promise<HTMLTableRowElement> =>
             switch(key)
             {
                 case "it_nr": temp.innerText = values.it_nr; temp.id = "IT_NR"; break;
-                case "type": temp.innerText = values.type; temp.id="TYP"; break;
-                case "hersteller": temp.innerText = values.hersteller; temp.id="HERSTELLER"; break;
                 case "model": temp.innerText = values.model; temp.id = "MODEL"; break;
                 case "seriennummer": temp.innerText = values.seriennummer; temp.id="SERIENNUMMER"; break;
-                case "attached": temp.innerText = values.attached || "-"; temp.id="ATTACHED"; break;
                 case "standort": temp.innerText = values.standort; temp.id="STANDORT"; break;
                 case "status": temp.innerText = values.status as any; temp.id="STATUS"; break;
                 case "besitzer":
@@ -55,7 +52,7 @@ const MakeTemplate = async(values: Bildschirm): Promise<HTMLTableRowElement> =>
         const sortedtemplate = document.createElement("tr");
         sortedtemplate.setAttribute("onmouseover", "main.foc(this);");
         sortedtemplate.setAttribute("onmouseout", "main.unfoc(this);");
-        const queries = ["#IT_NR", "#TYP", "#HERSTELLER", "#MODEL", "#SERIENNUMMER", "#ATTACHED", "#STANDORT", "#STATUS", "#BESITZER", "#FORM"];
+        const queries = ["#IT_NR","#SERIENNUMMER", "#MODEL", "#STANDORT", "#STATUS", "#BESITZER", "#FORM"];
         queries.forEach(query => {
             console.debug(sortedtemplate);
             console.debug(template.querySelector(query));
@@ -75,7 +72,7 @@ export const createIcons = () => {
     // const i3 = document.createElement("i");
 
     a1.classList.add("text-gray-500", "text-gray-500", "hover:text-gray-100"); a1.href = "#";
-    i1.classList.add("material-icons-outlined", "text-base"); i1.innerText = "edit"; i1.setAttribute("onclick", "Bildschirm.EditEntry(this);");
+    i1.classList.add("material-icons-outlined", "text-base"); i1.innerText = "edit"; i1.setAttribute("onclick", "Phone.EditEntry(this);");
     a1.appendChild(i1);
     icons.appendChild(a1);
     return icons;
@@ -83,21 +80,18 @@ export const createIcons = () => {
 
 
 
-export const AddRow = async (_values?: Bildschirm) =>
+export const AddRow = async (_values?: Phone) =>
 {
-    let values:Bildschirm;
+    let values:Phone;
 
     if(!_values)
     {
-        values = await getInputValues("Bildschirm") as Bildschirm;
+        values = await getInputValues("Phone") as Phone;
         if(devices.filter(e => e.it_nr == values.it_nr).length > 0) return alert("Diese IT-Nummer existiert bereits!");
         //Es wurden keine Values mitgegeben, also... in die DB
         setData(values, {method: "PUT", device: values});
     }
     else values = _values;
-
-    console.debug(values);
-    if(!values.attached) values.attached = "-";
     
     const newRow = await MakeTemplate(values);
     //Set the values into the new row
@@ -108,15 +102,12 @@ export const AddRow = async (_values?: Bildschirm) =>
         switch(index)
             {
                 case 0: template.innerText = values.it_nr; break;
-                case 1: template.innerText = values.type; break;
-                case 2: template.innerText = values.hersteller; break;
-                case 3: template.innerText = values.model; break;
-                case 4: template.innerText = values.seriennummer; break;
-                case 5: template.innerText = values.attached || ""; break;
-                case 6: template.innerText = values.standort; break;
-                case 7: template.innerText = values.status; break;
-                case 8: template.innerText = values.besitzer; break;
-                case 9: template.innerText = values.form; break;
+                case 1: template.innerText = values.model; break;               ;
+                case 2: template.innerText = values.seriennummer; break;
+                case 3: template.innerText = values.standort; break;
+                case 4: template.innerText = values.status; break;
+                case 5: template.innerText = values.besitzer; break;
+                case 6: template.innerText = values.form; break;
             }
     });
     
@@ -134,7 +125,7 @@ export const EditEntry = (elem: HTMLElement) =>
     elem.innerHTML = "done";
     elem.classList.remove("text-yellow-400");
     elem.classList.add("text-green-400");
-    elem.setAttribute("onclick", "Bildschirm.SaveEntry(this)");
+    elem.setAttribute("onclick", "Phone.SaveEntry(this)");
 
     const grandparent = elem.parentElement?.parentElement?.parentElement as HTMLTableRowElement;
     
@@ -164,7 +155,7 @@ export const SaveEntry = (elem: HTMLElement) =>
     elem.innerHTML = "edit";
     elem.classList.remove("text-green-400");
     elem.classList.add("text-yellow-400");
-    elem.setAttribute("onclick", "Bildschirm.EditEntry(this)");
+    elem.setAttribute("onclick", "Phone.EditEntry(this)");
 
     const grandparent = elem.parentElement?.parentElement?.parentElement as HTMLTableRowElement;
     
