@@ -28,7 +28,7 @@ export const getMonitors = ():Promise<Bildschirm[]> =>
             ShowError(err.message, err.status);
             reject(new Error(err.message));
         }
-        console.log(res);
+        console.debug(res);
 
         const data = JSON.parse(res.message) as res_monitor[];
         
@@ -60,7 +60,7 @@ export const getMonitors = ():Promise<Bildschirm[]> =>
                 standort: "0" as any
             });
         });
-        console.warn(Mons);
+        console.debug(Mons);
         console.warn(Monitors);
         resolve(Mons);
     });
@@ -80,9 +80,9 @@ export const getData = async () =>
             ShowError(err.message, err.status);
             throw new Error(err.message);
         }
-        console.log(res);
+        console.debug(res);
         
-        console.log(res.message);
+        console.debug(res.message);
         const data = JSON.parse(res.message) as res_data[];
         //convert the data to the pc interface
         const pc: PC[] = [];

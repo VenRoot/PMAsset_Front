@@ -11,7 +11,7 @@ export const getDevice = async(it_nr: string) => devices.filter(device => device
 export const SearchDevice = async(it_nr: string) =>
  {
     const devs = await getDevice(it_nr);
-    console.log(devs);
+    console.debug(devs);
     ClearTable();
      devs.forEach(device =>AddRow(device));
  }
@@ -27,7 +27,7 @@ const MakeTemplate = async(values: Bildschirm): Promise<HTMLTableRowElement> =>
             const temp = document.createElement("td");
             if(key == "kind") return;
             temp.classList.add("border-2", "border-black", "duration-500", "transition", "text-center");
-            console.warn(key);
+            console.debug(key);
             switch(key)
             {
                 case "it_nr": temp.innerText = values.it_nr; temp.id = "IT_NR"; break;
@@ -46,20 +46,20 @@ const MakeTemplate = async(values: Bildschirm): Promise<HTMLTableRowElement> =>
                 default: console.error(key, values); break;
 
             }
-            // console.log(temp);
+            // console.debug(temp);
             //add the td to the tr
             template.appendChild(temp);
 
         });
-        // console.log(template, template.children);
+        // console.debug(template, template.children);
         const sortedtemplate = document.createElement("tr");
         sortedtemplate.setAttribute("onmouseover", "main.foc(this);");
         sortedtemplate.setAttribute("onmouseout", "main.unfoc(this);");
         const queries = ["#IT_NR", "#TYP", "#HERSTELLER", "#MODEL", "#SERIENNUMMER", "#ATTACHED", "#STANDORT", "#STATUS", "#BESITZER", "#FORM"];
         queries.forEach(query => {
-            console.warn(sortedtemplate);
-            console.warn(template.querySelector(query));
-            console.warn(query);
+            console.debug(sortedtemplate);
+            console.debug(template.querySelector(query));
+            console.debug(query);
             if(query == "#ATTACHED" && !template.querySelector(query)) return;
             sortedtemplate.appendChild(template.querySelector(query) as HTMLTableCellElement)
         });
@@ -96,7 +96,7 @@ export const AddRow = async (_values?: Bildschirm) =>
     }
     else values = _values;
 
-    console.log(values);
+    console.debug(values);
     if(!values.attached) values.attached = "-";
     
     const newRow = await MakeTemplate(values);
@@ -139,14 +139,14 @@ export const EditEntry = (elem: HTMLElement) =>
     const grandparent = elem.parentElement?.parentElement?.parentElement as HTMLTableRowElement;
     
     Array.from(grandparent.cells).forEach((cell, i) => {
-        console.log(cell);
+        console.debug(cell);
         
         switch(i)
         {
-            case 1: cell.innerHTML="";  cell.appendChild(document.getElementById("SelectInputTyp")?.cloneNode(true)!); console.log(cell); break;
-            case 2: cell.innerHTML="";  cell.appendChild(document.getElementById("SelectHerstellerTyp")?.cloneNode(true)!); console.log(cell); break;
+            case 1: cell.innerHTML="";  cell.appendChild(document.getElementById("SelectInputTyp")?.cloneNode(true)!); console.debug(cell); break;
+            case 2: cell.innerHTML="";  cell.appendChild(document.getElementById("SelectHerstellerTyp")?.cloneNode(true)!); console.debug(cell); break;
             // case 4: break; cell.children[0].classList.remove("disabled"); break;
-            case 7: StatusSelect.value = cell.innerHTML; cell.innerHTML=""; cell.appendChild(StatusSelect); console.warn(cell); break;
+            case 7: StatusSelect.value = cell.innerHTML; cell.innerHTML=""; cell.appendChild(StatusSelect); console.debug(cell); break;
             case 9: FormSelect.value = cell.innerHTML; cell.innerHTML=""; cell.appendChild(FormSelect); break;
             case 10: case 5: break;
             default: const inp = document.createElement("input");

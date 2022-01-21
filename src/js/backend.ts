@@ -6,16 +6,16 @@ export const request = (subdomain: string, auth: pullrequest, callback: Function
     xmlhttp.onreadystatechange = () => {
         if (xmlhttp.readyState == 4)
         {
-            console.log(xmlhttp);
+            console.debug(xmlhttp);
             
             if (xmlhttp.status >= 200 && xmlhttp.status < 300) callback(JSON.parse(xmlhttp.responseText), null);
             //ERROR
             else callback(null, JSON.parse(xmlhttp.responseText));
         }
     };
-    console.log("https://localhost:5000/"+subdomain);
+    console.debug("https://localhost:5000/"+subdomain);
     xmlhttp.open("GET", "https://localhost:5000/"+subdomain, true);
-    console.log(auth);
+    console.debug(auth);
     
     switch(auth.method)
     {
@@ -76,10 +76,10 @@ export const insertRequest = (subdomain: string, auth: pushrequest, callback: Fu
 export const checkUser = async() =>
 {
     request("check", {method: "check", SessionID: window.sessionStorage.getItem("SessionID") as string, username: window.sessionStorage.getItem("username") as string}, (res: {message: string, status: number}, err:{message: string, status: number}) => {
-        console.log(res);
+        console.debug(res);
         
         if(err) {
-            console.log(err);
+            console.debug(err);
             if(err.message.toLocaleLowerCase() === "user is not logged in")
             {
                 alert("Key und Username ungültig! Bitte melden Sie sich erneut an!");
@@ -88,7 +88,7 @@ export const checkUser = async() =>
             }
         }
         else if(res.status == 200) return true;
-        console.log(res);
+        console.debug(res);
         
         
     })
@@ -102,7 +102,7 @@ export const getKey = async (callback: Function) =>
         if(err) throw err;
         if(res.status >= 200 && res.status < 300) 
         {
-            console.log(res.message);
+            console.debug(res.message);
             
             sessionStorage.setItem("SessionID", res.message);
             return callback(res.message);
@@ -124,7 +124,7 @@ export const getEntries = async (auth: {SessionID: string, username: string}) =>
         try
         {
             let result = JSON.parse(res.message) as response[];
-            result.forEach(e => console.log(JSON.parse(e.DATA)));
+            result.forEach(e => console.debug(JSON.parse(e.DATA)));
         }
         catch(e)
         {
@@ -150,7 +150,7 @@ const countDevices = async () =>
 };
 const refreshSession = () =>
 {
-    console.log("Refreshing session");
+    console.debug("Refreshing session");
     const SessionID = window.sessionStorage.getItem("SessionID") as string;
     const username = window.sessionStorage.getItem("username") as string;
     
