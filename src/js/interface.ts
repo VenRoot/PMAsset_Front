@@ -78,9 +78,16 @@ export interface pullrequest
 }
 
 export interface pushrequest {
-    method: "POST" | "PUT" | "DELETE";
+    method: "POST" | "PUT" | "DELETE" | "GET";
     SessionID?: string;
     username?: string
     device: Item
-    
+}
+
+export interface IPDF
+{
+    method: "POST" | "GET" | "DELETE" | "PUT";
+    SessionID?: string;
+    username?: string;
+    ITNr: string;
 }

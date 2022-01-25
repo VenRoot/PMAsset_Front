@@ -1,4 +1,4 @@
-import { pullrequest, pushrequest, response } from "./interface";
+import { IPDF, pullrequest, pushrequest, response } from "./interface";
 
 export const request = (subdomain: string, auth: pullrequest, callback: Function, optional?: any) =>
 {
@@ -43,6 +43,44 @@ export const request = (subdomain: string, auth: pullrequest, callback: Function
     xmlhttp.send(null);
 }
 
+export const PDF = (auth: IPDF, callback: Function) =>
+{
+
+    if(auth.method == "GET") return window.open("https://localhost:5000/pdf/"+auth.ITNr+"/output.pdf", "_blank")!.focus();
+
+
+    const xmlhttp = new XMLHttpRequest();
+    //push data to the backend
+    xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState == 4)
+        {
+            try
+            {
+                if (xmlhttp.status == 200) callback(JSON.parse(xmlhttp.responseText), null);
+                //ERROR
+                else callback(null, JSON.parse(xmlhttp.responseText));
+            }
+            catch(e)
+            {
+                if (xmlhttp.status == 200) callback(xmlhttp.responseText, null);
+                //ERROR
+                else callback(null, xmlhttp.responseText);
+            }
+        }
+    };
+    xmlhttp.open(auth.method, "https://localhost:5000/pdf", true);
+
+    xmlhttp.setRequestHeader("auth", JSON.stringify({SessionID: auth.SessionID, username: auth.username}));
+    switch(auth.method)
+    {
+        case "PUT": case "POST": case "DELETE":
+        if(!auth.SessionID || !auth.username) throw new Error("Missing parameters");
+        xmlhttp.setRequestHeader("data", JSON.stringify({ITNr: auth.ITNr, type: "PC"}));
+        break;
+    }
+    xmlhttp.send(null);
+}
+
 /**
  * 
  * @param subdomain 
@@ -70,6 +108,7 @@ export const insertRequest = (subdomain: string, auth: pushrequest, callback: Fu
         if(!auth.SessionID || !auth.username) throw new Error("Missing parameters");
         xmlhttp.setRequestHeader("device", JSON.stringify({device: auth.device}));
         break;
+        default: xmlhttp.abort();
     }
     xmlhttp.send(null);
 }
