@@ -46,26 +46,23 @@ export const request = (subdomain: string, auth: pullrequest, callback: Function
 export const PDF = (auth: IPDF, callback: Function) =>
 {
 
-    if(auth.method == "GET") return window.open("https://localhost:5000/pdf/"+auth.ITNr+"/output.pdf", "_blank")!.focus();
+    // if(auth.method == "GET") return window.open("https://localhost:5000/pdf/"+auth.ITNr+"/output.pdf", "_blank")!.focus();
 
 
     const xmlhttp = new XMLHttpRequest();
+    xmlhttp.responseType = "arraybuffer";
     //push data to the backend
     xmlhttp.onreadystatechange = function () {
         if (xmlhttp.readyState == 4)
         {
-            try
-            {
-                if (xmlhttp.status == 200) callback(JSON.parse(xmlhttp.responseText), null);
+                if (xmlhttp.status == 200) 
+                {
+                    //@ts-ignore
+                    console.log(md5(xmlhttp.response));
+                    callback(xmlhttp.response, null);
+                }
                 //ERROR
-                else callback(null, JSON.parse(xmlhttp.responseText));
-            }
-            catch(e)
-            {
-                if (xmlhttp.status == 200) callback(xmlhttp.responseText, null);
-                //ERROR
-                else callback(null, xmlhttp.responseText);
-            }
+                else callback(null, xmlhttp.response);
         }
     };
     xmlhttp.open(auth.method, "https://localhost:5000/pdf", true);
@@ -73,7 +70,7 @@ export const PDF = (auth: IPDF, callback: Function) =>
     xmlhttp.setRequestHeader("auth", JSON.stringify({SessionID: auth.SessionID, username: auth.username}));
     switch(auth.method)
     {
-        case "PUT": case "POST": case "DELETE":
+        case "PUT": case "POST": case "DELETE": case "GET":
         if(!auth.SessionID || !auth.username) throw new Error("Missing parameters");
         xmlhttp.setRequestHeader("data", JSON.stringify({ITNr: auth.ITNr, type: "PC"}));
         break;
