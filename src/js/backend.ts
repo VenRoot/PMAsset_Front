@@ -1,4 +1,4 @@
-import { pullrequest, pushrequest, response } from "./interface";
+import { IPDF, pullrequest, pushrequest, response } from "./interface";
 
 export const request = (subdomain: string, auth: pullrequest, callback: Function, optional?: any) =>
 {
@@ -43,6 +43,39 @@ export const request = (subdomain: string, auth: pullrequest, callback: Function
     xmlhttp.send(null);
 }
 
+export const PDF = (auth: IPDF, callback: Function) =>
+{
+
+    // if(auth.method == "GET") return window.open("https://localhost:5000/pdf/"+auth.ITNr+"/output.pdf", "_blank")!.focus();
+
+
+    const xmlhttp = new XMLHttpRequest();
+    xmlhttp.responseType = "arraybuffer";
+    //push data to the backend
+    xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState == 4)
+        {
+                if (xmlhttp.status == 200) 
+                {
+                    callback(xmlhttp.response, null);
+                }
+                //ERROR
+                else callback(null, xmlhttp.response);
+        }
+    };
+    xmlhttp.open(auth.method, "https://localhost:5000/pdf", true);
+
+    xmlhttp.setRequestHeader("auth", JSON.stringify({SessionID: auth.SessionID, username: auth.username}));
+    switch(auth.method)
+    {
+        case "PUT": case "POST": case "DELETE": case "GET":
+        if(!auth.SessionID || !auth.username) throw new Error("Missing parameters");
+        xmlhttp.setRequestHeader("data", JSON.stringify({ITNr: auth.ITNr, type: "PC"}));
+        break;
+    }
+    xmlhttp.send(null);
+}
+
 /**
  * 
  * @param subdomain 
@@ -68,8 +101,9 @@ export const insertRequest = (subdomain: string, auth: pushrequest, callback: Fu
     {
         case "PUT": case "POST": case "DELETE": 
         if(!auth.SessionID || !auth.username) throw new Error("Missing parameters");
-        xmlhttp.setRequestHeader("device", JSON.stringify({device: auth.device}));
+        xmlhttp.setRequestHeader("device", JSON.stringify(auth.device));
         break;
+        default: xmlhttp.abort();
     }
     xmlhttp.send(null);
 }
@@ -144,10 +178,6 @@ async function req()
     return xmlhttp.responseText;
 }
 
-const countDevices = async () =>
-{
-
-};
 const refreshSession = () =>
 {
     console.debug("Refreshing session");
@@ -158,10 +188,13 @@ const refreshSession = () =>
     {
         request("refresh", {method: "refresh", SessionID: SessionID, username: username}, (res: {message: string, status: number}, err: response) => {
             if(err) throw err;
-            if(res.status >= 200 && res.status < 300) return true;
+            if(res.status >= 200 && res.status < 300) {
+                console.log(new Date().toLocaleString() + ": Session refreshed");
+                return true;
+            }
             ShowError("Ihre Session ist abgelaufen oder nicht gültig. Bitte neu anmelden", res.status);
         });
     }
 }
 
-setInterval(refreshSession, 1000 * 60 * 2);
+setInterval(refreshSession, 1000 * 60);

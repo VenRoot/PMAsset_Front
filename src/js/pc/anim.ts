@@ -1,6 +1,6 @@
 import {ClearTable, enableBtn, foc, getInputValues, ResetFields, tbody} from "../anim.js";
 import {Bildschirm, Item, PC} from "../interface";
-import { getData, getMonitors, setData, setEquipment } from "./backend.js";
+import { generatePDF, getData, getMonitors, getPDF, rewritePDF, setData, setEquipment } from "./backend.js";
 
 const genPasswd = (length: number) =>
 {
@@ -41,9 +41,10 @@ export const GeneratePassword = (elem: HTMLElement) =>
 }
 
 export let devices:PC[] = [];
-export const setDevices = async(dev:PC[]) => devices = dev; 
+export const setDevices = (dev:PC[]) => devices = dev; 
 
-export const getDevice = async(it_nr: string) =>
+export const getDevices = (): PC[] => devices;
+export const getDevice = (it_nr: string) =>
 {
     return devices.filter(device => device.it_nr.includes(it_nr));
 }
@@ -61,8 +62,8 @@ export const SearchDevice = async(it_nr: string) =>
 
 
     const template = document.createElement("tr");
-    template.setAttribute("onmouseover", "main.foc(this)");
-    template.setAttribute("onmouseout", "main.unfoc(this)");
+    // template.setAttribute("onmouseover", "main.foc(this)");
+    // template.setAttribute("onmouseout", "main.unfoc(this)");
 
 
     //Make a loop where we clone the template, put the values in and append it to the temp variable
@@ -86,19 +87,21 @@ export const SearchDevice = async(it_nr: string) =>
             temp.innerText = values.besitzer as any; 
             temp.id="BESITZER";
             break;
-            case "form": temp.innerText = values.form as any; temp.id="FORM"; break;
+            case "form": temp.innerText = values.form as any; temp.id="FORM";         
+            break;
             case "passwort": 
             const pwf = document.createElement("input"); pwf.type = "password"; pwf.disabled = true; pwf.value = values.passwort as any; pwf.classList.add("bpasswd");
             temp.innerHTML = pwf.outerHTML; temp.id="PASSWORT"; break;
         }
         console.debug(temp); 
         
-        template.appendChild(temp); 
+        template.append(temp); 
     });
-    console.debug(template);
+    console.log(template);
     const sortedtemplate = document.createElement("tr");
-    sortedtemplate.setAttribute("onmouseover", "main.foc(this)");
-    sortedtemplate.setAttribute("onmouseout", "main.unfoc(this)");
+    // sortedtemplate.setAttribute("onmouseover", "main.foc(this)");
+    // sortedtemplate.setAttribute("onmouseout", "main.unfoc(this)");
+    sortedtemplate.classList.add("hover:bg-opacity-50");
     const queries = ["#IT_NR", "#TYP", "#HERSTELLER", "#SERIENNUMMER", "#EQUIPMENT", "#STANDORT", "#STATUS", "#BESITZER", "#FORM", "#PASSWORT"];
     queries.forEach(query => sortedtemplate.appendChild(template.querySelector(query) as HTMLTableCellElement));
 
@@ -298,6 +301,15 @@ export const SearchDevice = async(it_nr: string) =>
     if(typeof values.equipment == "string") values.equipment = JSON.parse(values.equipment);
     console.debug(values);
     const newRow = await MakeTemplate(values);
+
+    //check if count of rows in tbody is even or odd
+    const tbody = document.getElementById("tbody")!;
+    const count = tbody.children.length;
+    if(count % 2 == 0) newRow.classList.add("bg-gray-100");
+    else newRow.classList.add("bg-gray-200");
+    
+
+
     //Set the values into the new row
     Object.keys(values).forEach((key, index) =>
         {
@@ -333,7 +345,51 @@ export const SearchDevice = async(it_nr: string) =>
                 case 5: template.innerText = values.standort as any; break;
                 case 6: template.innerText = values.status as any; break;
                 case 7: template.innerText = values.besitzer as any; break;
-                case 8: template.innerText = values.form as any; break;
+                case 8: template.innerText = values.form as any; 
+                
+                //Make a custom contextmenu, which will show several options
+                template.addEventListener("contextmenu", e => {
+                    //Make a contextmenu and add the options
+                    
+                    //First, remove the contextmenu if it already exists
+                    const _menu = document.getElementById("contextmenu") as HTMLDivElement;
+                    if(_menu) _menu.remove();
+                    const contextmenu = document.createElement("div");
+                    contextmenu.id = "contextmenu";
+                    contextmenu.setAttribute("row", values.it_nr);
+                    contextmenu.classList.add("bg-gray-100", "text-gray-900", "rounded", "absolute", "z-50", "p-2", "border", "border-gray-400", "text-sm", "font-semibold", "right-0", "top-0", "transform-origin", "center", "transition");
+                    const {clientX: mouseX, clientY: mouseY} = e;
+                    let options:{option:string, func: string}[] = [];
+                    switch(values.form)
+                    {
+                        case "Ja": options = [{option: "Anzeigen", func: "PDFAnzeigen"}, {option: "Neu erstellen", func: "PDFNeuGenerieren"}, {option: "Entfernen", func: "PDFEntfernen"}]; break;
+                        case "Nein": options = [{option: "Hinzufügen", func: "PDFHinzufuegen"}]; break;
+                    }
+                    options.forEach(option =>
+                        {
+                            const item = document.createElement("div");
+                            item.classList.add("item");
+                            item.innerText = option.option;
+                            item.setAttribute("onclick", `PC.${option.func}("${values.it_nr}");`);
+                            contextmenu.append(item);
+                        });
+
+                    contextmenu.style.left = `${mouseX}px`; 
+                    contextmenu.style.top = `${mouseY}px`;
+                    contextmenu.style.backgroundColor = "black";
+                    contextmenu.style.color = "white";
+                    document.body.append(contextmenu);
+                    //Add a listener to the contextmenu, which will remove the contextmenu when clicked
+                    contextmenu.addEventListener("click", () => contextmenu.remove());
+                    window.addEventListener("click", (e) => {
+                        //Check if the clicked element is the contextmenu 
+                        if(e.target != contextmenu) contextmenu.remove();
+                    });
+                    e.preventDefault();
+                });
+                template.setAttribute("oncontextmenu", `PC.ShowContextMenu(this, "${values.it_nr}");`);
+                
+                break;
                 case 9: (template.children[0] as HTMLInputElement).value = values.passwort as any; break;
             }
 
@@ -380,11 +436,125 @@ export const SearchDevice = async(it_nr: string) =>
     //     else if(index == 9) return;
     //     else cell.innerText = values![index];
     // });
-    
-    
 };
 
+export const ShowContextMenu = (element: HTMLTableCellElement, itnr: string) =>
+{
+    const menu = document.createElement("div"); menu.id = "context-menu";
+    for(let i = 0; i < 2; i++)
+    {
+        const item = document.createElement("div");
+        item.classList.add("item");
+        item.innerText = "Item " + i;
+        item.addEventListener("click", () => {
+            alert(item.innerText);
+        });
+        menu.append(item);
+    }
+    menu.style.display = "block";
+    menu.style.left = element.offsetLeft + "px";
+    menu.style.top = element.offsetTop + "px";
 
+}
+
+export const PDFAnzeigen = (ITNr: string) =>
+{
+    getPDF(ITNr);
+}
+
+export const PDFHinzufuegen = (ITNr: string) =>
+{
+    const username = sessionStorage.getItem("username");
+    const key = sessionStorage.getItem("SessionID");
+    if(!username || !key) return alert("Bitte loggen Sie sich erneut ein!");
+    if(!confirm("PDF aus aktuellen Werten generieren?")) return;
+    const device = devices.find(device => device.it_nr == ITNr);
+    if(!device) return;
+
+    device.form = "Ja";
+
+    //Update the table
+    UpdateTable(device);
+
+    //Generate the PDF
+    generatePDF(device.it_nr);
+    //Update the database
+    setData(device, {device: device, method: "POST", username: username, SessionID: key});
+}
+
+export const PDFEntfernen = (ITNr: string) =>
+{
+    const username = sessionStorage.getItem("username");
+    const key = sessionStorage.getItem("SessionID");
+    if(!username || !key) return alert("Bitte loggen Sie sich erneut ein!");
+    if(!confirm("PDF mit aktuellen Werten entfernen?")) return;
+    const device = devices.find(device => device.it_nr == ITNr);
+    if(!device) return;
+
+    device.form = "Nein";
+
+    //Update the table
+    UpdateTable(device);
+
+    //Update the database
+    setData(device, {device: device, method: "POST", username: username, SessionID: key});
+}
+
+
+export const PDFNeuGenerieren = (ITNr: string) =>
+{
+    const username = sessionStorage.getItem("username");
+    const key = sessionStorage.getItem("SessionID");
+    if(!username || !key) return alert("Bitte loggen Sie sich erneut ein!");
+    if(!confirm("PDF neu generieren?")) return;
+    const device = devices.find(device => device.it_nr == ITNr);
+    if(!device) return;
+
+    device.form = "Ja";
+    //Update the database
+    rewritePDF(device.it_nr, (message: string, status: number) => {
+        if(status == 200) {
+            alert("PDF wurde neu generiert!");
+            //Update the table
+            UpdateTable(device);
+        }
+        else alert(message);
+    });
+}
+
+export const Notify = (message: string, type: string) =>
+{
+    const notification = document.createElement("div");
+    notification.classList.add("notification", type);
+    notification.innerText = message;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.remove(), 3000);	
+}
+
+export const UpdateTable = (device: PC) =>
+{
+    
+    const row = Array.from(tbody.rows).find(row => row.cells[0].textContent == device.it_nr);
+    if(!row) return;
+    Array.from(row.cells).forEach((cell, index) => {
+        if(index == 0) cell.innerText = device.it_nr;
+        else if(index == 1) cell.innerText = device.type;
+        else if(index == 2) cell.innerText = device.hersteller;
+        else if(index == 3) cell.innerText = device.seriennummer;
+        else if(index == 5) cell.innerText = device.standort;
+        else if(index == 6) cell.innerText = device.status;
+        else if(index == 7) cell.innerText = device.besitzer;
+        else if(index == 8) cell.innerText = device.form;
+        else if(index == 9) {
+            const ele = document.createElement("input");
+            ele.type = "password";
+            ele.classList.add("bpasswd");
+            ele.value = device.passwort || "";
+            cell.innerHTML = "";
+            cell.appendChild(ele);
+        }
+    });
+}
 
 //Make a function which gets the Monitors from the backend and log them
 export const GetMonitors = async (currentRow: string) =>
