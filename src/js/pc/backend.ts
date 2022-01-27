@@ -110,8 +110,8 @@ export const getData = async () =>
     
     return res;
 }
-
 export const setData = async (data: Item, method: pushrequest ) =>
+
 {
     const username = window.sessionStorage.getItem("username");
     const SessionID = window.sessionStorage.getItem("SessionID");
@@ -137,6 +137,7 @@ export const setData = async (data: Item, method: pushrequest ) =>
                 ShowError(err.message, err.status);
                 throw new Error(err.message);
             }
+            console.log(res);
             return res;
         });
     }
@@ -195,7 +196,7 @@ export const createPDF = (ITNr: string) =>
     });
 }
 
-export const rewritePDF = (ITNr: string) =>
+export const rewritePDF = (ITNr: string, callback?: Function) =>
 {
     const username = window.sessionStorage.getItem("username");
     const SessionID = window.sessionStorage.getItem("SessionID");
@@ -207,30 +208,39 @@ export const rewritePDF = (ITNr: string) =>
             return alert(err.message);
         }
         console.log(res);
-        alert(res.message);
+        if(callback) callback(res);
+    });
+}
+
+export const deletePDF = (ITNr: string, callback?: Function) =>
+{
+    const username = window.sessionStorage.getItem("username");
+    const SessionID = window.sessionStorage.getItem("SessionID");
+    if(username == null || SessionID == null) return alert("No SessionID or username found");
+    PDF({method: "DELETE", SessionID: SessionID, username: username, ITNr: ITNr}, (res: {message: string, status: number}, err: {message: string, status: number}) => {
+        if(err)
+        {
+            ShowError(err.message, err.status);
+            return alert(err.message);
+        }
+        console.log(res);
+        if(callback) callback(res);
     });
 }
 
 export const getPDF = async (ITNr: string) =>
 {
+    console.log(ITNr);
     const username = window.sessionStorage.getItem("username");
     const SessionID = window.sessionStorage.getItem("SessionID");
     if(username == null || SessionID == null) throw new Error("No SessionID or username found");
-    if(devices.filter(entry => entry.it_nr == ITNr)[0].form == "Nein") return alert("Keine PDF vorhanden. Bitte erstellen Sie diese");
+    if(devices.find(entry => entry.it_nr == ITNr)?.form == "Nein") return alert("Keine PDF vorhanden. Bitte erstellen Sie diese");
     PDF({method: "GET", SessionID: SessionID, username: username, ITNr: ITNr}, (res: Uint8Array, err: {message: string, status: number}) => {
         if(err)
         {
             ShowError(err.message, err.status);
             throw new Error(err.message);
-        }
-        //@ts-ignore
-        console.log(md5(res));
-        // const str = hex2a(res.pdf);
-        // console.log(str);
-        const blob = new Blob([res], {type: "binary"});
-        //@ts-ignore
-        console.log(md5(blob));
-        
+        }  
         //@ts-ignore
         saveByteArray([res], ITNr + ".pdf");
         console.log(res);
@@ -256,8 +266,6 @@ const saveByteArray = (function () {
         var blob = new Blob(data, {type: "octet/stream"}),
             url = window.URL.createObjectURL(blob);
         a.href = url;
-        //@ts-ignore
-        console.log(md5(blob));
         a.download = name;
         a.click();
         window.URL.revokeObjectURL(url);

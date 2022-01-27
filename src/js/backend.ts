@@ -57,8 +57,6 @@ export const PDF = (auth: IPDF, callback: Function) =>
         {
                 if (xmlhttp.status == 200) 
                 {
-                    //@ts-ignore
-                    console.log(md5(xmlhttp.response));
                     callback(xmlhttp.response, null);
                 }
                 //ERROR
@@ -103,7 +101,7 @@ export const insertRequest = (subdomain: string, auth: pushrequest, callback: Fu
     {
         case "PUT": case "POST": case "DELETE": 
         if(!auth.SessionID || !auth.username) throw new Error("Missing parameters");
-        xmlhttp.setRequestHeader("device", JSON.stringify({device: auth.device}));
+        xmlhttp.setRequestHeader("device", JSON.stringify(auth.device));
         break;
         default: xmlhttp.abort();
     }
@@ -180,10 +178,6 @@ async function req()
     return xmlhttp.responseText;
 }
 
-const countDevices = async () =>
-{
-
-};
 const refreshSession = () =>
 {
     console.debug("Refreshing session");
@@ -194,10 +188,13 @@ const refreshSession = () =>
     {
         request("refresh", {method: "refresh", SessionID: SessionID, username: username}, (res: {message: string, status: number}, err: response) => {
             if(err) throw err;
-            if(res.status >= 200 && res.status < 300) return true;
+            if(res.status >= 200 && res.status < 300) {
+                console.log(new Date().toLocaleString() + ": Session refreshed");
+                return true;
+            }
             ShowError("Ihre Session ist abgelaufen oder nicht gültig. Bitte neu anmelden", res.status);
         });
     }
 }
 
-setInterval(refreshSession, 1000 * 60 * 2);
+setInterval(refreshSession, 1000 * 60);
