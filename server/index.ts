@@ -3,9 +3,10 @@ import fs from "fs";
 import path from "path";
 import url from "url";
 
-const options = {
+const options:https.SecureServerOptions = {
     key: fs.readFileSync(path.join(__dirname, "certs/key.pem")),
-    cert: fs.readFileSync(path.join(__dirname, "certs/cert.pem"))
+    cert: fs.readFileSync(path.join(__dirname, "certs/cert.pem")),
+    minVersion: "TLSv1.3"
 };
 
 const server = https.createSecureServer(options, async (req, res) => {
