@@ -10,6 +10,8 @@ import { uwu } from "./cart.js";
 import { PCHerstellerTypen, PCTypen, StatusTypen, MonitorTypen, PhoneTypen, MonTypen } from "./values.js";
 import {FormSelect, HerstellerSelect, StatusSelect, TypSelect} from "./templates.js";
 import { changeCurrentRow, currentRow, GetMonitors } from "./pc/anim.js";
+import { ShowError } from "./backend.js";
+import { setData } from "./pc/backend.js";
 
 uwu();
 
@@ -31,21 +33,26 @@ export const ClearTable = () =>
 }
 
 
-export const foc = async (element: HTMLTableRowElement) => {
-    for (let j = 0; j < element.cells.length; j++) {
-        let cell = element.cells[j];
-        if(cell.classList.contains("icons")) continue;
-        cell.classList.add('bg-yellow-600');
-    }
-};
-
-export const unfoc = async (element: HTMLTableRowElement) => {
-    for (let j = 0; j < element.cells.length; j++) {
-        let cell = element.cells[j];
-        if(cell.classList.contains("icons")) continue;
-        cell.classList.remove('bg-yellow-600');
-    }
+//Create a function which will highlight the current row
+export const foc = (row: HTMLTableRowElement) =>
+{
+    //row.classList.add('-bg-gray-200');
 }
+
+//Create a function which will unfocus the current row
+export const unfoc = (row: HTMLTableRowElement) =>
+{
+    //row.classList.remove('-bg-gray-200');
+}
+
+
+// export const unfoc = async (element: HTMLTableRowElement) => {
+//     for (let j = 0; j < element.cells.length; j++) {
+//         let cell = element.cells[j];
+//         if(cell.classList.contains("icons")) continue;
+//         cell.classList.remove('bg-yellow-600');
+//     }
+// }
 
 const newRowNames =
 [
@@ -233,6 +240,7 @@ const getCellValue = (index: number) => {
     const select4 = document.getElementById("FormSelect") as HTMLSelectElement;
     FormSelect.id = "FormSelect";
     select4.parentElement!.replaceChild(FormSelect, select4);
+    console.log(FormSelect, StatusSelect)
 })();
 
 
@@ -398,13 +406,23 @@ export const EditEntry = (elem: HTMLElement) =>
 
 export const SaveEntry = (elem: HTMLElement) =>
 {
+    const username = sessionStorage.getItem("username");
+    const SessionID = sessionStorage.getItem("SessionID");
+
+    if(username == null || SessionID == null) return ShowError("Du bist nicht eingeloggt!", 401);
     elem.innerHTML = "edit";
     elem.classList.remove("text-green-400");
     elem.classList.add("text-yellow-400");
     elem.setAttribute("onclick", "main.EditEntry(this)");
 
     const grandparent = elem.parentElement?.parentElement?.parentElement as HTMLTableRowElement;
-    
+    console.log((grandparent.cells[0].children[0] as HTMLInputElement).value)
+    //@ts-ignore
+    console.log(PC.devices);
+    //@ts-ignore
+    const device = PC.devices.find(devs => devs.it_nr == (grandparent.cells[0].children[0] as HTMLInputElement).value);
+    if(device == null) return ShowError("Device not found");
+
     Array.from(grandparent.cells).forEach((cell, i) => {
 
         switch(i)
@@ -419,6 +437,23 @@ export const SaveEntry = (elem: HTMLElement) =>
             default: cell.innerHTML = (cell.children[0] as HTMLInputElement).value; break;
         }
     });
+    const newPC:PC =
+    {
+        kind: "PC",
+        type: grandparent.children[1].textContent || "" as any,
+        status: grandparent.children[5].textContent || "" as any,
+        hersteller: grandparent.children[2].textContent || "" as any,
+        seriennummer: grandparent.children[3].textContent || "" as any,
+        besitzer: grandparent.children[7].textContent || "" as any,
+        form: grandparent.children[8].textContent || "" as any,
+        passwort: (grandparent.children[9].children[0] as HTMLInputElement).value || "" as any,
+        it_nr: device.it_nr,
+        standort: grandparent.children[5].textContent || "" as any,
+        equipment: device.equipment
+    }
+
+    //Update the device in the database
+    setData(newPC, {device: newPC, method: "POST", SessionID: SessionID, username: username})
 };
 
 export const DelEntry = (elem: HTMLElement) =>
