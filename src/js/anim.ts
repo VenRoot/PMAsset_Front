@@ -9,9 +9,9 @@ import { Bildschirm, InputName, Konferenz, KonfHersteller, MonTypes, PC, PCHerst
 import { uwu } from "./cart.js";
 import { PCHerstellerTypen, PCTypen, StatusTypen, MonitorTypen, PhoneTypen, MonTypen } from "./values.js";
 import {FormSelect, HerstellerSelect, StatusSelect, TypSelect} from "./templates.js";
-import { changeCurrentRow, currentRow, GetMonitors } from "./pc/anim.js";
+import { changeCurrentRow, currentRow, GetMonitors } from "./PC/anim.js";
 import { ShowError } from "./backend.js";
-import { setData } from "./pc/backend.js";
+import { setData } from "./PC/backend.js";
 
 uwu();
 

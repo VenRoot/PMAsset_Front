@@ -3,9 +3,9 @@ import { insertRequest, request, ShowError } from "../backend.js";
 import { Bildschirm, PC, pushrequest } from "../interface";
 import { AddRow, setDevices } from "./anim.js";
 import { res_monitor } from "./interface";
-import {devices as _PCDevices} from "../pc/anim.js";
-import { res_data } from "../pc/interface.js";
-import { getData as getPCData } from "../pc/backend.js";
+import {devices as _PCDevices} from "../PC/anim.js";
+import { res_data } from "../PC/interface.js";
+import { getData as getPCData } from "../PC/backend.js";
 
 export const PCDevices = _PCDevices;
 
