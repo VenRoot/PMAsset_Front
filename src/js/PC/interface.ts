@@ -1,6 +1,6 @@
 import {PC} from "../interface";
 
-export interface res_data {
+export interface PC_res_data {
     BESITZER: string;
     EQUIPMENT: string[] | null;
     FORM?: string;
@@ -20,6 +20,7 @@ export interface res_monitor
     HERSTELLER: string;
     ATTACHED: string;
     TYPE: string;
+    STANDORT: string;
     STATUS: string;
     BESITZER: string;
     MODEL: string;
