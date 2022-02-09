@@ -111,7 +111,6 @@ export const getData = async () =>
     return res;
 }
 export const setData = async (data: Item, method: pushrequest ) =>
-
 {
     const username = window.sessionStorage.getItem("username");
     const SessionID = window.sessionStorage.getItem("SessionID");

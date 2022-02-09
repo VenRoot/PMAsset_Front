@@ -10,8 +10,9 @@ import { uwu } from "./cart.js";
 import { PCHerstellerTypen, PCTypen, StatusTypen, MonitorTypen, PhoneTypen, MonTypen } from "./values.js";
 import {FormSelect, HerstellerSelect, StatusSelect, TypSelect} from "./templates.js";
 import { changeCurrentRow, currentRow, GetMonitors } from "./PC/anim.js";
-import { ShowError } from "./backend.js";
+import { getUsers, ShowError } from "./backend.js";
 import { setData } from "./PC/backend.js";
+import { autocomplete } from "./MA/ac.js";
 
 uwu();
 
@@ -382,28 +383,76 @@ export const EditEntry = (elem: HTMLElement) =>
 
     const grandparent = elem.parentElement?.parentElement?.parentElement as HTMLTableRowElement;
     
-    Array.from(grandparent.cells).forEach((cell, i) => {
-        console.debug(cell);
+    Array.from(grandparent.cells).forEach(async (cell, i) => {
+        //console.debug(cell);
         
         switch(i)
         {
             case 1: cell.innerHTML="";  cell.appendChild(document.getElementById("SelectInputTyp")?.cloneNode(true)!); console.debug(cell); break;
             case 4: break; cell.children[0].classList.remove("disabled"); break;
-            case 6: StatusSelect.value = cell.innerHTML; cell.innerHTML=""; cell.appendChild(StatusSelect); console.warn(cell); break;
-            case 8: FormSelect.value = cell.innerHTML; cell.innerHTML=""; cell.appendChild(FormSelect); break;
+            case 6: StatusSelect.value = cell.innerHTML; cell.innerHTML=""; cell.appendChild(StatusSelect.cloneNode(true)); console.warn(cell); break;
+            case 8: FormSelect.value = cell.innerHTML; cell.innerHTML=""; cell.appendChild(FormSelect.cloneNode(true)); break;
             case 9: cell.children[0].removeAttribute("disabled"); (cell.children[0] as HTMLInputElement).type = "text"; break;
             case 10: break;
-            default: const inp = document.createElement("input");
-            inp.classList.add("text-center") 
+            default:
+                
+            const inp = document.createElement("input");
+            inp.id="SearchInput"
+            inp.type="search";
+            inp.classList.add("search", "text-center");
             inp.value = cell.innerText; 
             cell.innerHTML = ""; 
+            //Autocomplete für Mitarbeiter
+            if(i == 7)
+            {
+                await init(inp);
+                inp.addEventListener("keyup", async (e) =>
+                {
+                    if(inp.value == "") return;
+                    let Users = await getUsers();
+                    if(!Users) return;
+                    let search = inp.value;
+                    console.log(Users);
+                    let result = Users.filter(user => user.cn.toLowerCase().includes(search.toLowerCase()) || user.userPrincipalName?.toLowerCase()?.includes(search.toLowerCase()));
+                
+                });
+            }
             cell.appendChild(inp); 
             break;
         }
     });
 }
 
-export const SaveEntry = (elem: HTMLElement) =>
+export const init = async (SearchInput: HTMLInputElement) => {
+    let Users = await getUsers();
+    console.log("OH NO", Users);
+    if(!Users) return;
+
+    //reduce user to only cn and mail
+    let reducedUsers = Users.map(user => {
+        return {
+            cn: user.cn,
+            mail: user.mail
+        }
+    });
+
+    console.warn(reducedUsers);
+    
+
+
+    //Put all values from users.cn in an array
+    let mail = Users.map(user => user.mail);
+    let cn = Users.map(user => user.cn);
+    mail.push(...cn);
+    mail = mail.filter(x => x);
+    console.log("Init Autocomplete");
+    console.table(mail);
+    autocomplete(SearchInput, mail);
+};
+
+setTimeout(() => init((document.getElementById("BesitzerInput") as HTMLInputElement)), 1000);
+
+export const SaveEntry = async (elem: HTMLElement) =>
 {
     const username = sessionStorage.getItem("username");
     const SessionID = sessionStorage.getItem("SessionID");
@@ -415,32 +464,54 @@ export const SaveEntry = (elem: HTMLElement) =>
     elem.setAttribute("onclick", "main.EditEntry(this)");
 
     const grandparent = elem.parentElement?.parentElement?.parentElement as HTMLTableRowElement;
-    console.log((grandparent.cells[0].children[0] as HTMLInputElement).value)
-    //@ts-ignore
-    console.log(PC.devices);
+ 
     //@ts-ignore
     const device = PC.devices.find(devs => devs.it_nr == (grandparent.cells[0].children[0] as HTMLInputElement).value);
     if(device == null) return ShowError("Device not found");
 
-    Array.from(grandparent.cells).forEach((cell, i) => {
+    
 
-        switch(i)
-        {
-            case 1: case 5: case 7: cell.innerHTML = (cell.children[0] as HTMLSelectElement).value; break;
-            //case 3: break; cell.children[0].classList.add("disabled"); break;
-            // case 8: cell.children[0].classList.add("disabled"); break;
-            case 8: cell.innerHTML = (cell.children[0] as HTMLSelectElement).value; break;
-            case 9: cell.children[0].setAttribute("disabled", ""); (cell.children[0] as HTMLInputElement).type = "password"; break;
-            case 4: break;
-            case 10: break;
-            default: cell.innerHTML = (cell.children[0] as HTMLInputElement).value; break;
-        }
-    });
+    const dostuff = async () => {
+        return new Promise((resolve, reject) => {
+            Array.from(grandparent.cells).forEach(async (cell, i) => {
+                switch(i)
+                    {
+                        case 1: case 5: case 8: cell.innerHTML = (cell.children[0] as HTMLSelectElement).value; break;
+                        case 9: cell.children[0].setAttribute("disabled", ""); (cell.children[0] as HTMLInputElement).type = "password"; break;
+                        case 4: break;
+                        case 10: resolve(void 0); break;
+                        default: 
+                        if(i != 7) cell.innerHTML = (cell.children[0] as HTMLInputElement).value;
+                        else if(i == 7)
+                        {
+                            console.log(cell);
+                            console.log(cell.children)
+                            let value = (cell.children[0] as HTMLInputElement).value;
+                            cell.innerHTML = value;
+                            //check if value is a mail
+                            if(!value.includes("@"))
+                            {
+                                let Users = await getUsers();
+                                if(!Users) return resolve(void 0);
+                                let user = Users.find(user => user.name == value);
+                                console.log(user);
+                                cell.innerHTML = user?.mail || "Failed";
+                            }
+                        }
+        
+                        break;
+                    }
+            })
+        });
+        
+    };
+    await dostuff();
+    console.log(grandparent.children[7]);
     const newPC:PC =
     {
         kind: "PC",
         type: grandparent.children[1].textContent || "" as any,
-        status: grandparent.children[5].textContent || "" as any,
+        status: grandparent.children[6].textContent || "" as any,
         hersteller: grandparent.children[2].textContent || "" as any,
         seriennummer: grandparent.children[3].textContent || "" as any,
         besitzer: grandparent.children[7].textContent || "" as any,

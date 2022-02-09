@@ -66,6 +66,8 @@ export const checkVerknüpfung = async (it_nr: string) => PCDevices.filter(entry
 
 export const setData = async (data: Bildschirm, method: pushrequest) =>
 {
+    console.log("J");
+    
     const username = window.sessionStorage.getItem("username");
     const SessionID = window.sessionStorage.getItem("SessionID");
     if(username == null || SessionID == null) throw new Error("No SessionID or username found");
@@ -87,6 +89,7 @@ export const setData = async (data: Bildschirm, method: pushrequest) =>
             ShowError(err.message, err.status);
             throw new Error(err.message);
         }
+        console.log(res);
         return res;
     });
 }
