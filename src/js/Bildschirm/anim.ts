@@ -4,6 +4,7 @@ import { FormSelect, StatusSelect } from "../templates.js";
 import { setData } from "./backend.js";
 
 export let devices:Bildschirm[] = [];
+export const getDevices = () => devices;
 export const setDevices = async(dev: Bildschirm[]) => devices = dev;
 
 export const getDevice = async(it_nr: string) => devices.filter(device => device.it_nr.includes(it_nr));

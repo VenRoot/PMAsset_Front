@@ -3,6 +3,6 @@ import {checkUser} from "./backend.js";
 export * from "./backend.js";
 export * from "./anim.js";
 
-export let DEBUG = false;
+export let DEBUG = true;
 
-console.debug = (...args: any[]) => DEBUG ? console.debug(...args) : null;
+console.debug = (...args: any[]) => DEBUG ? console.log(...args) : null;
