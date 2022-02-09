@@ -33,29 +33,57 @@
       }
     </style>
     <script defer type="module">
-        import * as PC from "./js/pc/main.js"; window.PC = PC;
+        import * as PC from "./js/PC/main.js"; window.PC = PC;
+        import * as Bildschirm from "./js/Bildschirm/main.js"; window.Bildschirm = Bildschirm;
+        import * as Phone from "./js/phone/main.js"; window.Phone = Phone;
         PC.getData();
-        console.debug(PC.devices);
+        Bildschirm.getData();
+        Phone.getData();
+        console.warn(PC.devices);
+        console.warn(Bildschirm.devices);
+        console.warn(Phone.devices);
         const foo = function (myInterval) {
     clearInterval(myInterval);
 };
             let x = setInterval(() => {
-                if(PC.devices.length > 0)
-                {
-                    clearInterval(x);
-                    console.debug("NEUE VALUES");
-                    console.debug(PC.devices);
-                    changeValues(PC.devices);
-                    foo(x);
-                    
-                }
-            }, 600);
+                clearInterval(x);
+                console.debug("NEUE VALUES");
+                console.debug(PC.devices);
+                const all = [];
+                all.push(...PC.devices);
+                all.push(...Bildschirm.getDevices());
+                all.push(...Phone.devices);
+                console.warn(all);
+                changeValues(PC.devices, Bildschirm.devices, Phone.devices);
+                foo(x);
 
-        function changeValues(devices)
+            }, 1000);
+
+        function changeValues(PCs, Mons, Phones)
         {
-            document.getElementById("GesamtPCs").innerText = devices.filter(e => e.kind == "PC").length;
-            document.getElementById("AktivPCs").innerText = devices.filter(e => e.kind == "PC").filter(e => e.status == "Aktiv").length;
-            document.getElementById("InaktivPCs").innerText = devices.filter(e => e.kind == "PC").filter(e => e.status == "Inaktiv").length;
+            if(PCs.length > 0)
+            {
+                document.getElementById("GesamtPCs").innerText = PCs.length;
+                document.getElementById("AktivPCs").innerText = PCs.filter(e => e.status == "Aktiv").length;
+                document.getElementById("InaktivPCs").innerText = PCs.filter(e => e.status == "Inaktiv").length;
+                document.getElementById("BestandPCs").innerText = PCs.filter(e => e.status == "Inaktiv").length;
+            }
+            
+            if(Mons.length > 0)
+            {
+                document.getElementById("GesamtBildschirme").innerText = Mons.length;
+                document.getElementById("AktivBildschirme").innerText = Mons.filter(e => e.status == "Aktiv").length;
+                document.getElementById("InaktivBildschirme").innerText = Mons.filter(e => e.status == "Inaktiv").length;
+                document.getElementById("BestandBildschirme").innerText = Mons.filter(e => e.status == "Inaktiv").length;
+            }
+
+            if(Phones.length > 0)
+            {
+                document.getElementById("GesamtPhones").innerText = Phones.length;
+                document.getElementById("AktivPhones").innerText = Phones.filter(e => e.status == "Aktiv").length;
+                document.getElementById("InaktivPhones").innerText = Phones.filter(e => e.status == "Inaktiv").length;
+                document.getElementById("BestandPhones").innerText = Phones.filter(e => e.status == "Inaktiv").length;
+            }
 
         }
     </script>
@@ -98,6 +126,7 @@
                 <a href="./Bildschirm/" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3">Bildschirm</a>
                 <a href="./Phone/" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3">Phones</a>
                 <a href="./Konferenz/" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3">Konferenzeräte</a>
+                <a href="./Mitarbeiter/" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3">Mitarbeiter</a>
                 <a class="block py-2.5 px-4"></a>
                 <a href="create" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3 font-bold">Antrag erstellen</a>
             </nav>
@@ -132,35 +161,35 @@
                 <tbody>
                   <tr>
                     <td>PCs</td>
-                    <td id="GesamtPCs">200</td>
-                    <td id="AktivPCs">100</td>
-                    <td id="InaktivPCs">50</td>
-                    <td id="">50</td>
-                    <td id="InaktivPCs">100</td>
+                    <td id="GesamtPCs">-</td>
+                    <td id="AktivPCs">-</td>
+                    <td id="InaktivPCs">-</td>
+                    <td id="">-</td>
+                    <td id="BestandPCs">-</td>
                   </tr>
                   <tr>
                     <td>Bilschirme</td>
-                    <td>200</td>
-                    <td>100</td>
-                    <td>50</td>
-                    <td>50</td>
-                    <td>100</td>
+                    <td id="GesamtBildschirme">-</td>
+                    <td id="AktivBildschirme">-</td>
+                    <td id="InaktivBildschirme">-</td>
+                    <td>-</td>
+                    <td id="BestandBildschirme">-</td>
                   </tr>
                   <tr>
                     <td>Phones</td>
-                    <td>200</td>
-                    <td>100</td>
-                    <td>50</td>
-                    <td>50</td>
-                    <td>100</td>
+                    <td id="GesamtPhones">-</td>
+                    <td id="AktivPhones">-</td>
+                    <td id="InaktivPhones">-</td>
+                    <td>-</td>
+                    <td id="BestandPhones">-</td>
                   </tr>
                   <tr>
                     <td>Konferenz</td>
-                    <td>200</td>
-                    <td>100</td>
-                    <td>50</td>
-                    <td>50</td>
-                    <td>100</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
                 </tbody>
               </table>
             </span>
@@ -267,6 +296,8 @@
                 </div>
             </div>
         </div>
+        <div style="position: relative; float: right; margin-right: 30px;">BUILD 20220209_01</div>
+
 </body>
 
 </html>
