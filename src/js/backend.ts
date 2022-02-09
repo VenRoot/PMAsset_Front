@@ -1,4 +1,4 @@
-import { IPDF, pullrequest, pushrequest, response } from "./interface";
+import { IPDF, pullrequest, pushrequest, response, User } from "./interface";
 
 export const request = (subdomain: string, auth: pullrequest, callback: Function, optional?: any) =>
 {
@@ -124,6 +124,38 @@ export const checkUser = async() =>
         
     })
 }
+
+let Users:User[] = [];
+export const getU = (): User[] => Users;
+
+export const getUsers = async () =>
+{
+    const p1 = performance.now();
+    const username = window.sessionStorage.getItem("username");
+    const SessionID = window.sessionStorage.getItem("SessionID");
+    if(username == null || SessionID == null) throw new Error("No SessionID or username found");
+    //@ts-ignore
+    if(Users && Users.length > 0) {
+        console.log(`Cache took: `, performance.now() - p1);
+        //@ts-ignore
+        return Users;
+
+    }
+    request("getEntries", {method: "getEntries", SessionID: SessionID, username: username, type: "MA"}, (res:{message:string, status:number}, err: {message: string, status: number}) => {
+        if(err)
+        {
+            ShowError(err.message, err.status);
+            throw new Error(err.message);
+        }
+        const users = JSON.parse(res.message);
+        //@ts-ignore
+        Users = users;
+        console.log(`Request took: `, performance.now() - p1);
+        
+        return users;
+    });
+}
+
 
 export const getKey = async (callback: Function) =>
 {
