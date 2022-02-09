@@ -2,7 +2,7 @@ import { ClearTable } from "../anim.js";
 import {insertRequest, request, ShowError, PDF} from "../backend.js";
 import { Item, PC, Bildschirm, pushrequest } from "../interface";
 import { AddRow, devices, GetMonitors, setDevices } from "./anim.js";
-import { res_data, res_monitor } from "./interface.js";
+import { PC_res_data, res_monitor } from "./interface.js";
 export const Monitors:Bildschirm[] = [];
 
 
@@ -82,7 +82,7 @@ export const getData = async () =>
         console.debug(res);
         
         console.debug(res.message);
-        const data = JSON.parse(res.message) as res_data[];
+        const data = JSON.parse(res.message) as PC_res_data[];
         //convert the data to the pc interface
         const pc: PC[] = [];
         data.forEach((element) => {

@@ -214,8 +214,7 @@ const getCellValue = (index: number) => {
 }
 
 (() => {
-    if (window.location.href.indexOf("login.html") != -1) return;
-    if(window.location.pathname == "/") return;
+    if (window.location.href.indexOf("login.html") != -1 || window.location.pathname == "/" || window.location.pathname.includes("Mitarbeiter")) return;
     const select = document.getElementById("SelectInputTyp") as HTMLSelectElement;
     const Hersteller = document.getElementById("SelectHerstellerTyp") as HTMLSelectElement;
     if(window.location.pathname.toLocaleLowerCase().includes("pc")) PCTypen.forEach(element => select.options.add(new Option(element, element)));
