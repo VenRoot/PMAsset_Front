@@ -71,7 +71,7 @@ type method = "newKey" | "getEntries" | "auth" | "check" | "refresh" | "setMonit
 export interface pullrequest
 {
     method: method;
-    type?: "PC" | "Monitor" | "Phone" | "Konferenz"; 
+    type?: "PC" | "Monitor" | "Phone" | "Konferenz" | "ALL" | "MA"; 
     SessionID?: string;
     username?: string;
     password?: string;

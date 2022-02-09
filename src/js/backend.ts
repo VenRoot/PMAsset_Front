@@ -5,9 +5,7 @@ export const request = (subdomain: string, auth: pullrequest, callback: Function
     const xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = () => {
         if (xmlhttp.readyState == 4)
-        {
-            console.debug(xmlhttp);
-            
+        {            
             if (xmlhttp.status >= 200 && xmlhttp.status < 300) callback(JSON.parse(xmlhttp.responseText), null);
             //ERROR
             else callback(null, JSON.parse(xmlhttp.responseText));
@@ -15,7 +13,6 @@ export const request = (subdomain: string, auth: pullrequest, callback: Function
     };
     console.debug("https://localhost:5000/"+subdomain);
     xmlhttp.open("GET", "https://localhost:5000/"+subdomain, true);
-    console.debug(auth);
     
     switch(auth.method)
     {
@@ -27,7 +24,7 @@ export const request = (subdomain: string, auth: pullrequest, callback: Function
 
         case "getEntries": if(!auth.SessionID || !auth.username) throw new Error("Missing parameters");
         xmlhttp.setRequestHeader("auth", JSON.stringify({type: "check", SessionID: auth.SessionID, username: auth.username}));
-        xmlhttp.setRequestHeader("req", JSON.stringify({type: auth.type})); break;
+        optional?.mail ? xmlhttp.setRequestHeader("req", JSON.stringify({type: auth.type, Mail: optional.mail})) : xmlhttp.setRequestHeader("req", JSON.stringify({type: auth.type})); break;
 
         case "check": if(!auth.SessionID || !auth.username) throw new Error("Missing parameters");
         xmlhttp.setRequestHeader("auth", JSON.stringify({type: "check", SessionID: auth.SessionID, username: auth.username})); break;

@@ -4,7 +4,7 @@ import { Bildschirm, PC, pushrequest } from "../interface";
 import { AddRow, setDevices } from "./anim.js";
 import { res_monitor } from "./interface";
 import {devices as _PCDevices} from "../PC/anim.js";
-import { res_data } from "../PC/interface.js";
+import { PC_res_data } from "../PC/interface.js";
 import { getData as getPCData } from "../PC/backend.js";
 
 export const PCDevices = _PCDevices;
@@ -108,7 +108,7 @@ export const getPCs = async ():Promise<PC[]> =>
         console.debug(res);
         
         console.debug(res.message);
-        const data = JSON.parse(res.message) as res_data[];
+        const data = JSON.parse(res.message) as PC_res_data[];
         //convert the data to the pc interface
         const pc: PC[] = [];
         data.forEach((element) => {
