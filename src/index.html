@@ -36,28 +36,31 @@
         import * as PC from "./js/PC/main.js"; window.PC = PC;
         import * as Bildschirm from "./js/Bildschirm/main.js"; window.Bildschirm = Bildschirm;
         import * as Phone from "./js/phone/main.js"; window.Phone = Phone;
-        await PC.getData();
-        await Bildschirm.getData();
-        await Phone.getData();
+    
+        const p1 = performance.now();
+        //Get all data from PC, Bildschirm and Phone with Promise.all
+        await Promise.all([PC.getData(), Bildschirm.getData(), Phone.getData()]);
+        console.log(`Loaded in ${performance.now() - p1}ms`);
         console.warn(PC.devices);
         console.warn(Bildschirm.devices);
         console.warn(Phone.devices);
-        const foo = function (myInterval) {
-    clearInterval(myInterval);
-};
-            let x = setInterval(() => {
-                clearInterval(x);
-                console.debug("NEUE VALUES");
-                console.debug(PC.devices);
-                const all = [];
-                all.push(...PC.devices);
-                all.push(...Bildschirm.getDevices());
-                all.push(...Phone.devices);
-                console.warn(all);
-                changeValues(PC.devices, Bildschirm.devices, Phone.devices);
-                foo(x);
+        changeValues(PC.devices, Bildschirm.devices, Phone.devices);
+//         const foo = function (myInterval) {
+//     clearInterval(myInterval);
+// };
+//             let x = setInterval(() => {
+//                 clearInterval(x);
+//                 console.debug("NEUE VALUES");
+//                 console.debug(PC.devices);
+//                 const all = [];
+//                 all.push(...PC.devices);
+//                 all.push(...Bildschirm.getDevices());
+//                 all.push(...Phone.devices);
+//                 console.warn(all);
+//                 changeValues(PC.devices, Bildschirm.devices, Phone.devices);
+//                 foo(x);
 
-            }, 1000);
+//             });
 
         function changeValues(PCs, Mons, Phones)
         {
