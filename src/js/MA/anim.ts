@@ -1,10 +1,11 @@
-import { getData, getUsers } from "./backend.js";
+import { getData } from "./backend.js";
 import {autocomplete} from "./ac.js";
 import { Item } from "../interface.js";
-const SearchInput = document.getElementById("SearchInput") as HTMLInputElement;
-const ResPC = document.getElementById("ResPC") as HTMLLabelElement;
-const ResBildschirm = document.getElementById("ResBildschirm") as HTMLLabelElement;
-const ResPhone = document.getElementById("ResPhone") as HTMLLabelElement;
+import { getUsers } from "../backend.js";
+export const SearchInput = document.getElementById("SearchInput") as HTMLInputElement;
+export const ResPC = document.getElementById("ResPC") as HTMLLabelElement;
+export const ResBildschirm = document.getElementById("ResBildschirm") as HTMLLabelElement;
+export const ResPhone = document.getElementById("ResPhone") as HTMLLabelElement;
 
 const FillSuggestions = async (event: KeyboardEvent) => {
     if(event.keyCode == 13) {
@@ -16,21 +17,6 @@ const FillSuggestions = async (event: KeyboardEvent) => {
     let search = SearchInput.value;
     console.log(Users);
     let result = Users.filter(user => user.cn.toLowerCase().includes(search.toLowerCase()) || user.userPrincipalName?.toLowerCase()?.includes(search.toLowerCase()));
-
-    
-
-    // let suggestions = document.getElementById("suggestions") as HTMLDivElement;
-    // suggestions.innerHTML = "";
-    // result.forEach(user => {
-    //     let suggestion = document.createElement("div");
-    //     suggestion.className = "suggestion";
-    //     suggestion.innerText = user.cn;
-    //     suggestion.onclick = () => {
-    //         SearchInput.value = user.cn;
-    //         Search();
-    //     }
-    //     suggestions.appendChild(suggestion);
-    // });
 }
 
 SearchInput.addEventListener("keyup", FillSuggestions);

@@ -29,3 +29,9 @@
 {
     background: #343434;
 }
+
+#table
+{
+    /* Center the table */
+    margin: 0 auto;
+}
