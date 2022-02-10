@@ -1,7 +1,7 @@
 const os = require('os');
 const fs = require('fs');
 const path = require('path');
-const { spawn, spawnSync } = require('child_process');
+const { spawn, spawnSync, execSync } = require('child_process');
 const children = [];
 
 process.on('SIGINT', function() {
@@ -11,11 +11,28 @@ process.on('SIGINT', function() {
       console.log("killing ", child.pid," child process");
       child.kill();
     });
-  });
+});
 
+if(!fs.existsSync("src/js/vars.ts"))
+{
+  let hostname = os.hostname().toLocaleLowerCase();
+  if(os.hostname().toLocaleLowerCase() != "azrweunodejs01")
+  {
+    hostname = "localhost";
+
+  }
+  console.warn("⚠️src/vars.ts does not exist. Creating with "+hostname+" as backend⚠️");
+  let file = 'export const SERVERADDR = "https://'+hostname+':5000/";'
+  fs.writeFileSync("src/js/vars.ts", file, {encoding: "utf-8"});
+  throw "PLEASE RESTART APPLICATION";
+}
 
 //Check if windows or linux
 if (os.platform() === 'win32') {
+
+
+    console.log("Checking if python modules are installed... ");
+    execSync("pip install fillpdf");
     //run npm run start:windows and redirect output to console
     const npm = spawn('npm', ['run', 'start:windows'],
     {
