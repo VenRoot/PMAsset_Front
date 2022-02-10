@@ -1,5 +1,7 @@
 import { IPDF, pullrequest, pushrequest, response, User } from "./interface";
 
+export const SERVERADDR = "https://localhost:5000/";
+//export const SERVERADDR = "https://azrweunodejs01:5000/";
 interface reqres {
     message: string,
     status: number
@@ -16,8 +18,8 @@ export const request = (subdomain: string, auth: pullrequest, optional?: any):Pr
                 else reject(JSON.parse(xmlhttp.responseText));
             }
         };
-        console.debug("https://localhost:5000/"+subdomain);
-        xmlhttp.open("GET", "https://localhost:5000/"+subdomain, true);
+        console.debug(SERVERADDR+subdomain);
+        xmlhttp.open("GET", SERVERADDR+subdomain, true);
 
         switch(auth.method)
         {
@@ -67,7 +69,7 @@ export const PDF = (auth: IPDF, callback: Function) =>
                 else callback(null, xmlhttp.response);
         }
     };
-    xmlhttp.open(auth.method, "https://localhost:5000/pdf", true);
+    xmlhttp.open(auth.method, SERVERADDR+"pdf", true);
 
     xmlhttp.setRequestHeader("auth", JSON.stringify({SessionID: auth.SessionID, username: auth.username}));
     switch(auth.method)
@@ -98,7 +100,7 @@ export const insertRequest = (subdomain: string, auth: pushrequest, callback: Fu
             else callback(null, JSON.parse(xmlhttp.responseText));
         }
     };
-    xmlhttp.open(auth.method, "https://localhost:5000/"+subdomain, true);
+    xmlhttp.open(auth.method, SERVERADDR+subdomain, true);
 
     xmlhttp.setRequestHeader("auth", JSON.stringify({SessionID: auth.SessionID, username: auth.username}));
     switch(auth.method)
@@ -201,7 +203,7 @@ export const getEntries = async (auth: {SessionID: string, username: string}) =>
 async function req()
 {
     let xmlhttp = new XMLHttpRequest();
-    xmlhttp.open("GET", "http://localhost:5000/auth", false);
+    xmlhttp.open("GET", SERVERADDR+"auth", false);
     xmlhttp.setRequestHeader("auth", JSON.stringify({type: "RequestKey"}));
     xmlhttp.send();
     return xmlhttp.responseText;
