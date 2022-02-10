@@ -1,7 +1,8 @@
 import { IPDF, pullrequest, pushrequest, response, User } from "./interface";
+import {SERVERADDR} from "./vars.js";
 
-export const SERVERADDR = "https://localhost:5000/";
-//export const SERVERADDR = "https://azrweunodejs01:5000/";
+
+
 interface reqres {
     message: string,
     status: number
