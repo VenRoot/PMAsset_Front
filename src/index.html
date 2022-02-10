@@ -36,9 +36,9 @@
         import * as PC from "./js/PC/main.js"; window.PC = PC;
         import * as Bildschirm from "./js/Bildschirm/main.js"; window.Bildschirm = Bildschirm;
         import * as Phone from "./js/phone/main.js"; window.Phone = Phone;
-        PC.getData();
-        Bildschirm.getData();
-        Phone.getData();
+        await PC.getData();
+        await Bildschirm.getData();
+        await Phone.getData();
         console.warn(PC.devices);
         console.warn(Bildschirm.devices);
         console.warn(Phone.devices);
