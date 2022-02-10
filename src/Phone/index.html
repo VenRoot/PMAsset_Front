@@ -13,6 +13,7 @@
     <link href="../css/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/material.css">
     <link rel="stylesheet" href="../css/table.css">
+    <link rel="stylesheet" href="../css/custom.css">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,7 +21,7 @@
     <script src="../js/jquery-3.6.0.min.js"></script>
     <script defer type="module">
         import * as main from"../js/main.js"; window.main = main;
-        import * as phone from "../js/phone/main.js"; window.phone = phone;
+        import * as phone from "../js/phone/main.js"; window.Phone = phone;
         main.checkUser();
         console.log(window);
         let x = sessionStorage.getItem("username").split("@")[0].split(".");
@@ -186,7 +187,7 @@
 </body>
 <script defer>
   $(document).ready(() => {
-    phone.getData();
+    Phone.getData();
   })
 </script>
 </html>
