@@ -20,7 +20,7 @@
     <script src="../js/jquery-3.6.0.min.js"></script>
     <script defer type="module">
         import * as main from"../js/main.js"; window.main = main;
-        import * as phone from "../js/phone/main.js"; window.phone = phone;
+        import * as phone from "../js/phone/main.js"; window.Phone = phone;
         main.checkUser();
         console.log(window);
         let x = sessionStorage.getItem("username").split("@")[0].split(".");
@@ -186,7 +186,7 @@
 </body>
 <script defer>
   $(document).ready(() => {
-    phone.getData();
+    Phone.getData();
   })
 </script>
 </html>

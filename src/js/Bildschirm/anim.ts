@@ -1,4 +1,5 @@
-import {ClearTable, enableBtn, getInputValues, ResetFields, tbody} from "../anim.js";
+import {ClearTable, enableBtn, getInputValues, init, ResetFields, tbody} from "../anim.js";
+import { getUsers, ShowError } from "../backend.js";
 import {Bildschirm, Item, PC} from "../interface";
 import { FormSelect, StatusSelect } from "../templates.js";
 import { setData } from "./backend.js";
@@ -28,7 +29,7 @@ const MakeTemplate = async(values: Bildschirm): Promise<HTMLTableRowElement> =>
             const temp = document.createElement("td");
             if(key == "kind") return;
             temp.classList.add("border-2", "border-black", "duration-500", "transition", "text-center");
-            console.debug(key);
+            //console.debug(key);
             switch(key)
             {
                 case "it_nr": temp.innerText = values.it_nr; temp.id = "IT_NR"; break;
@@ -58,9 +59,9 @@ const MakeTemplate = async(values: Bildschirm): Promise<HTMLTableRowElement> =>
         sortedtemplate.setAttribute("onmouseout", "main.unfoc(this);");
         const queries = ["#IT_NR", "#TYP", "#HERSTELLER", "#MODEL", "#SERIENNUMMER", "#ATTACHED", "#STANDORT", "#STATUS", "#BESITZER", "#FORM"];
         queries.forEach(query => {
-            console.debug(sortedtemplate);
-            console.debug(template.querySelector(query));
-            console.debug(query);
+            // console.debug(sortedtemplate);
+            // console.debug(template.querySelector(query));
+            // console.debug(query);
             if(query == "#ATTACHED" && !template.querySelector(query)) return;
             sortedtemplate.appendChild(template.querySelector(query) as HTMLTableCellElement)
         });
@@ -139,49 +140,111 @@ export const EditEntry = (elem: HTMLElement) =>
 
     const grandparent = elem.parentElement?.parentElement?.parentElement as HTMLTableRowElement;
     
-    Array.from(grandparent.cells).forEach((cell, i) => {
-        console.debug(cell);
+    Array.from(grandparent.cells).forEach(async (cell, i) => {
         
         switch(i)
         {
             case 1: cell.innerHTML="";  cell.appendChild(document.getElementById("SelectInputTyp")?.cloneNode(true)!); console.debug(cell); break;
             case 2: cell.innerHTML="";  cell.appendChild(document.getElementById("SelectHerstellerTyp")?.cloneNode(true)!); console.debug(cell); break;
             // case 4: break; cell.children[0].classList.remove("disabled"); break;
-            case 7: StatusSelect.value = cell.innerHTML; cell.innerHTML=""; cell.appendChild(StatusSelect); console.debug(cell); break;
-            case 9: FormSelect.value = cell.innerHTML; cell.innerHTML=""; cell.appendChild(FormSelect); break;
+            case 7: StatusSelect.value = cell.innerHTML; cell.innerHTML=""; cell.appendChild(StatusSelect.cloneNode(true)); console.debug(cell); break;
+            case 9: FormSelect.value = cell.innerHTML; cell.innerHTML=""; cell.appendChild(FormSelect.cloneNode(true)); break;
             case 10: case 5: break;
             default: const inp = document.createElement("input");
-            inp.classList.add("text-center") 
+            inp.id="SearchInput"
+            inp.type="search";
+            inp.classList.add("search", "text-center");
             inp.value = cell.innerText; 
-            cell.innerHTML = ""; 
+            cell.innerHTML = "";
+            if(i == 8)
+            {
+                await init(inp);
+                inp.addEventListener("keyup", async (e) =>
+                {
+                    if(inp.value == "") return;
+                    let Users = await getUsers();
+                    if(!Users) return;
+                    let search = inp.value;
+                    console.log(Users);
+                    let result = Users.filter(user => user.cn.toLowerCase().includes(search.toLowerCase()) || user.userPrincipalName?.toLowerCase()?.includes(search.toLowerCase()));
+                
+                });
+            }
             cell.appendChild(inp); 
             break;
         }
     });
 }
 
-export const SaveEntry = (elem: HTMLElement) =>
+setTimeout(() => init((document.getElementById("BesitzerInput") as HTMLInputElement)), 1000);
+
+export const SaveEntry = async (elem: HTMLElement) =>
 {
+    const username = sessionStorage.getItem("username");
+    const SessionID = sessionStorage.getItem("SessionID");
+
+    if(username == null || SessionID == null) return ShowError("Du bist nicht eingeloggt!", 401);
+    
     elem.innerHTML = "edit";
     elem.classList.remove("text-green-400");
     elem.classList.add("text-yellow-400");
     elem.setAttribute("onclick", "Bildschirm.EditEntry(this)");
 
     const grandparent = elem.parentElement?.parentElement?.parentElement as HTMLTableRowElement;
-    
-    Array.from(grandparent.cells).forEach((cell, i) => {
 
-        switch(i)
-        {
-            case 1: case 7: cell.innerHTML = (cell.children[0] as HTMLSelectElement).value; break;
-            //case 3: break; cell.children[0].classList.add("disabled"); break;
-            // case 8: cell.children[0].classList.add("disabled"); break;
-            case 8: case 9: cell.innerHTML = (cell.children[0] as HTMLSelectElement).value; break;
-            case 9: cell.children[0].setAttribute("disabled", ""); (cell.children[0] as HTMLInputElement).type = "password"; break;
-            case 4: cell.innerHTML = (cell.children[0] as HTMLInputElement).value; break;
-            case 10: case 5: break;
-            default: cell.innerHTML = (cell.children[0] as HTMLInputElement).value; break;
-        }
-    });
+    const dostuff = async () =>
+    {
+        return new Promise((resolve, reject) => {
+            Array.from(grandparent.cells).forEach(async (cell, i) => {
+                switch(i)
+                {
+                    case 1: case 7: cell.innerHTML = (cell.children[0] as HTMLSelectElement).value; break;
+                    //case 3: break; cell.children[0].classList.add("disabled"); break;
+                    // case 8: cell.children[0].classList.add("disabled"); break;
+                    case 8: case 9: cell.innerHTML = (cell.children[0] as HTMLSelectElement).value; break;
+                    case 9: cell.children[0].setAttribute("disabled", ""); (cell.children[0] as HTMLInputElement).type = "password"; break;
+                    case 4: cell.innerHTML = (cell.children[0] as HTMLInputElement).value; break;
+                    case 5: break;
+                    case 10: resolve(void 0); break;
+                    default: 
+                    if(i != 7) cell.innerHTML = (cell.children[0] as HTMLInputElement).value; 
+                    else
+                    {
+                        let value = (cell.children[0] as HTMLInputElement).value;
+                        cell.innerHTML = value;
+                        //check if value is a mail
+                        if(!value.includes("@"))
+                        {
+                            let Users = await getUsers();
+                            if(!Users) return resolve(void 0);
+                            let user = Users.find(user => user.name == value);
+                            console.log(user);
+                            cell.innerHTML = user?.mail || "Failed";
+                        }
+                    }
+                    
+                    break;
+                }
+            });
+        })
+    };
+
+    await dostuff();
+
+    const newMon:Bildschirm = 
+    {
+        kind: "Monitor",
+        it_nr: grandparent.cells[0].innerText as any,
+        type: (grandparent.cells[1] as HTMLTableCellElement).textContent || "" as any,
+        hersteller: (grandparent.cells[2] as HTMLTableCellElement).textContent || "" as any,
+        model: (grandparent.cells[3] as HTMLTableCellElement).textContent || "" as any,
+        seriennummer: (grandparent.cells[4] as HTMLTableCellElement).textContent || "" as any,
+        standort: (grandparent.cells[6] as HTMLTableCellElement).textContent || "" as any,
+        status: (grandparent.cells[7] as HTMLTableCellElement).textContent || "" as any,
+        besitzer: (grandparent.cells[8] as HTMLTableCellElement).textContent || "" as any,
+        form: (grandparent.cells[9] as HTMLTableCellElement).textContent || "" as any
+    };
+
+    setData(newMon, {device: newMon, method: "POST", SessionID: SessionID, username: username});
 };
 
