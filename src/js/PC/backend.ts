@@ -21,48 +21,45 @@ export const getMonitors = ():Promise<Bildschirm[]> =>
         return null;
     }
 
-    request("getEntries", {method: "getEntries", SessionID: SessionID, username: username, type: "Monitor"}, async (res: {message: string, status: number}, err: {message: string, status: number}) => {
-        if(err)
-        {
-            ShowError(err.message, err.status);
-            reject(new Error(err.message));
-        }
-        console.debug(res);
-
-        const data = JSON.parse(res.message) as res_monitor[];
-        
-        data.forEach((element) => {
-            Mons.push({
-                kind: "Monitor",
-                type: element.TYPE as any,
-                hersteller: element.HERSTELLER as any,
-                model: element.MODEL as any,
-                it_nr: element.ITNR as any,
-                besitzer: element.BESITZER || "",
-                attached: element.ATTACHED,
-                seriennummer: element.SN as any,
-                status: element.STATUS as any,
-                form: element.FORM as any,
-                standort: "0" as any
-            });
-            Monitors.push({
-                kind: "Monitor",
-                type: element.TYPE as any,
-                hersteller: element.HERSTELLER as any,
-                model: element.MODEL as any,
-                attached: element.ATTACHED,
-                besitzer: element.BESITZER || "",
-                it_nr: element.ITNR as any,
-                seriennummer: element.SN as any,
-                form: element.FORM as any,
-                status: element.STATUS as any,
-                standort: "0" as any
-            });
+    let res = await request("getEntries", {method: "getEntries", SessionID: SessionID, username: username, type: "Monitor"}).catch(err => {
+        ShowError(err.message, err.status);
+        reject(err);
+    });
+    if(!res) throw new Error("No response from server");
+    console.debug(res);
+    const data = JSON.parse(res.message) as res_monitor[];
+    
+    data.forEach((element) => {
+        Mons.push({
+            kind: "Monitor",
+            type: element.TYPE as any,
+            hersteller: element.HERSTELLER as any,
+            model: element.MODEL as any,
+            it_nr: element.ITNR as any,
+            besitzer: element.BESITZER || "",
+            attached: element.ATTACHED,
+            seriennummer: element.SN as any,
+            status: element.STATUS as any,
+            form: element.FORM as any,
+            standort: "0" as any
         });
+        Monitors.push({
+            kind: "Monitor",
+            type: element.TYPE as any,
+            hersteller: element.HERSTELLER as any,
+            model: element.MODEL as any,
+            attached: element.ATTACHED,
+            besitzer: element.BESITZER || "",
+            it_nr: element.ITNR as any,
+            seriennummer: element.SN as any,
+            form: element.FORM as any,
+            status: element.STATUS as any,
+            standort: "0" as any
+        });
+    });
         console.debug(Mons);
         console.warn(Monitors);
         resolve(Mons);
-    });
     });    
 }
 
@@ -73,41 +70,35 @@ export const getData = async () =>
     const SessionID = window.sessionStorage.getItem("SessionID");
 
     if(username == null || SessionID == null) throw new Error("No SessionID or username found");
-    let res = request("getEntries", {method: "getEntries", SessionID: SessionID, username: username, type: "PC"}, (res: {message: string, status: number}, err: {message: string, status: number}) => {
-        if(err)
-        {
-            ShowError(err.message, err.status);
-            throw new Error(err.message);
-        }
-        console.debug(res);
-        
-        console.debug(res.message);
-        const data = JSON.parse(res.message) as PC_res_data[];
-        //convert the data to the pc interface
-        const pc: PC[] = [];
-        data.forEach((element) => {
-            pc.push(
-                {
-                    kind: "PC",
-                    it_nr: element.ITNR as any,
-                    type: element.TYPE as any,
-                    hersteller: element.HERSTELLER as any,
-                    besitzer: element.BESITZER || "",
-                    seriennummer: element.SN,
-                    passwort: element.PASSWORT,
-                    status: element.STATUS as any,
-                    standort: element.STANDORT,
-                    form: element.FORM as any,
-                    equipment: element.EQUIPMENT!                    
-                }
-            )
-        });
-        if(document.location.pathname.toLowerCase().includes("/pc")) ClearTable();
-        setDevices(pc);
-        //Check if the domain is the pc page
-        if(document.location.pathname.toLowerCase().includes("/pc")) pc.forEach(entry => AddRow(entry));
+    let res = await request("getEntries", {method: "getEntries", SessionID: SessionID, username: username, type: "PC"}).catch(err => {
+        ShowError(err.message, err.status);
+        throw new Error(err.message);
     });
-    
+    console.debug(res);
+    const data = JSON.parse(res.message) as PC_res_data[];
+    //convert the data to the pc interface
+    const pc: PC[] = [];
+    data.forEach((element) => {
+        pc.push(
+            {
+                kind: "PC",
+                it_nr: element.ITNR as any,
+                type: element.TYPE as any,
+                hersteller: element.HERSTELLER as any,
+                besitzer: element.BESITZER || "",
+                seriennummer: element.SN,
+                passwort: element.PASSWORT,
+                status: element.STATUS as any,
+                standort: element.STANDORT,
+                form: element.FORM as any,
+                equipment: element.EQUIPMENT!                    
+            }
+        )
+    });
+    if(document.location.pathname.toLowerCase().includes("/pc")) ClearTable();
+    setDevices(pc);
+    //Check if the domain is the pc page
+    if(document.location.pathname.toLowerCase().includes("/pc")) pc.forEach(entry => AddRow(entry));
     return res;
 }
 export const setData = async (data: Item, method: pushrequest ) =>
@@ -294,11 +285,8 @@ export const setEquipment = async (PCITNr: string, MonITNr: string[]) =>
 
     if(!username || !SessionID) throw new Error("No SessionID or username found");
 
-    request("setMonitors", {method: "setMonitors", SessionID: SessionID, username: username}, async (res: {message: string, status: number}, err: {message: string, status: number}) => {
-        getData();
-     }, {
-        PCITNr: PCITNr, MonITNr: MonITNr
-    })
+    await request("setMonitors", {method: "setMonitors", SessionID: SessionID, username: username}, {PCITNr: PCITNr, MonITNr: MonITNr});
+    getData();
 
 }
 

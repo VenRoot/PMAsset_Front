@@ -25,12 +25,13 @@ btn?.addEventListener('click', () => {
 });
 
 //Remove all childs of tbody except the first row
-export const ClearTable = () =>
+export const ClearTable = async () =>
 {
     while(tbody.childElementCount > 1)
     {
         tbody.removeChild(tbody.lastElementChild!);
     }
+    Promise.resolve();
 }
 
 
@@ -410,7 +411,7 @@ export const EditEntry = (elem: HTMLElement) =>
                 {
                     if(inp.value == "") return;
                     let Users = await getUsers();
-                    if(!Users) return;
+                    if(!Users) return console.error("Users konnten nicht geladen werden");
                     let search = inp.value;
                     console.log(Users);
                     let result = Users.filter(user => user.cn.toLowerCase().includes(search.toLowerCase()) || user.userPrincipalName?.toLowerCase()?.includes(search.toLowerCase()));
@@ -424,6 +425,7 @@ export const EditEntry = (elem: HTMLElement) =>
 }
 
 export const init = async (SearchInput: HTMLInputElement) => {
+    if(SearchInput == null) return;
     let Users = await getUsers();
     console.log("OH NO", Users);
     if(!Users) return;
