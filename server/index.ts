@@ -2,6 +2,9 @@ import https from "http2";
 import fs from "fs";
 import path from "path";
 import url from "url";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const options:https.SecureServerOptions = {
     key: fs.readFileSync(path.join(__dirname, "certs/key.pem")),

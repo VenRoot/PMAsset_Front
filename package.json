@@ -7,9 +7,10 @@
         "build": "npm run clean && tsc && ./copy.sh && npm run optimize",
         "start": "node start.js",
         "start:linux": "npm run build && node server/index.js",
-        "build:windows": "tsc && copy.cmd && npm run optimize",
+        "build:windows": "npm run clean:windows && tsc && copy.cmd && npm run optimize && echo 'DONE'",
         "start:windows": "npm run build:windows && node server/index.js",
         "clean": "rm -rf ./out",
+        "clean:windows": "rmdir .\\out\\ /s /q",
         "optimize": "tailwindcss -i ./src/css/tailwind.min.css -o ./out/css/tailwind.min.css"
     },
     "repository": {
@@ -34,6 +35,7 @@
         "tailwindcss": "^3.0.19"
     },
     "dependencies": {
+        "dotenv": "^16.0.0",
         "jquery": "^3.6.0"
     }
 }
