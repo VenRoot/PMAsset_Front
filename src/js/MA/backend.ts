@@ -3,55 +3,6 @@ import { Bildschirm, PC, Phone } from "../interface";
 import { PC_res_data, res_monitor } from "../PC/interface";
 import { res_phone } from "../phone/interface.js";
 
-interface User {
-    "name": string,
-    "mail": string,
-    "employeeNumber": string,
-    "department": string,
-    "departmentNumber": string,
-    "title": string,
-    "telephoneNumber": string,
-    "mobile": string,
-    "physicalDeliveryOfficeName": string,
-    "l": string,
-    "st": string,
-    "postalCode": string,
-    "co": string,
-    "userPrincipalName": string,
-    "cn": string
-};
-
-let Users:User[] = [];
-export const getU = (): User[] => Users;
-
-export const getUsers = async () =>
-{
-    const p1 = performance.now();
-    const username = window.sessionStorage.getItem("username");
-    const SessionID = window.sessionStorage.getItem("SessionID");
-    if(username == null || SessionID == null) throw new Error("No SessionID or username found");
-    //@ts-ignore
-    if(Users && Users.length > 0) {
-        console.log(`Cache took: `, performance.now() - p1);
-        //@ts-ignore
-        return Users;
-
-    }
-    request("getEntries", {method: "getEntries", SessionID: SessionID, username: username, type: "MA"}, (res:{message:string, status:number}, err: {message: string, status: number}) => {
-        if(err)
-        {
-            ShowError(err.message, err.status);
-            throw new Error(err.message);
-        }
-        const users = JSON.parse(res.message);
-        //@ts-ignore
-        Users = users;
-        console.log(`Request took: `, performance.now() - p1);
-        
-        return users;
-    });
-}
-
 interface rr 
 {
     pcs: PC[];
@@ -61,7 +12,7 @@ interface rr
 
 export const getData = async (mail: string):Promise<rr> =>
 {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         //return a promise with JSON type
     const p1 = performance.now();
     const username = window.sessionStorage.getItem("username");
@@ -69,27 +20,19 @@ export const getData = async (mail: string):Promise<rr> =>
 
     if(username == null || SessionID == null) throw new Error("No SessionID or username found");
     if(!mail || mail == "") throw new Error("No mail given");
-    const pc: PC[] = [];
-    const Mon: Bildschirm[] = [];
-    const Ph: Phone[] = [];
-    request("getEntries", {method: "getEntries", SessionID: SessionID, username: username, type: "ALL"}, async(res: {message: string, status: number}, err: {message: string, status: number}) => {
-        if(err)
-        {
-            ShowError(err.message, err.status);
-            return Promise.reject(new Error(err.message));
-        }
-        console.debug(res);
-        
-        console.debug(res.message);
-        const {pc, mon, ph, konf} = JSON.parse(res.message);
-        console.log(pc, mon, ph, konf);
-        console.log(`Request took: `, performance.now() - p1);
-
-        const [pcs, mons, phones] = await Promise.all([ConvToPC(pc), ConvToBS(mon, pc), ConvToPPh(ph)]);
-        let obj = {pcs, mons, phones};
-        resolve(obj);
-
-    }, {mail: mail});
+    let res = await request("getEntries", {method: "getEntries", SessionID: SessionID, username: username, type: "ALL"}, {mail: mail}).catch(err => {
+        ShowError(err.message, err.status);
+        Promise.reject(new Error(err.message));
+    });
+    if(!res) throw new Error("No response from server");
+    console.debug(res);
+    console.debug(res.message);
+    const {pc, mon, ph, konf} = JSON.parse(res.message);
+    console.log(pc, mon, ph, konf);
+    console.log(`Request took: `, performance.now() - p1);
+    const [pcs, mons, phones] = await Promise.all([ConvToPC(pc), ConvToBS(mon, pc), ConvToPPh(ph)]);
+    let obj = {pcs, mons, phones};
+    resolve(obj);
     });
     
 }

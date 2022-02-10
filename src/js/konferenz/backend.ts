@@ -11,36 +11,31 @@ export const getData = async() =>
     const SessionID = window.sessionStorage.getItem("SessionID");
 
     if(username == null || SessionID == null) throw new Error("No SessionID or username found");
-    let res = request("getEntries", {method: "getEntries", SessionID: SessionID, username: username, type: "Konferenz"}, async (res: {message: string, status: number}, err: {message: string, status: number}) =>
-    {
-        if(err)
-        {
-            ShowError(err.message, err.status);
-            throw new Error(err.message);
-        }
-        console.debug(res);
-
-        console.debug(res.message);
-        const data = JSON.parse(res.message) as res_konferenz[];
-        //convert the data to the pc interface
-        const Konfis: Konferenz[] = [];
-        data.forEach((element) => {
-            Konfis.push(
-                {
-                    kind: "Konferenz",
-                    it_nr: element.ITNR as any,
-                    hersteller: element.HERSTELLER as any,
-                    model: element.MODEL as any,  
-                    seriennummer: element.SN,
-                    standort: element.STANDORT,
-                    status: element.STATUS as any,
-                    besitzer: element.BESITZER || "",
-                    form: element.FORM as any
-                });
-        });
-        setDevices(Konfis);
-        if(document.location.pathname.toLowerCase().includes("/konferenz")) Konfis.forEach(entry => AddRow(entry));
+    let res = await request("getEntries", {method: "getEntries", SessionID: SessionID, username: username, type: "Konferenz"}).catch(err => {
+        ShowError(err.message, err.status);
+        throw new Error(err.message);
     });
+    console.debug(res);
+    console.debug(res.message);
+    const data = JSON.parse(res.message) as res_konferenz[];
+    //convert the data to the pc interface
+    const Konfis: Konferenz[] = [];
+    data.forEach((element) => {
+        Konfis.push(
+            {
+                kind: "Konferenz",
+                it_nr: element.ITNR as any,
+                hersteller: element.HERSTELLER as any,
+                model: element.MODEL as any,  
+                seriennummer: element.SN,
+                standort: element.STANDORT,
+                status: element.STATUS as any,
+                besitzer: element.BESITZER || "",
+                form: element.FORM as any
+            });
+    });
+    setDevices(Konfis);
+    if(document.location.pathname.toLowerCase().includes("/konferenz")) Konfis.forEach(entry => AddRow(entry));
     if(document.location.pathname.toLowerCase().includes("/konferenz")) ClearTable();
     return res;
 }
