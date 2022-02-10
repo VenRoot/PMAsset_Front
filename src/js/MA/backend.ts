@@ -12,7 +12,7 @@ interface rr
 
 export const getData = async (mail: string):Promise<rr> =>
 {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         //return a promise with JSON type
     const p1 = performance.now();
     const username = window.sessionStorage.getItem("username");
@@ -20,27 +20,19 @@ export const getData = async (mail: string):Promise<rr> =>
 
     if(username == null || SessionID == null) throw new Error("No SessionID or username found");
     if(!mail || mail == "") throw new Error("No mail given");
-    const pc: PC[] = [];
-    const Mon: Bildschirm[] = [];
-    const Ph: Phone[] = [];
-    request("getEntries", {method: "getEntries", SessionID: SessionID, username: username, type: "ALL"}, async(res: {message: string, status: number}, err: {message: string, status: number}) => {
-        if(err)
-        {
-            ShowError(err.message, err.status);
-            return Promise.reject(new Error(err.message));
-        }
-        console.debug(res);
-        
-        console.debug(res.message);
-        const {pc, mon, ph, konf} = JSON.parse(res.message);
-        console.log(pc, mon, ph, konf);
-        console.log(`Request took: `, performance.now() - p1);
-
-        const [pcs, mons, phones] = await Promise.all([ConvToPC(pc), ConvToBS(mon, pc), ConvToPPh(ph)]);
-        let obj = {pcs, mons, phones};
-        resolve(obj);
-
-    }, {mail: mail});
+    let res = await request("getEntries", {method: "getEntries", SessionID: SessionID, username: username, type: "ALL"}, {mail: mail}).catch(err => {
+        ShowError(err.message, err.status);
+        Promise.reject(new Error(err.message));
+    });
+    if(!res) throw new Error("No response from server");
+    console.debug(res);
+    console.debug(res.message);
+    const {pc, mon, ph, konf} = JSON.parse(res.message);
+    console.log(pc, mon, ph, konf);
+    console.log(`Request took: `, performance.now() - p1);
+    const [pcs, mons, phones] = await Promise.all([ConvToPC(pc), ConvToBS(mon, pc), ConvToPPh(ph)]);
+    let obj = {pcs, mons, phones};
+    resolve(obj);
     });
     
 }
