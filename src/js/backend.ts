@@ -50,37 +50,48 @@ export const request = (subdomain: string, auth: pullrequest, optional?: any):Pr
     
 }
 
-export const PDF = (auth: IPDF, callback: Function) =>
+export const PDF = (auth: IPDF): Promise<reqres> =>
 {
+    return new Promise(async (resolve, reject) => {
+            const xmlhttp = new XMLHttpRequest();
+            
+        //push data to the backend
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.readyState == 4)
+            {
+                    if (xmlhttp.status == 200) 
+                    {
+                        auth.file ? resolve(JSON.parse(xmlhttp.responseText)) : resolve(xmlhttp.response);
+                    }
+                    //ERROR
+                    else auth.file ? reject(xmlhttp.responseText) : reject(xmlhttp.response);
 
-    // if(auth.method == "GET") return window.open("https://localhost:5000/pdf/"+auth.ITNr+"/output.pdf", "_blank")!.focus();
+            }
+        };
+        auth.file ? xmlhttp.open(auth.method, SERVERADDR+"CustomPDF", true) : xmlhttp.open(auth.method, SERVERADDR+"pdf", true);
 
-
-    const xmlhttp = new XMLHttpRequest();
-    xmlhttp.responseType = "arraybuffer";
-    //push data to the backend
-    xmlhttp.onreadystatechange = function () {
-        if (xmlhttp.readyState == 4)
-        {
-                if (xmlhttp.status == 200) 
-                {
-                    callback(xmlhttp.response, null);
-                }
-                //ERROR
-                else callback(null, xmlhttp.response);
-        }
-    };
-    xmlhttp.open(auth.method, SERVERADDR+"pdf", true);
-
-    xmlhttp.setRequestHeader("auth", JSON.stringify({SessionID: auth.SessionID, username: auth.username}));
-    switch(auth.method)
-    {
-        case "PUT": case "POST": case "DELETE": case "GET":
+        xmlhttp.setRequestHeader("auth", JSON.stringify({SessionID: auth.SessionID, username: auth.username}));
         if(!auth.SessionID || !auth.username) throw new Error("Missing parameters");
-        xmlhttp.setRequestHeader("data", JSON.stringify({ITNr: auth.ITNr, type: "PC"}));
-        break;
-    }
-    xmlhttp.send(null);
+        switch(auth.method)
+        {
+            case "PUT": case "POST": case "DELETE": case "GET":
+            xmlhttp.setRequestHeader("data", JSON.stringify({ITNr: auth.ITNr, type: "PC", own: auth.uploadOwn || false}));
+            break;
+        }
+        if(auth.file)
+            {
+                const formData = new FormData();
+                if(!auth.file.files) throw new Error("Missing file");
+                const file = auth.file.files[0];
+                formData.append("file", file);
+                xmlhttp.setRequestHeader("Content-Size", file.size.toString());
+                xmlhttp.send(formData);
+            }
+        else xmlhttp.send();
+        // }
+    });
+
+    
 }
 
 /**
@@ -120,6 +131,7 @@ export const checkUser = async() =>
         console.error(err);
         if(err.message.toLocaleLowerCase() === "user is not logged in")
             {
+                sessionStorage.setItem("redirect", window.location.href);
                 alert("Key und Username ungültig! Bitte melden Sie sich erneut an!");
                 window.location.href = "/login.html";
                 return false;

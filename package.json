@@ -6,7 +6,7 @@
         "build:linux.old": "tsc && cp -r ./src/* ./out/ ",
         "build": "npm run clean && tsc && ./copy.sh && npm run optimize",
         "start": "node start.js",
-        "start:linux": "npm run build && node server/index.js",
+        "start:linux": "npm run build && node server/index.js --max-http-header-size=2000000",
         "build:windows": "npm run clean:windows && tsc && copy.cmd && npm run optimize && echo 'DONE'",
         "start:windows": "npm run build:windows && node server/index.js",
         "clean": "rm -rf ./out",
