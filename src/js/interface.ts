@@ -109,4 +109,6 @@ export interface IPDF
     SessionID?: string;
     username?: string;
     ITNr: string;
+    uploadOwn?: boolean;
+    file?: HTMLInputElement;
 }
