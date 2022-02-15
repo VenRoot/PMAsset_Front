@@ -1,4 +1,5 @@
 import {ClearTable, enableBtn, foc, getInputValues, ResetFields, tbody} from "../anim.js";
+import { PDF } from "../backend.js";
 import {Bildschirm, Item, PC} from "../interface";
 import { generatePDF, getData, getMonitors, getPDF, rewritePDF, setData, setEquipment } from "./backend.js";
 
@@ -362,8 +363,8 @@ export const SearchDevice = async(it_nr: string) =>
                     let options:{option:string, func: string}[] = [];
                     switch(values.form)
                     {
-                        case "Ja": options = [{option: "Anzeigen", func: "PDFAnzeigen"}, {option: "Neu erstellen", func: "PDFNeuGenerieren"}, {option: "Entfernen", func: "PDFEntfernen"}]; break;
-                        case "Nein": options = [{option: "Hinzufügen", func: "PDFHinzufuegen"}]; break;
+                        case "Ja": options = [{option: "Anzeigen", func: "PDFAnzeigen"}, {option: "Neu erstellen", func: "PDFNeuGenerieren"}, {option: "Entfernen", func: "PDFEntfernen"}, {option: "Mit lokaler PDF überschreiben", func: "AddCustomPDF"}]; break;
+                        case "Nein": options = [{option: "Hinzufügen", func: "PDFHinzufuegen"}, {option: "Bereits vorhandene PDF bereitstellen", func: "AddCustomPDF"}]; break;
                     }
                     options.forEach(option =>
                         {
@@ -480,6 +481,41 @@ export const PDFHinzufuegen = (ITNr: string) =>
     generatePDF(device.it_nr);
     //Update the database
     setData(device, {device: device, method: "POST", username: username, SessionID: key});
+}
+
+export const AddCustomPDF = (ITNr: string) => {
+    const username = sessionStorage.getItem("username");
+    const key = sessionStorage.getItem("SessionID");
+    if(!username || !key) return alert("Bitte loggen Sie sich erneut ein!");
+    if(!confirm("PDF lokal hochladen? ⚠️ES WIRD KEIN VALUE-CHECK VORGENOMMEN\n(DIE TABELLENDATEN KÖNNTEN VOM PDF-INHALT ABWEICHEN)")) return;
+    const device = devices.find(device => device.it_nr == ITNr);
+    if(!device) return;
+
+    //Select a pdf file from the computer
+    const file = document.createElement("input");
+    file.type = "file";
+    file.accept = ".pdf";
+    file.click();
+    file.addEventListener("change", async () => {
+        if(!file || file.files == null || file.files[0] == null) return;
+        const f = file.files[0];
+        if(!f) return;
+        const reader = new FileReader();
+        reader.readAsBinaryString(f);
+        reader.addEventListener("load", async () => {
+
+            device.form = "Ja";
+            UpdateTable(device);
+            setData(device, {device: device, method: "POST", username: username, SessionID: key});
+            let res = await PDF({ITNr: ITNr, method: "POST", SessionID: key, username: username, uploadOwn: true, file: file});
+
+            if(res.status == 200) alert("PDF hochgeladen!");
+            else alert("Fehler beim Hochladen der PDF!");
+        });
+    });
+
+
+    
 }
 
 export const PDFEntfernen = (ITNr: string) =>
