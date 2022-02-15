@@ -1,0 +1,1 @@
+export const SERVERADDR = navigator.appVersion.indexOf("Win")!=-1 ? "https://localhost:5000/" : "https://azrweunodejs01:5000/";
