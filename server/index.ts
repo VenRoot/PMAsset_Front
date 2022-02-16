@@ -4,6 +4,11 @@ import path from "path";
 import url from "url";
 import dotenv from "dotenv";
 
+//Check the current directory, make sure it's the server directory
+if(!process.cwd().includes("server"))
+{
+    process.chdir(path.join(process.cwd(), "server"));
+}
 dotenv.config();
 
 const options:https.SecureServerOptions = {
