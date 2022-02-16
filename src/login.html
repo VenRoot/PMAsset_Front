@@ -25,32 +25,35 @@
         
     </textarea>
     <!-- component -->
-<div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col">
-  <!-- Make a headline with a smaller headline underneath it -->
-  <h1 class="text-black text-xl">Azure Login</h1>
-  <h2 class="text-gray-600 text-xs">Melden Sie sich mit Ihren Microsoft Daten an</h2> <br> <br>
+  <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col">
+    <!-- Make a headline with a smaller headline underneath it -->
+    <h1 class="text-black text-xl">Azure Login</h1>
+    <h2 class="text-gray-600 text-xs">Melden Sie sich mit Ihren Microsoft Daten an</h2> <br> <br>
 
-    <div class="mb-4">
-      <label class="block text-grey-darker text-sm font-bold mb-2" for="username">
-        Username
-      </label>
-      <input class="shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker" id="username" onkeydown="if(event.keyCode == 13) login.login(document.getElementById('username').value, document.getElementById('password').value);" type="text" placeholder="Vorname.Nachname">
-    </div>
-    <div class="mb-6">
-      <label class="block text-grey-darker text-sm font-bold mb-2" for="password">
-        Password
-      </label>
-      <input class="shadow appearance-none border border-red rounded w-full py-2 px-3 text-grey-darker mb-3" onkeydown="if(event.keyCode == 13) login.login(document.getElementById('username').value, document.getElementById('password').value);" id="password" type="password" placeholder="******************">
-      <p class="text-red text-xs italic">Bitte geben Sie ein Passwort ein</p>
-    </div>
-    <div class="flex items-center justify-between">
-      <button class="bg-blue hover:bg-blue-dark text-black font-bold py-2 px-4 rounded" type="button" onclick="login.login(document.getElementById('username').value, document.getElementById('password').value);">
-        Anmelden
-      </button>
-      <!-- <a class="inline-block align-baseline font-bold text-sm text-blue hover:text-blue-darker" href="#">
-        Forgot Password?
-      </a> -->
-    </div>
-</div>
+      <div class="mb-4">
+        <label class="block text-grey-darker text-sm font-bold mb-2" for="username">
+          Username
+        </label>
+        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker" id="username" onkeydown="if(event.keyCode == 13) login.login(document.getElementById('username').value, document.getElementById('password').value);" type="text" placeholder="Vorname.Nachname">
+      </div>
+      <div class="mb-6">
+        <label class="block text-grey-darker text-sm font-bold mb-2" for="password">
+          Password
+        </label>
+        <input class="shadow appearance-none border border-red rounded w-full py-2 px-3 text-grey-darker mb-3" onkeydown="if(event.keyCode == 13) login.login(document.getElementById('username').value, document.getElementById('password').value);" id="password" type="password" placeholder="******************">
+        <p class="text-red text-xs italic">Bitte geben Sie ein Passwort ein</p>
+      </div>
+      <div class="flex items-center justify-between">
+        <button class="bg-blue hover:bg-blue-dark text-black font-bold py-2 px-4 rounded" type="button" onclick="login.login(document.getElementById('username').value, document.getElementById('password').value);">
+          Anmelden
+        </button>
+        <!-- <a class="inline-block align-baseline font-bold text-sm text-blue hover:text-blue-darker" href="#">
+          Forgot Password?
+        </a> -->
+      </div>
+  </div>
+  <div id="toasts">
+
+  </div>
 </body>
 </html>
