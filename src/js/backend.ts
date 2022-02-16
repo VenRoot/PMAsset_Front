@@ -1,4 +1,5 @@
 import { IPDF, pullrequest, pushrequest, response, User } from "./interface";
+import { makeToast } from "./toast.js";
 import {SERVERADDR} from "./vars.js";
 
 
@@ -14,9 +15,9 @@ export const request = (subdomain: string, auth: pullrequest, optional?: any):Pr
         xmlhttp.onreadystatechange = () => {
             if (xmlhttp.readyState == 4)
             {            
-                if (xmlhttp.status >= 200 && xmlhttp.status < 300) resolve(JSON.parse(xmlhttp.responseText));
+                if (xmlhttp.status >= 200 && xmlhttp.status < 300) resolve(tryParseJSON(xmlhttp.responseText));
                 //ERROR
-                else reject(JSON.parse(xmlhttp.responseText));
+                else reject(tryParseJSON(xmlhttp.responseText));
             }
         };
         console.debug(SERVERADDR+subdomain);
@@ -50,6 +51,15 @@ export const request = (subdomain: string, auth: pullrequest, optional?: any):Pr
     
 }
 
+export const tryParseJSON = (jsonString: string) =>
+{
+    try {
+        return JSON.parse(jsonString);
+    } catch(e) {
+        return jsonString;
+    }
+}
+
 export const PDF = (auth: IPDF): Promise<reqres> =>
 {
     return new Promise(async (resolve, reject) => {
@@ -61,10 +71,14 @@ export const PDF = (auth: IPDF): Promise<reqres> =>
             {
                     if (xmlhttp.status == 200) 
                     {
-                        auth.file ? resolve(JSON.parse(xmlhttp.responseText)) : resolve(xmlhttp.response);
+                        auth.file ? resolve(tryParseJSON(xmlhttp.responseText)) : resolve(tryParseJSON(xmlhttp.response));
+                        if(auth.method == "GET")
+                        {
+                            return new Blob([xmlhttp.response], {type: "application/pdf"});
+                        }
                     }
                     //ERROR
-                    else auth.file ? reject(xmlhttp.responseText) : reject(xmlhttp.response);
+                    else auth.file ? reject({resText: tryParseJSON(xmlhttp.responseText), status: xmlhttp.status, message: xmlhttp.statusText}) : reject({resText: tryParseJSON(xmlhttp.responseText), status: xmlhttp.status, message: xmlhttp.statusText});
 
             }
         };
@@ -74,7 +88,10 @@ export const PDF = (auth: IPDF): Promise<reqres> =>
         if(!auth.SessionID || !auth.username) throw new Error("Missing parameters");
         switch(auth.method)
         {
-            case "PUT": case "POST": case "DELETE": case "GET":
+            case "GET":
+            xmlhttp.responseType = "blob";
+
+            case "PUT": case "POST": case "DELETE":
             xmlhttp.setRequestHeader("data", JSON.stringify({ITNr: auth.ITNr, type: "PC", own: auth.uploadOwn || false}));
             break;
         }
@@ -100,30 +117,32 @@ export const PDF = (auth: IPDF): Promise<reqres> =>
  * @param auth 
  * @param callback 
  */
-export const insertRequest = (subdomain: string, auth: pushrequest, callback: Function) =>
+export const insertRequest = (subdomain: string, auth: pushrequest): Promise<{message: string, code: number}> =>
 {
-    const xmlhttp = new XMLHttpRequest();
-    //push data to the backend
-    xmlhttp.onreadystatechange = function () {
-        if (xmlhttp.readyState == 4)
-        {
-            if (xmlhttp.status >= 200 && xmlhttp.status < 300) callback(JSON.parse(xmlhttp.responseText), null);
-            //ERROR
-            else callback(null, JSON.parse(xmlhttp.responseText));
-        }
-    };
-    xmlhttp.open(auth.method, SERVERADDR+subdomain, true);
+    return new Promise((resolve, reject) => {
+        const xmlhttp = new XMLHttpRequest();
+        //push data to the backend
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.readyState == 4)
+            {
+                if (xmlhttp.status >= 200 && xmlhttp.status < 300) resolve(tryParseJSON(xmlhttp.responseText));
+                //ERROR
+                else reject({status: xmlhttp.status, message: xmlhttp.statusText});
+            }
+        };
+        xmlhttp.open(auth.method, SERVERADDR+subdomain, true);
 
-    xmlhttp.setRequestHeader("auth", JSON.stringify({SessionID: auth.SessionID, username: auth.username}));
-    switch(auth.method)
-    {
-        case "PUT": case "POST": case "DELETE": 
-        if(!auth.SessionID || !auth.username) throw new Error("Missing parameters");
-        xmlhttp.setRequestHeader("device", JSON.stringify(auth.device));
-        break;
-        default: xmlhttp.abort();
-    }
-    xmlhttp.send(null);
+        xmlhttp.setRequestHeader("auth", JSON.stringify({SessionID: auth.SessionID, username: auth.username}));
+        switch(auth.method)
+        {
+            case "PUT": case "POST": case "DELETE": 
+            if(!auth.SessionID || !auth.username) reject({message: "Missing parameters", code: 400});
+            xmlhttp.setRequestHeader("device", JSON.stringify(auth.device));
+            break;
+            default: xmlhttp.abort(); reject({status: 400, message: "Invalid method"});
+        }
+        xmlhttp.send(null);
+    });
 }
 export const checkUser = async() =>
 {
@@ -169,7 +188,7 @@ export const getUsers = async () =>
         if(err) return ShowError(err.message, err.status);
     });
     if(!x) return;
-    const users = JSON.parse(x.message);
+    const users = tryParseJSON(x.message);
     Users = users;
     console.log(`Cache took: `, performance.now() - p1);
     return users as unknown as User[];
@@ -194,7 +213,7 @@ export const getKey = async () =>
 
 export const ShowError = (message: string, code: number = -1) =>
 {
-    alert(`Es ist folgender Fehler mit dem Code ${code} aufgetreten: \n\n${message}`)
+    makeToast(`Es ist folgender Fehler mit dem Code ${code} aufgetreten: \n\n${message}`, "error");
 }
 
 export const getEntries = async (auth: {SessionID: string, username: string}) =>
@@ -202,11 +221,12 @@ export const getEntries = async (auth: {SessionID: string, username: string}) =>
     const res = await request("getEntries", {method: "getEntries", SessionID: auth.SessionID, username: auth.username}).catch(err => Promise.reject(err));
     try
     {
-        let result = JSON.parse(res.message) as response[];
-        result.forEach(e => console.debug(JSON.parse(e.DATA)));
+        let result = tryParseJSON(res.message) as response[];
+        result.forEach(e => console.debug(tryParseJSON(e.DATA)));
     }
     catch(e)
     {
+        ShowError(res.message, res.status);
         throw new Error(res.message);
     }
 };

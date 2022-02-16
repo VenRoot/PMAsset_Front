@@ -1,7 +1,7 @@
 import { getData } from "./backend.js";
 import {autocomplete} from "./ac.js";
 import { Item } from "../interface.js";
-import { getUsers } from "../backend.js";
+import { getUsers, tryParseJSON } from "../backend.js";
 export const SearchInput = document.getElementById("SearchInput") as HTMLInputElement;
 export const ResPC = document.getElementById("ResPC") as HTMLLabelElement;
 export const ResBildschirm = document.getElementById("ResBildschirm") as HTMLLabelElement;
@@ -114,8 +114,6 @@ const init = async () => {
     let cn = Users.map(user => user.cn);
     mail.push(...cn);
     mail = mail.filter(x => x);
-    console.log("Init Autocomplete");
-    console.table(mail);
     autocomplete(SearchInput, mail);
 };
 
@@ -144,7 +142,7 @@ const fillTable = async (device: Item, table: HTMLTableElement) => {
             if(attr[i] == "equipment")
             {
                 //@ts-ignore
-                cell.innerHTML = JSON.parse(device.equipment).join("<br>");
+                cell.innerHTML = tryParseJSON(device.equipment).join("<br>");
                 continue;
             }
 
