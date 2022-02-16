@@ -1,7 +1,9 @@
 import {ClearTable, enableBtn, foc, getInputValues, ResetFields, tbody} from "../anim.js";
 import { PDF } from "../backend.js";
 import {Bildschirm, Item, PC} from "../interface";
+import { makeToast } from "../toast.js";
 import { generatePDF, getData, getMonitors, getPDF, rewritePDF, setData, setEquipment } from "./backend.js";
+import { tryParseJSON } from "../backend.js";
 
 const genPasswd = (length: number) =>
 {
@@ -50,12 +52,12 @@ export const getDevice = (it_nr: string) =>
     return devices.filter(device => device.it_nr.includes(it_nr));
 }
 
-export const SearchDevice = async(it_nr: string) =>
+export const SearchDevice =(it_nr: string) =>
  {
-    const devs = await getDevice(it_nr);
+    const devs = getDevice(it_nr.toLocaleUpperCase());
     console.debug(devs);
     ClearTable();
-     devs.forEach(device => AddRow(device));
+    devs.forEach(device => AddRow(device));
  }
 
  const MakeTemplate = async (values: PC): Promise<HTMLTableRowElement> =>
@@ -299,7 +301,7 @@ export const SearchDevice = async(it_nr: string) =>
 
     if(!values.equipment) values.equipment = [];
     //@ts-ignore
-    if(typeof values.equipment == "string") values.equipment = JSON.parse(values.equipment);
+    if(typeof values.equipment == "string") values.equipment = tryParseJSON(values.equipment);
     console.debug(values);
     const newRow = await MakeTemplate(values);
 
@@ -363,7 +365,7 @@ export const SearchDevice = async(it_nr: string) =>
                     let options:{option:string, func: string}[] = [];
                     switch(values.form)
                     {
-                        case "Ja": options = [{option: "Anzeigen", func: "PDFAnzeigen"}, {option: "Neu erstellen", func: "PDFNeuGenerieren"}, {option: "Entfernen", func: "PDFEntfernen"}, {option: "Mit lokaler PDF überschreiben", func: "AddCustomPDF"}]; break;
+                        case "Ja": options = [{option: "Anzeigen", func: "PDFAnzeigen"}, {option: "Neu erstellen", func: "F"}, {option: "Entfernen", func: "PDFEntfernen"}, {option: "Mit lokaler PDF überschreiben", func: "AddCustomPDF"}]; break;
                         case "Nein": options = [{option: "Hinzufügen", func: "PDFHinzufuegen"}, {option: "Bereits vorhandene PDF bereitstellen", func: "AddCustomPDF"}]; break;
                     }
                     options.forEach(option =>
@@ -463,7 +465,7 @@ export const PDFAnzeigen = (ITNr: string) =>
     getPDF(ITNr);
 }
 
-export const PDFHinzufuegen = (ITNr: string) =>
+export const PDFHinzufuegen = async (ITNr: string) =>
 {
     const username = sessionStorage.getItem("username");
     const key = sessionStorage.getItem("SessionID");
@@ -478,7 +480,9 @@ export const PDFHinzufuegen = (ITNr: string) =>
     UpdateTable(device);
 
     //Generate the PDF
-    generatePDF(device.it_nr);
+    let res = await generatePDF(device.it_nr);
+    if(res.status != 200) return makeToast("Fehler beim Generieren der PDF", "error");
+    makeToast("PDF erfolgreich generiert", "success");
     //Update the database
     setData(device, {device: device, method: "POST", username: username, SessionID: key});
 }
@@ -509,8 +513,8 @@ export const AddCustomPDF = (ITNr: string) => {
             setData(device, {device: device, method: "POST", username: username, SessionID: key});
             let res = await PDF({ITNr: ITNr, method: "POST", SessionID: key, username: username, uploadOwn: true, file: file});
 
-            if(res.status == 200) alert("PDF hochgeladen!");
-            else alert("Fehler beim Hochladen der PDF!");
+            if(res.status == 200) makeToast("PDF hochgeladen!", "success");
+            else makeToast("Fehler beim Hochladen der PDF!", "error");
         });
     });
 
@@ -550,11 +554,11 @@ export const PDFNeuGenerieren = (ITNr: string) =>
     //Update the database
     rewritePDF(device.it_nr, (message: string, status: number) => {
         if(status == 200) {
-            alert("PDF wurde neu generiert!");
+            makeToast("PDF wurde neu generiert!", "success");
             //Update the table
             UpdateTable(device);
         }
-        else alert(message);
+        else makeToast(message, "error");
     });
 }
 

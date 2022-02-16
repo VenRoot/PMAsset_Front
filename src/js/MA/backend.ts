@@ -1,4 +1,4 @@
-import { request, ShowError } from "../backend.js";
+import { request, ShowError, tryParseJSON } from "../backend.js";
 import { Bildschirm, PC, Phone } from "../interface";
 import { PC_res_data, res_monitor } from "../PC/interface";
 import { res_phone } from "../phone/interface.js";
@@ -27,7 +27,7 @@ export const getData = async (mail: string):Promise<rr> =>
     if(!res) throw new Error("No response from server");
     console.debug(res);
     console.debug(res.message);
-    const {pc, mon, ph, konf} = JSON.parse(res.message);
+    const {pc, mon, ph, konf} = tryParseJSON(res.message);
     console.log(pc, mon, ph, konf);
     console.log(`Request took: `, performance.now() - p1);
     const [pcs, mons, phones] = await Promise.all([ConvToPC(pc), ConvToBS(mon, pc), ConvToPPh(ph)]);
