@@ -184,27 +184,33 @@ export const createPDF = async (ITNr: string) =>
     });
 }
 
-export const rewritePDF = async (ITNr: string, callback?: Function) =>
+export const rewritePDF = async (ITNr: string):Promise<{message: string, status: number}> =>
 {
-    const username = window.sessionStorage.getItem("username");
-    const SessionID = window.sessionStorage.getItem("SessionID");
-    if(username == null || SessionID == null) return makeToast("No SessionID or username found", "error");
-    const res = await PDF({method: "POST", SessionID: SessionID, username: username, ITNr: ITNr}).catch(err => {
-        return ShowError(err.message, err.status);
-    });
-        if(callback) callback(res);
+    return new Promise(async (resolve, reject) => {
+        const username = window.sessionStorage.getItem("username");
+        const SessionID = window.sessionStorage.getItem("SessionID");
+        if(username == null || SessionID == null) { makeToast("No SessionID or username found", "error"); return reject("No SessionID or username found"); } 
+        const res = await PDF({method: "POST", SessionID: SessionID, username: username, ITNr: ITNr}).catch(err => {
+            return ShowError(err.message, err.status);
+        });
+        if(!res) { makeToast("Fehler beim erstellen der PDF", "error"); return reject()}
+        resolve({message: res.message, status: res.status});
+    })   
 }
 
-export const deletePDF = async (ITNr: string, callback?: Function) =>
+export const deletePDF = async (ITNr: string) =>
 {
-    const username = window.sessionStorage.getItem("username");
-    const SessionID = window.sessionStorage.getItem("SessionID");
-    if(username == null || SessionID == null) return makeToast("No SessionID or username found", "error");
-    const res = await PDF({method: "DELETE", SessionID: SessionID, username: username, ITNr: ITNr}).catch(err => {
-        ShowError(err.message, err.status);
-        return alert(err.message);
-    });
-        if(callback) callback(res);
+    return new Promise(async (resolve, reject) => {
+        const username = window.sessionStorage.getItem("username");
+        const SessionID = window.sessionStorage.getItem("SessionID");
+        if(username == null || SessionID == null) return makeToast("No SessionID or username found", "error");
+        const res = await PDF({method: "DELETE", SessionID: SessionID, username: username, ITNr: ITNr}).catch(err => {
+            ShowError(err.message, err.status);
+            return;
+        });
+        if(!res) return makeToast("Fehler beim löschen der PDF", "error");
+        makeToast("PDF erfolgreich gelöscht", "success");
+    })
 }
 
 export const getPDF = async (ITNr: string) =>
