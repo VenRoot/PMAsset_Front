@@ -448,7 +448,6 @@ export const init = async (SearchInput: HTMLInputElement) => {
     mail.push(...cn);
     mail = mail.filter(x => x);
     console.log("Init Autocomplete");
-    console.table(mail);
     autocomplete(SearchInput, mail);
 };
 

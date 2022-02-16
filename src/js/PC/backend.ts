@@ -1,6 +1,7 @@
 import { ClearTable } from "../anim.js";
-import {insertRequest, request, ShowError, PDF} from "../backend.js";
+import {insertRequest, request, ShowError, PDF, tryParseJSON} from "../backend.js";
 import { Item, PC, Bildschirm, pushrequest } from "../interface";
+import { makeToast } from "../toast.js";
 import { AddRow, devices, GetMonitors, setDevices } from "./anim.js";
 import { PC_res_data, res_monitor } from "./interface.js";
 export const Monitors:Bildschirm[] = [];
@@ -27,7 +28,7 @@ export const getMonitors = ():Promise<Bildschirm[]> =>
     });
     if(!res) throw new Error("No response from server");
     console.debug(res);
-    const data = JSON.parse(res.message) as res_monitor[];
+    const data = tryParseJSON(res.message) as res_monitor[];
     
     data.forEach((element) => {
         Mons.push({
@@ -75,7 +76,7 @@ export const getData = async () =>
         throw new Error(err.message);
     });
     console.debug(res);
-    const data = JSON.parse(res.message) as PC_res_data[];
+    const data = tryParseJSON(res.message) as PC_res_data[];
     //convert the data to the pc interface
     const pc: PC[] = [];
     data.forEach((element) => {
@@ -103,34 +104,33 @@ export const getData = async () =>
 }
 export const setData = async (data: Item, method: pushrequest ) =>
 {
-    const username = window.sessionStorage.getItem("username");
-    const SessionID = window.sessionStorage.getItem("SessionID");
+    return new Promise(async (resolve, reject) => {
 
-    if(username == null || SessionID == null) throw new Error("No SessionID or username found");
-    if(data.kind == "PC")
-    {
-        insertRequest("setData", {method: method.method, SessionID: SessionID, username: username, device: {
-            kind: "PC",
-            hersteller: data.hersteller,
-            it_nr: data.it_nr,
-            type: data.type,
-            seriennummer: data.seriennummer,
-            equipment: data.equipment,
-            standort: data.standort,
-            status: data.status,
-            besitzer: data.besitzer || "",
-            form: data.form || "",
-            passwort: data.passwort || "",
-        }}, (res: {message: string, status: number}, err: {message: string, status: number}) => {
-            if(err)
-            {
+        const username = window.sessionStorage.getItem("username");
+        const SessionID = window.sessionStorage.getItem("SessionID");
+
+        if(username == null || SessionID == null) return reject(new Error("No SessionID or username found"));
+        if(data.kind == "PC")
+        {
+            let res = await insertRequest("setData", {method: method.method, SessionID: SessionID, username: username, device: {
+                kind: "PC",
+                hersteller: data.hersteller,
+                it_nr: data.it_nr,
+                type: data.type,
+                seriennummer: data.seriennummer,
+                equipment: data.equipment,
+                standort: data.standort,
+                status: data.status,
+                besitzer: data.besitzer || "",
+                form: data.form || "",
+                passwort: data.passwort || "",
+            }}).catch((err: {message: string, status: number}) => {
                 ShowError(err.message, err.status);
-                throw new Error(err.message);
-            }
-            console.log(res);
-            return res;
-        });
-    }
+                reject();
+            });
+                resolve(res);
+        }        
+    })
 }
 
 
@@ -145,8 +145,8 @@ export const UploadPDF = async (ITNr: string): Promise<{message: string, status:
             return reject(err.message);
         });
             console.log(res);
-            resolve(res as any);
-        });
+            resolve(tryParseJSON(res as any));
+    });
 }
 
 export const generatePDF = (ITNr: string): Promise<{message: string, status: number, pdf: string}> =>
@@ -156,56 +156,42 @@ export const generatePDF = (ITNr: string): Promise<{message: string, status: num
         const SessionID = window.sessionStorage.getItem("SessionID");
         if(username == null || SessionID == null) return reject("No SessionID or username found");
         const res = await PDF({method: "PUT", SessionID: SessionID, username: username, ITNr: ITNr}).catch(err => {
-            ShowError(err.message, err.status);
-            return reject(err.message);
+            if(err)
+            {
+                ShowError(err.message, err.status);
+                return reject(err.message);
+            }
+            
         });
             console.log(res);
-            resolve(res as any);
+            resolve(tryParseJSON(res as any));
     });
-}    
-
-// export const doPDF = async (ITNr: string) =>
-// {
-//     let x = await generatePDF(ITNr);
-//     download(x.pdf, ITNr, "pdf");
-
-// }
-
-
-
-// export const getPDF = (ITNr: string) =>
-// {
-//     if(devices.filter(entry => entry.it_nr == ITNr)[0].form == "Nein") return alert("Keine PDF vorhanden. Bitte erstellen Sie diese");
-    
-//     window!.open(`https://localhost:5000/pdf/${ITNr}/output.pdf`, '_blank')!.focus();
-
-// }
+}
 
 export const createPDF = async (ITNr: string) =>
 {
-    if(devices.filter(entry => entry.it_nr == ITNr)[0].form == "Ja") return alert("PDF bereits vorhanden. Bitte löschen Sie diese");
-    const username = window.sessionStorage.getItem("username");
-    const SessionID = window.sessionStorage.getItem("SessionID");
-    if(username == null || SessionID == null) return alert("No SessionID or username found");
-    const res = await PDF({method: "PUT", SessionID: SessionID, username: username, ITNr: ITNr}).catch(err => {
-            ShowError(err.message, err.status);
-            return alert(err.message);
+    return new Promise(async (resolve, reject) => {
+        if(devices.filter(entry => entry.it_nr == ITNr)[0].form == "Ja") return reject("PDF bereits vorhanden. Bitte löschen Sie diese");
+        const username = window.sessionStorage.getItem("username");
+        const SessionID = window.sessionStorage.getItem("SessionID");
+        if(username == null || SessionID == null) return reject("No SessionID or username found");
+        const res = await PDF({method: "PUT", SessionID: SessionID, username: username, ITNr: ITNr}).catch(err => {
+                ShowError(err.message, err.status);
+                return reject(err.message);
+        });
+        if(!res) return reject("Fehler beim erstellen der PDF");
+        resolve(res.message);
     });
-    if(!res) return alert("Fehler beim erstellen der PDF");
-        console.log(res);
-        alert(res.message);
 }
 
 export const rewritePDF = async (ITNr: string, callback?: Function) =>
 {
     const username = window.sessionStorage.getItem("username");
     const SessionID = window.sessionStorage.getItem("SessionID");
-    if(username == null || SessionID == null) return alert("No SessionID or username found");
+    if(username == null || SessionID == null) return makeToast("No SessionID or username found", "error");
     const res = await PDF({method: "POST", SessionID: SessionID, username: username, ITNr: ITNr}).catch(err => {
-        ShowError(err.message, err.status);
-        return alert(err.message);
+        return ShowError(err.message, err.status);
     });
-        console.log(res);
         if(callback) callback(res);
 }
 
@@ -213,31 +199,31 @@ export const deletePDF = async (ITNr: string, callback?: Function) =>
 {
     const username = window.sessionStorage.getItem("username");
     const SessionID = window.sessionStorage.getItem("SessionID");
-    if(username == null || SessionID == null) return alert("No SessionID or username found");
+    if(username == null || SessionID == null) return makeToast("No SessionID or username found", "error");
     const res = await PDF({method: "DELETE", SessionID: SessionID, username: username, ITNr: ITNr}).catch(err => {
         ShowError(err.message, err.status);
         return alert(err.message);
     });
-        console.log(res);
         if(callback) callback(res);
 }
 
 export const getPDF = async (ITNr: string) =>
 {
-    console.log(ITNr);
     const username = window.sessionStorage.getItem("username");
     const SessionID = window.sessionStorage.getItem("SessionID");
-    if(username == null || SessionID == null) throw new Error("No SessionID or username found");
+    if(username == null || SessionID == null) return makeToast("No SessionID or username found", "error");
     if(devices.find(entry => entry.it_nr == ITNr)?.form == "Nein") return alert("Keine PDF vorhanden. Bitte erstellen Sie diese");
-    const res = await PDF({method: "GET", SessionID: SessionID, username: username, ITNr: ITNr}).catch(err => {
+    const res = await PDF({method: "GET", SessionID: SessionID, username: username, ITNr: ITNr}).catch((err: {resText: object | string, status: number, message: string}) => {
         ShowError(err.message, err.status);
         throw new Error(err.message);
-    }) as unknown as Uint8Array;
-        //@ts-ignore
-        saveByteArray([res], ITNr + ".pdf");
-        console.log(res);
-        //window!.open(res.pdf, '_blank')!.focus();
-        return res;
+    }) as unknown as Blob;
+
+    const url = window.URL.createObjectURL(res);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${ITNr}.pdf`;
+    a.click();
+    return res;
 }
 
 const hex2a = (hexx:string) => {
@@ -247,54 +233,19 @@ const hex2a = (hexx:string) => {
         str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
     return str;
 }
-hex2a('32343630'); // returns '2460'
-
-const saveByteArray = (function () {
-    let a = document.createElement("a");
-    document.body.appendChild(a);
-    a.style.display = "none";
-    return function (data:any, name:any) {
-        var blob = new Blob(data, {type: "octet/stream"}),
-            url = window.URL.createObjectURL(blob);
-        a.href = url;
-        a.download = name;
-        a.click();
-        window.URL.revokeObjectURL(url);
-    };
-}());
-
-
-// // Function to download data to a file
-// const download = (data:any, filename:string, type:string) => {
-//     var file = new Blob([data], {type: type});
-//         var a = document.createElement("a"),
-//                 url = URL.createObjectURL(file);
-//         a.href = url;
-//         a.download = filename;
-//         document.body.appendChild(a);
-//         a.click();
-//         setTimeout(function() {
-//             document.body.removeChild(a);
-//             window.URL.revokeObjectURL(url);  
-//         }, 0);
-// }
-
-export const setEquipment = async (PCITNr: string, MonITNr: string[]) =>
+export const setEquipment = (PCITNr: string, MonITNr: string[]) =>
 {
-    const username = window.sessionStorage.getItem("username");
-    const SessionID = window.sessionStorage.getItem("SessionID");
+    return new Promise(async (resolve, reject) => {
+        const username = window.sessionStorage.getItem("username");
+        const SessionID = window.sessionStorage.getItem("SessionID");
 
-    if(!username || !SessionID) throw new Error("No SessionID or username found");
+        if(!username || !SessionID) return reject("No SessionID or username found");
 
-    await request("setMonitors", {method: "setMonitors", SessionID: SessionID, username: username}, {PCITNr: PCITNr, MonITNr: MonITNr});
-    getData();
+        let res = await request("setMonitors", {method: "setMonitors", SessionID: SessionID, username: username}, {PCITNr: PCITNr, MonITNr: MonITNr});
+        if(res.status != 200) return reject(res.message);
+        getData();
+        resolve(true);
+    });
 
 }
-
-
-export const refreshPCs = async () =>
-{
-    
-}
-
 

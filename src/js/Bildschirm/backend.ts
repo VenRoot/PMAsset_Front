@@ -1,11 +1,12 @@
 import { ClearTable } from "../anim.js";
-import { insertRequest, request, ShowError } from "../backend.js";
+import { insertRequest, request, ShowError, tryParseJSON } from "../backend.js";
 import { Bildschirm, PC, pushrequest } from "../interface";
 import { AddRow, setDevices } from "./anim.js";
 import { res_monitor } from "./interface";
 import {devices as _PCDevices} from "../PC/anim.js";
 import { PC_res_data } from "../PC/interface.js";
 import { getData as getPCData } from "../PC/backend.js";
+import { makeToast } from "../toast.js";
 
 export const PCDevices = _PCDevices;
 
@@ -21,7 +22,7 @@ export const getData = async() =>
     });
     console.debug(res);
     console.debug(res.message);
-    const data = JSON.parse(res.message) as res_monitor[];
+    const data = tryParseJSON(res.message) as res_monitor[];
     //convert the data to the pc interface
     const Monitors: Bildschirm[] = [];
     let PCs = await getPCs();
@@ -59,12 +60,10 @@ export const checkVerknüpfung = async (it_nr: string) => PCDevices.filter(entry
 
 export const setData = async (data: Bildschirm, method: pushrequest) =>
 {
-    console.log("J");
-    
     const username = window.sessionStorage.getItem("username");
     const SessionID = window.sessionStorage.getItem("SessionID");
-    if(username == null || SessionID == null) throw new Error("No SessionID or username found");
-    insertRequest("setData", {method: method.method, SessionID: SessionID, username: username, device: {
+    if(username == null || SessionID == null) return ShowError("No SessionID or username found", 400);
+    let res = await insertRequest("setData", {method: method.method, SessionID: SessionID, username: username, device: {
         kind: "Monitor",
         hersteller: data.hersteller,
         it_nr: data.it_nr,
@@ -76,15 +75,15 @@ export const setData = async (data: Bildschirm, method: pushrequest) =>
         status: data.status,
         besitzer: data.besitzer || "",
         form: data.form || "",
-    }}, (res: {message: string, status: number}, err: {message: string, status: number}) => {
+    }}).catch((err: {message: string, status: number}) => {
         if(err)
         {
             ShowError(err.message, err.status);
             throw new Error(err.message);
         }
-        console.log(res);
-        return res;
     });
+    if(!res) return ShowError("Keine Antwort vom Server erhalten", 500);
+    makeToast("Daten wurden erfolgreich gespeichert", "success");
 }
 
 //Fetch the data from the backend server
@@ -102,7 +101,7 @@ export const getPCs = async ():Promise<PC[]> =>
     console.debug(res);
     
     console.debug(res.message);
-    const data = JSON.parse(res.message) as PC_res_data[];
+    const data = tryParseJSON(res.message) as PC_res_data[];
     //convert the data to the pc interface
     const pc: PC[] = [];
     data.forEach((element) => {
