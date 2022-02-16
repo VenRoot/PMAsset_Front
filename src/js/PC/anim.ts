@@ -365,7 +365,7 @@ export const SearchDevice =(it_nr: string) =>
                     let options:{option:string, func: string}[] = [];
                     switch(values.form)
                     {
-                        case "Ja": options = [{option: "Anzeigen", func: "PDFAnzeigen"}, {option: "Neu erstellen", func: "F"}, {option: "Entfernen", func: "PDFEntfernen"}, {option: "Mit lokaler PDF überschreiben", func: "AddCustomPDF"}]; break;
+                        case "Ja": options = [{option: "Anzeigen", func: "PDFAnzeigen"}, {option: "Neu erstellen", func: "PDFNeuGenerieren"}, {option: "Entfernen", func: "PDFEntfernen"}, {option: "Mit lokaler PDF überschreiben", func: "AddCustomPDF"}]; break;
                         case "Nein": options = [{option: "Hinzufügen", func: "PDFHinzufuegen"}, {option: "Bereits vorhandene PDF bereitstellen", func: "AddCustomPDF"}]; break;
                     }
                     options.forEach(option =>
