@@ -1,8 +1,8 @@
 import {ClearTable, enableBtn, foc, getInputValues, ResetFields, tbody} from "../anim.js";
-import { PDF } from "../backend.js";
+import { PDF, ShowError } from "../backend.js";
 import {Bildschirm, Item, PC} from "../interface";
 import { makeToast } from "../toast.js";
-import { generatePDF, getData, getMonitors, getPDF, rewritePDF, setData, setEquipment } from "./backend.js";
+import { deletePDF, generatePDF, getData, getMonitors, getPDF, rewritePDF, setData, setEquipment } from "./backend.js";
 import { tryParseJSON } from "../backend.js";
 
 const genPasswd = (length: number) =>
@@ -530,18 +530,20 @@ export const PDFEntfernen = (ITNr: string) =>
     if(!confirm("PDF mit aktuellen Werten entfernen?")) return;
     const device = devices.find(device => device.it_nr == ITNr);
     if(!device) return;
+    deletePDF(device.it_nr);
+    // if(!device) return;
 
-    device.form = "Nein";
+    // device.form = "Nein";
 
-    //Update the table
-    UpdateTable(device);
+    // //Update the table
+    // UpdateTable(device);
 
-    //Update the database
-    setData(device, {device: device, method: "POST", username: username, SessionID: key});
+    // //Update the database
+    // setData(device, {device: device, method: "POST", username: username, SessionID: key});
 }
 
 
-export const PDFNeuGenerieren = (ITNr: string) =>
+export const PDFNeuGenerieren = async (ITNr: string) =>
 {
     const username = sessionStorage.getItem("username");
     const key = sessionStorage.getItem("SessionID");
@@ -552,14 +554,11 @@ export const PDFNeuGenerieren = (ITNr: string) =>
 
     device.form = "Ja";
     //Update the database
-    rewritePDF(device.it_nr, (message: string, status: number) => {
-        if(status == 200) {
-            makeToast("PDF wurde neu generiert!", "success");
-            //Update the table
-            UpdateTable(device);
-        }
-        else makeToast(message, "error");
-    });
+    let res = await rewritePDF(device.it_nr);
+    if(!res) return makeToast("Fehler beim Generieren der PDF", "error");
+    if(res.status != 200) return ShowError(res.message, res.status);
+    makeToast(res.message, "success");
+    UpdateTable(device);
 }
 
 export const Notify = (message: string, type: string) =>
