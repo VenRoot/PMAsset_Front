@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 import url from "url";
 import dotenv from "dotenv";
+import s from "node-schedule";
 
 //Check the current directory, make sure it's the server directory
 if(!process.cwd().includes("server"))
@@ -74,8 +75,20 @@ const server = https.createSecureServer(options, async (req, res) => {
 
 process.on("uncaughtException", () =>
 {
+    //Cleanup before starting the server again
+    server.close();
     server.listen(Number(process.env.PORT) || 3000, "0.0.0.0", undefined, undefined).on("listening", () => {
         console.log(`Server listening on port ${process.env.PORT || 3000}`);});
 });
 
-//create a function to handle requests and send response
+
+
+//Schedule a task to run all 10 minutes
+s.scheduleJob("0 */5 * * * *", () => {
+    //monitor the memory usage and the heap
+    let x = "";
+    x+=("Time of monitoring: " + new Date().toLocaleTimeString()+"\n");
+    x+=(`Heap usage: ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} MB\n`);
+    x+=(`Memory usage: ${(process.memoryUsage().rss / 1024 / 1024).toFixed(2)} MB\n`);
+    fs.appendFileSync(path.join(__dirname, "..", "logs/heap.log"), x+"\n", {encoding: "utf8"});	
+});
