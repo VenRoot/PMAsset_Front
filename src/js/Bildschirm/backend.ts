@@ -43,7 +43,7 @@ export const getData = async() =>
             model: element.MODEL as any,
             attached: element.ATTACHED as any,
             it_nr: element.ITNR as any,
-            form: element.FORM,
+            // form: element.FORM,
             besitzer: element.BESITZER || "",
             seriennummer: element.SN as any,
             status: element.STATUS as any,
@@ -74,7 +74,7 @@ export const setData = async (data: Bildschirm, method: pushrequest) =>
         standort: data.standort,
         status: data.status,
         besitzer: data.besitzer || "",
-        form: data.form || "",
+        // form: data.form || "",
     }}).catch((err: {message: string, status: number}) => {
         if(err)
         {

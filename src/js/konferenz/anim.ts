@@ -1,4 +1,5 @@
-import {ClearTable, enableBtn, getInputValues, ResetFields, tbody} from "../anim.js";
+import {ClearTable, enableBtn, getInputValues, init, ResetFields, tbody} from "../anim.js";
+import { getUsers, ShowError } from "../backend.js";
 import {Konferenz, Item,} from "../interface";
 import { setData } from "./backend.js";
 
@@ -39,7 +40,7 @@ const MakeTemplate = async(values: Konferenz): Promise<HTMLTableRowElement> =>
                 temp.innerText = values.besitzer;
                 temp.id="BESITZER";
                 break;
-                case "form": temp.innerText = values.form!; temp.id="FORM"; break;
+                // case "form": temp.innerText = values.form!; temp.id="FORM"; break;
                 default: console.error(key, values); break;
 
             }
@@ -52,7 +53,7 @@ const MakeTemplate = async(values: Konferenz): Promise<HTMLTableRowElement> =>
         const sortedtemplate = document.createElement("tr");
         sortedtemplate.setAttribute("onmouseover", "main.foc(this);");
         sortedtemplate.setAttribute("onmouseout", "main.unfoc(this);");
-        const queries = ["#IT_NR", "#HERSTELLER", "#MODEL", "#SERIENNUMMER", "#STANDORT", "#STATUS", "#BESITZER", "#FORM"];
+        const queries = ["#IT_NR", "#HERSTELLER", "#MODEL", "#SERIENNUMMER", "#STANDORT", "#STATUS", "#BESITZER"];
         queries.forEach(query => {
             console.debug(sortedtemplate);
             console.debug(template.querySelector(query));
@@ -108,7 +109,7 @@ export const AddRow = async (_values?: Konferenz) =>
                 case 4: template.innerText = values.standort; break;
                 case 5: template.innerText = values.status; break;
                 case 6: template.innerText = values.besitzer; break;
-                case 7: template.innerText = values.form; break;
+                // case 7: template.innerText = values.form; break;
             }
     });
     
@@ -130,28 +131,53 @@ export const EditEntry = (elem: HTMLElement) =>
 
     const grandparent = elem.parentElement?.parentElement?.parentElement as HTMLTableRowElement;
     
-    Array.from(grandparent.cells).forEach((cell, i) => {
+    Array.from(grandparent.cells).forEach(async(cell, i) => {
         console.debug(cell);
         
         switch(i)
         {
-            case 1: cell.innerHTML="";  cell.appendChild(document.getElementById("SelectHerstellerTyp")?.cloneNode(true)!); console.debug(cell); break;
+            // case 1: cell.innerHTML="";  cell.appendChild(document.getElementById("SelectHerstellerTyp")?.cloneNode(true)!); console.debug(cell); break;
             // case 4: break; cell.children[0].classList.remove("disabled"); break;
             case 5: cell.innerHTML="";  cell.appendChild(document.getElementById("SelectInputStatus")?.cloneNode(true)!); console.debug(cell); break;
-            case 7: cell.innerHTML="";  cell.appendChild(document.getElementById("FormSelect")?.cloneNode(true)!); console.debug(cell); break;
-            case 8: case 0: break;
-            default: const inp = document.createElement("input");
-            inp.classList.add("text-center") 
+            // case 7: cell.innerHTML="";  cell.appendChild(document.getElementById("FormSelect")?.cloneNode(true)!); console.debug(cell); break;
+            case 7: case 0: break;
+            default: 
+            const inp = document.createElement("input");
+            
+            inp.classList.add("search", "text-center", "bg-transparent", "text-black", "dark:text-gray-300");
             inp.value = cell.innerText; 
             cell.innerHTML = ""; 
-            cell.appendChild(inp); 
+            //Autocomplete für Mitarbeiter
+            if(i == 7)
+            {
+                inp.id="SearchInput"
+                inp.type="search";
+                await init(inp);
+                inp.addEventListener("keyup", async (e) =>
+                {
+                    if(inp.value == "") return;
+                    let Users = await getUsers();
+                    if(!Users) return console.error("Users konnten nicht geladen werden");
+                    let search = inp.value;
+                    console.log(Users);
+                    let result = Users.filter(user => user.cn.toLowerCase().includes(search.toLowerCase()) || user.userPrincipalName?.toLowerCase()?.includes(search.toLowerCase()));
+                
+                });
+            }
+            cell.appendChild(inp);
             break;
         }
     });
 }
 
-export const SaveEntry = (elem: HTMLElement) =>
+export const SaveEntry = async (elem: HTMLElement) =>
 {
+    const username = sessionStorage.getItem("username");
+    const SessionID = sessionStorage.getItem("SessionID");
+
+    if(username == null || SessionID == null) return ShowError("Du bist nicht eingeloggt!", 401);
+
+
     elem.innerHTML = "edit";
     elem.classList.remove("text-green-400");
     elem.classList.add("text-yellow-400");
@@ -159,14 +185,56 @@ export const SaveEntry = (elem: HTMLElement) =>
 
     const grandparent = elem.parentElement?.parentElement?.parentElement as HTMLTableRowElement;
     
-    Array.from(grandparent.cells).forEach((cell, i) => {
+    //@ts-ignore
+    const device = PC.devices.find(devs => devs.it_nr == (grandparent.cells[0].children[0] as HTMLInputElement).value);
+    if(device == null) return ShowError("Device not found");
 
-        switch(i)
-        {
-            case 0: case 8: break;
-            case 1: case 7: case 5: cell.innerHTML = (cell.children[0] as HTMLSelectElement).value; break;
-            default: cell.innerHTML = (cell.children[0] as HTMLInputElement).value; break;
-        }
-    });
+
+    const dostuff = async () => {
+        return new Promise((resolve, reject) => {
+            Array.from(grandparent.cells).forEach(async (cell, i) => {
+                switch(i)
+                    {
+                        case 0: case 7: break; case 8: cell.innerHTML = (cell.children[0] as HTMLSelectElement).value; break;
+                        case 5: cell.innerHTML = (cell.children[0] as HTMLSelectElement).value; break;
+                        default: 
+                        if(i != 6) cell.innerHTML = (cell.children[0] as HTMLInputElement).value;
+                        else if(i == 6)
+                        {
+                            console.log(cell);
+                            console.log(cell.children)
+                            let value = (cell.children[0] as HTMLInputElement).value;
+                            cell.innerHTML = value;
+                            //check if value is a mail
+                            if(!value.includes("@"))
+                            {
+                                let Users = await getUsers();
+                                if(!Users) return resolve(void 0);
+                                let user = Users.find(user => user.name == value);
+                                console.log(user);
+                                cell.innerHTML = user?.mail || "Failed";
+                            }
+                        }
+        
+                        break;
+                    }
+            })
+        });
+        
+    };
+    await dostuff();
+    const konf:Konferenz =
+    {
+        kind: "Konferenz",
+        it_nr: device.it_nr,
+        hersteller: grandparent.cells[1].textContent || "" as any,
+        model: grandparent.cells[2].textContent || "",
+        seriennummer: grandparent.cells[3].textContent || "",
+        standort: grandparent.cells[4].textContent || "",
+        status: grandparent.cells[5].textContent || "" as any,
+        besitzer: grandparent.cells[6].textContent || "" as any
+    }
+    setData(konf, {device: konf, method: "POST", SessionID: SessionID, username: username});
+
 };
 

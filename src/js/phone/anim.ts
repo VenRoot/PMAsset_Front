@@ -2,6 +2,7 @@ import {ClearTable, enableBtn, getInputValues, init, ResetFields, tbody} from ".
 import { getUsers, ShowError } from "../backend.js";
 import {Phone, Item,} from "../interface";
 import { FormSelect, StatusSelect } from "../templates.js";
+import { makeToast } from "../toast.js";
 import { setData } from "./backend.js";
 
 export let devices:Phone[] = [];
@@ -28,7 +29,7 @@ const MakeTemplate = async(values: Phone): Promise<HTMLTableRowElement> =>
         {
             const temp = document.createElement("td");
             if(key == "kind") return;
-            temp.classList.add("border-2", "border-black", "duration-500", "transition", "text-center", "dark:text-gray-300", "dark:border-gray-300");
+            temp.classList.add("border-2", "border-black", "duration-500", "transition", "text-black", "text-center", "dark:text-gray-300", "dark:border-gray-300");
             console.debug(key);
             switch(key)
             {
@@ -41,7 +42,7 @@ const MakeTemplate = async(values: Phone): Promise<HTMLTableRowElement> =>
                 temp.innerText = values.besitzer;
                 temp.id="BESITZER";
                 break;
-                case "form": temp.innerText = values.form!; temp.id="FORM"; break;
+                // case "form": temp.innerText = values.form!; temp.id="FORM"; break;
                 default: console.error(key, values); break;
 
             }
@@ -55,7 +56,7 @@ const MakeTemplate = async(values: Phone): Promise<HTMLTableRowElement> =>
         sortedtemplate.classList.add("hover:bg-opacity-50", "dark:text-gray-300");
         sortedtemplate.setAttribute("onmouseover", "main.foc(this);");
         sortedtemplate.setAttribute("onmouseout", "main.unfoc(this);");
-        const queries = ["#IT_NR","#SERIENNUMMER", "#MODEL", "#STANDORT", "#STATUS", "#BESITZER", "#FORM"];
+        const queries = ["#IT_NR","#SERIENNUMMER", "#MODEL", "#STANDORT", "#STATUS", "#BESITZER"];
         queries.forEach(query => {
             console.debug(sortedtemplate);
             console.debug(template.querySelector(query));
@@ -105,12 +106,12 @@ export const AddRow = async (_values?: Phone) =>
         switch(index)
             {
                 case 0: template.innerText = values.it_nr; break;
-                case 1: template.innerText = values.model; break;               ;
+                case 1: template.innerText = values.model; break;
                 case 2: template.innerText = values.seriennummer; break;
                 case 3: template.innerText = values.standort; break;
                 case 4: template.innerText = values.status; break;
                 case 5: template.innerText = values.besitzer; break;
-                case 6: template.innerText = values.form; break;
+                // case 6: template.innerText = values.form; break;
             }
     });
     
@@ -140,14 +141,14 @@ export const EditEntry = (elem: HTMLElement) =>
             case 1: cell.innerHTML="";  cell.appendChild(document.getElementById("SelectInputTyp")?.cloneNode(true)!); console.debug(cell); break;
             // case 4: break; cell.children[0].classList.remove("disabled"); break;
             case 4: StatusSelect.value = cell.innerHTML; cell.innerHTML=""; cell.appendChild(StatusSelect); console.debug(cell); break;
-            case 6: FormSelect.value = cell.innerHTML; cell.innerHTML=""; cell.appendChild(FormSelect); break;
-            case 7: break;
+            // case 6: FormSelect.value = cell.innerHTML; cell.innerHTML=""; cell.appendChild(FormSelect); break;
+            case 6: break;
             default: 
             
             const inp = document.createElement("input");
             inp.id="SearchInput"
             inp.type="search";
-            inp.classList.add("search", "text-center");
+            inp.classList.add("search", "text-center", "bg-transparent", "text-black", "dark:text-gray-300");
             inp.value = cell.innerText; 
             cell.innerHTML = ""; 
 
@@ -194,8 +195,8 @@ export const SaveEntry = async(elem: HTMLElement) =>
                 
                 switch(i)
                 {
-                    case 1: case 4: case 6: cell.innerHTML = (cell.children[0] as HTMLSelectElement).value; break;
-                    case 7: resolve(void 0); break;
+                    case 1: case 4: cell.innerHTML = (cell.children[0] as HTMLSelectElement).value; break;
+                    case 6: resolve(void 0); break;
                     default: 
                     if(i != 5) cell.innerHTML = (cell.children[0] as HTMLInputElement).value; 
                     else
@@ -213,7 +214,8 @@ export const SaveEntry = async(elem: HTMLElement) =>
                             if(!Users) return resolve(void 0);
                             let user = Users.find(user => user.name == value);
                             console.log(user);
-                            cell.innerHTML = user?.mail || "Failed";
+                            cell.innerHTML = user?.mail || "-";
+                            makeToast(`"${value}" ist kein gültiger Benutzer!`, "warning");
                         }
                     }
                     break;
@@ -235,7 +237,7 @@ export const SaveEntry = async(elem: HTMLElement) =>
         standort: grandparent.children[3].textContent || "" as any,
         status: grandparent.children[4].textContent || "" as any,
         besitzer: grandparent.children[5].textContent || "" as any,
-        form: grandparent.children[6].textContent || "" as any,
+        // form: grandparent.children[6].textContent || "" as any,
     }
     console.log(newPC);
     

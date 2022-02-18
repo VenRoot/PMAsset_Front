@@ -27,7 +27,7 @@ export interface Gerät
     status: Status;
     standort: string;
     besitzer: string;
-    form: string;
+    // form: string;
 }
 
 
@@ -56,6 +56,7 @@ export interface PC extends Gerät
     type: PCTypes;
     hersteller: PCHersteller;
     passwort: string;
+    form: string;
 }
 
 export interface Bildschirm extends Gerät

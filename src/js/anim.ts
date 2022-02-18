@@ -112,7 +112,7 @@ export const getInputValues = async (type: "PC" | "Bildschirm" | "Phone" | "Konf
             standort: (document.getElementById("StandortInput")as HTMLInputElement).value,
             status: (document.getElementById("SelectInputStatus")as HTMLSelectElement).selectedOptions[0].value as Status,
             besitzer: (document.getElementById("BesitzerInput")as HTMLInputElement).value,
-            form: (document.getElementById("FormSelect")as HTMLSelectElement).selectedOptions[0].value,
+            // form: (document.getElementById("FormSelect")as HTMLSelectElement).selectedOptions[0].value,
         };
         // let values = cells.map((cell, index) => {
         //     if(index == 0) return (cell.children[0].children[0] as HTMLInputElement).value;
@@ -135,7 +135,7 @@ export const getInputValues = async (type: "PC" | "Bildschirm" | "Phone" | "Konf
             standort: (document.getElementById("StandortInput")as HTMLInputElement).value,
             status: (document.getElementById("SelectInputStatus")as HTMLSelectElement).selectedOptions[0].value as Status,
             besitzer: (document.getElementById("BesitzerInput")as HTMLInputElement).value,
-            form: (document.getElementById("FormSelect")as HTMLSelectElement).selectedOptions[0].value
+            // form: (document.getElementById("FormSelect")as HTMLSelectElement).selectedOptions[0].value
         };
         return phone;
     }
@@ -150,7 +150,7 @@ export const getInputValues = async (type: "PC" | "Bildschirm" | "Phone" | "Konf
             standort: (document.getElementById("StandortInput")as HTMLInputElement).value,
             status: (document.getElementById("SelectInputStatus")as HTMLSelectElement).selectedOptions[0].value as Status,
             besitzer: (document.getElementById("BesitzerInput")as HTMLInputElement).value,
-            form: (document.getElementById("FormSelect")as HTMLSelectElement).selectedOptions[0].value
+            // form: (document.getElementById("FormSelect")as HTMLSelectElement).selectedOptions[0].value
         };
         return konferenz;
     }
@@ -297,7 +297,7 @@ export const enableBtn = () =>
             DoneBTN.removeAttribute("disabled");
             if(window.location.pathname.toLocaleLowerCase().includes("pc")) DoneBTN.setAttribute("onclick", "PC.AddRow();");
             else if(window.location.pathname.toLocaleLowerCase().includes("bildschirm")) DoneBTN.setAttribute("onclick", "Bildschirm.AddRow();");
-            else if(window.location.pathname.toLocaleLowerCase().includes("phone")) DoneBTN.setAttribute("onclick", "phone.AddRow();");
+            else if(window.location.pathname.toLocaleLowerCase().includes("phone")) DoneBTN.setAttribute("onclick", "Phone.AddRow();");
             else if(window.location.pathname.toLocaleLowerCase().includes("konferenz")) DoneBTN.setAttribute("onclick", "Konferenz.AddRow();");
             DoneBTN.parentElement?.classList.add("text-green-400");
             DoneBTN.parentElement?.classList.remove("text-red-400");
@@ -408,14 +408,15 @@ export const EditEntry = (elem: HTMLElement) =>
             default:
                 
             const inp = document.createElement("input");
-            inp.id="SearchInput"
-            inp.type="search";
-            inp.classList.add("search", "text-center");
+            
+            inp.classList.add("search", "text-center", "bg-transparent", "text-black", "dark:text-gray-300");
             inp.value = cell.innerText; 
             cell.innerHTML = ""; 
             //Autocomplete für Mitarbeiter
             if(i == 7)
             {
+                inp.id="SearchInput"
+                inp.type="search";
                 await init(inp);
                 inp.addEventListener("keyup", async (e) =>
                 {

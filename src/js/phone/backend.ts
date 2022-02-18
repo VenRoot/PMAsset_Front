@@ -31,7 +31,7 @@ export const getData = async() =>
                 standort: element.STANDORT,
                 status: element.STATUS as any,
                 besitzer: element.BESITZER || "",
-                form: element.FORM as any
+                // form: element.FORM as any
             });
     });
     setDevices(Phones);
@@ -53,7 +53,7 @@ export const setData = async (data: Phone, method: pushrequest) =>
         standort: data.standort,
         status: data.status,
         besitzer: data.besitzer || "",
-        form: data.form || "",
+        // form: data.form || "",
     }}).catch(err => {
         ShowError(err.message, err.status);
     });
