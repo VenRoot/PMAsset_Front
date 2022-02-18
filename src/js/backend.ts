@@ -131,6 +131,7 @@ export const insertRequest = (subdomain: string, auth: pushrequest): Promise<{me
 
             
         }
+        if(auth.device.status == "Bestellt") auth.device.seriennummer = "0";
         const xmlhttp = new XMLHttpRequest();
         //push data to the backend
         xmlhttp.onreadystatechange = function () {
