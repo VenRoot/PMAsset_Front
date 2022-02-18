@@ -28,7 +28,7 @@ const MakeTemplate = async(values: Bildschirm): Promise<HTMLTableRowElement> =>
         {
             const temp = document.createElement("td");
             if(key == "kind") return;
-            temp.classList.add("border-2", "border-black", "duration-500", "transition", "text-center");
+            temp.classList.add("border-2", "border-black", "duration-500", "transition", "text-center", "bg-transparent", "dark:border-gray-300", "text-black", "dark:text-gray-300");
             //console.debug(key);
             switch(key)
             {
@@ -44,7 +44,7 @@ const MakeTemplate = async(values: Bildschirm): Promise<HTMLTableRowElement> =>
                 temp.innerText = values.besitzer;
                 temp.id="BESITZER";
                 break;
-                case "form": temp.innerText = values.form!; temp.id="FORM"; break;
+                // case "form": temp.innerText = values.form!; temp.id="FORM"; break;
                 default: console.error(key, values); break;
 
             }
@@ -57,7 +57,7 @@ const MakeTemplate = async(values: Bildschirm): Promise<HTMLTableRowElement> =>
         const sortedtemplate = document.createElement("tr");
         sortedtemplate.setAttribute("onmouseover", "main.foc(this);");
         sortedtemplate.setAttribute("onmouseout", "main.unfoc(this);");
-        const queries = ["#IT_NR", "#TYP", "#HERSTELLER", "#MODEL", "#SERIENNUMMER", "#ATTACHED", "#STANDORT", "#STATUS", "#BESITZER", "#FORM"];
+        const queries = ["#IT_NR", "#TYP", "#HERSTELLER", "#MODEL", "#SERIENNUMMER", "#ATTACHED", "#STANDORT", "#STATUS", "#BESITZER"];
         queries.forEach(query => {
             // console.debug(sortedtemplate);
             // console.debug(template.querySelector(query));
@@ -118,7 +118,7 @@ export const AddRow = async (_values?: Bildschirm) =>
                 case 6: template.innerText = values.standort; break;
                 case 7: template.innerText = values.status; break;
                 case 8: template.innerText = values.besitzer; break;
-                case 9: template.innerText = values.form; break;
+                // case 9: template.innerText = values.form; break;
             }
     });
     
@@ -148,22 +148,25 @@ export const EditEntry = (elem: HTMLElement) =>
             case 2: cell.innerHTML="";  cell.appendChild(document.getElementById("SelectHerstellerTyp")?.cloneNode(true)!); console.debug(cell); break;
             // case 4: break; cell.children[0].classList.remove("disabled"); break;
             case 7: StatusSelect.value = cell.innerHTML; cell.innerHTML=""; cell.appendChild(StatusSelect.cloneNode(true)); console.debug(cell); break;
-            case 9: FormSelect.value = cell.innerHTML; cell.innerHTML=""; cell.appendChild(FormSelect.cloneNode(true)); break;
-            case 10: case 5: break;
-            default: const inp = document.createElement("input");
-            inp.id="SearchInput"
-            inp.type="search";
-            inp.classList.add("search", "text-center");
+            // case 9: FormSelect.value = cell.innerHTML; cell.innerHTML=""; cell.appendChild(FormSelect.cloneNode(true)); break;
+            case 9: case 5: break;
+            default:
+            const inp = document.createElement("input");
+            
+            inp.classList.add("search", "text-center", "bg-transparent", "text-black", "dark:text-gray-300");
             inp.value = cell.innerText; 
-            cell.innerHTML = "";
-            if(i == 8)
+            cell.innerHTML = ""; 
+            //Autocomplete für Mitarbeiter
+            if(i == 7)
             {
+                inp.id="SearchInput"
+                inp.type="search";
                 await init(inp);
                 inp.addEventListener("keyup", async (e) =>
                 {
                     if(inp.value == "") return;
                     let Users = await getUsers();
-                    if(!Users) return;
+                    if(!Users) return console.error("Users konnten nicht geladen werden");
                     let search = inp.value;
                     console.log(Users);
                     let result = Users.filter(user => user.cn.toLowerCase().includes(search.toLowerCase()) || user.userPrincipalName?.toLowerCase()?.includes(search.toLowerCase()));
@@ -201,11 +204,11 @@ export const SaveEntry = async (elem: HTMLElement) =>
                     case 1: case 7: cell.innerHTML = (cell.children[0] as HTMLSelectElement).value; break;
                     //case 3: break; cell.children[0].classList.add("disabled"); break;
                     // case 8: cell.children[0].classList.add("disabled"); break;
-                    case 8: case 9: cell.innerHTML = (cell.children[0] as HTMLSelectElement).value; break;
+                    case 8: cell.innerHTML = (cell.children[0] as HTMLSelectElement).value; break;
                     case 9: cell.children[0].setAttribute("disabled", ""); (cell.children[0] as HTMLInputElement).type = "password"; break;
                     case 4: cell.innerHTML = (cell.children[0] as HTMLInputElement).value; break;
                     case 5: break;
-                    case 10: resolve(void 0); break;
+                    case 9: resolve(void 0); break;
                     default: 
                     if(i != 7) cell.innerHTML = (cell.children[0] as HTMLInputElement).value; 
                     else
@@ -242,7 +245,7 @@ export const SaveEntry = async (elem: HTMLElement) =>
         standort: (grandparent.cells[6] as HTMLTableCellElement).textContent || "" as any,
         status: (grandparent.cells[7] as HTMLTableCellElement).textContent || "" as any,
         besitzer: (grandparent.cells[8] as HTMLTableCellElement).textContent || "" as any,
-        form: (grandparent.cells[9] as HTMLTableCellElement).textContent || "" as any
+        // form: (grandparent.cells[9] as HTMLTableCellElement).textContent || "" as any
     };
 
     setData(newMon, {device: newMon, method: "POST", SessionID: SessionID, username: username});
