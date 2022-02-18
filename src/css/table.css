@@ -16,6 +16,6 @@ tr th:nth-child(1) {
     border-radius: 0.625rem 0 0 0.625rem;
 }
 
-td {
+td .light{
     color: #000000 !important;
 }

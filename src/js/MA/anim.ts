@@ -124,19 +124,19 @@ setTimeout(init, 1000);
 const fillTable = async (device: Item, table: HTMLTableElement) => {
     
     const row = table.insertRow();
-    row.classList.add("hover:bg-opacity-50", "border-2", "border-black", "duration-500", "transition", "text-center");
-    table.rows.length%2 == 0 ? row.classList.add("bg-gray-200") : row.classList.add("bg-white");
+    row.classList.add("hover:bg-opacity-50", "border-1", "border-black", "text-black", "duration-500", "transition", "text-center", "dark:text-white", "dark:border-gray-300");
+    table.rows.length%2 == 0 ? row.classList.add("bg-gray-200", "dark:bg-gray-600") : row.classList.add("bg-white", "dark:bg-gray-900");
 
     if(device.kind == "PC")
     {
-        const attr = ["it_nr", "seriennummer", "type", "standort", "equipment", "form", "passwort"];
+        const attr = ["it_nr", "type", "seriennummer", "standort", "equipment", "form", "passwort"];
         //Foreach cell in the row in the thead
         for(let i = 0; i < (table.tHead?.children[0] as HTMLTableRowElement).cells.length; i++)
         {
             console.log(attr[i]);
             
             const cell = row.insertCell();
-            cell.classList.add("hover:bg-opacity-50");
+            cell.classList.add("hover:bg-opacity-50", "dark:bg-gray-900", "text-black", "dark:text-white", "dark:border-gray-300");
             //Fill the cell with the value of the device attribute
 
             if(attr[i] == "equipment")
@@ -153,12 +153,12 @@ const fillTable = async (device: Item, table: HTMLTableElement) => {
     else if(device.kind == "Monitor")
     {
         console.warn(device.attached);
-        const attr = ["it_nr", "type", "seriennummer", "model", "standort", "attached", "form"];
+        const attr = ["it_nr", "type", "seriennummer", "model", "standort", "attached"];
         //Foreach cell in the row in the thead
         for(let i = 0; i < (table.tHead?.children[0] as HTMLTableRowElement).cells.length; i++)
         {
             const cell = row.insertCell();
-            cell.classList.add("hover:bg-opacity-50");
+            cell.classList.add("hover:bg-opacity-50", "dark:bg-gray-900", "text-black", "dark:text-white");
             //Fill the cell with the value of the device attribute
 
             if(attr[i] == "attached")
@@ -174,12 +174,12 @@ const fillTable = async (device: Item, table: HTMLTableElement) => {
     }
     else if(device.kind == "Phone")
     {
-        const attr = ["it_nr", "model", "seriennummer", "standort", "form"];
+        const attr = ["it_nr", "model", "seriennummer", "standort"];
         //Foreach cell in the row in the thead
         for(let i = 0; i < (table.tHead?.children[0] as HTMLTableRowElement).cells.length; i++)
         {
             const cell = row.insertCell();
-            cell.classList.add("hover:bg-opacity-50");
+            cell.classList.add("hover:bg-opacity-50", "dark:bg-gray-900", "text-black", "dark:text-white");
             //Fill the cell with the value of the device attribute
             //@ts-ignore
             cell.innerText = device[attr[i]].toString();
@@ -191,13 +191,13 @@ const fillTable = async (device: Item, table: HTMLTableElement) => {
 
 const MakeTableTemplate = (device: Item) => {
     const table = document.createElement("table");
-    table.classList.add("table", "text-gray-400", "w-full", "border-separate", "space-y-6", "text-sm");
+    table.classList.add("table", "text-gray-400", "w-full", "border-separate", "space-y-6", "text-sm", "dark:bg-gray-900", "dark:text-white");
     
     const thead = document.createElement("thead");
-    thead.classList.add("bg-blue-500", "text-white");
+    thead.classList.add("bg-blue-500", "text-white" ,"dark:bg-gray-900", "dark:text-white");
 
     const trhead = document.createElement("tr");
-    trhead.classList.add("bg-blend-darken");
+    trhead.classList.add("bg-blend-darken", "dark:bg-gray-900", "dark:text-white");
     
 
     switch(device.kind)
@@ -208,28 +208,28 @@ const MakeTableTemplate = (device: Item) => {
             attr1.forEach(attr => {
                 const th = document.createElement("th");
                 th.innerText = attr;
-                th.classList.add("p-3", "text-center");
+                th.classList.add("p-3", "text-center", "dark:bg-gray-900", "dark:text-white");
                 trhead.appendChild(th);
             });
             
             break;
         case "Monitor":
             table.id = "MonTable";
-            const attr2 = ["IT-Nr", "Typ", "Seriennummer", "Modell", "Standort", "Verknüpft mit", "Form"];
+            const attr2 = ["IT-Nr", "Typ", "Seriennummer", "Modell", "Standort", "Verknüpft mit"];
             attr2.forEach(attr => {
                 const th = document.createElement("th");
                 th.innerText = attr;
-                th.classList.add("p-3", "text-center");
+                th.classList.add("p-3", "text-center", "dark:bg-gray-900", "dark:text-white");
                 trhead.appendChild(th);
             });
             break;
         case "Phone":
             table.id = "PhoneTable";
-            const attr3 = ["IT-Nr", "Modell", "Seriennummer", "Standort",  "Form"];
+            const attr3 = ["IT-Nr", "Modell", "Seriennummer", "Standort"];
             attr3.forEach(attr => {
                 const th = document.createElement("th");
                 th.innerText = attr;
-                th.classList.add("p-3", "text-center");
+                th.classList.add("p-3", "text-center", "dark:bg-gray-900", "dark:text-white");
                 trhead.appendChild(th);
             });
             break;

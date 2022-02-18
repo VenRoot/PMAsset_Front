@@ -10,5 +10,5 @@ export interface res_monitor
     ATTACHED: string;
     BESITZER: string;
     MODEL: string;
-    FORM: string;
+    // FORM: string;
 }

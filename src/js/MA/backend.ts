@@ -80,7 +80,7 @@ const ConvToBS = async (data: res_monitor[], pcs: PC_res_data[]): Promise<Bildsc
                 besitzer: element.BESITZER || "",
                 seriennummer: element.SN,
                 status: element.STATUS as any,
-                form: element.FORM as any
+                // form: element.FORM as any
             }
         )
     });
@@ -99,7 +99,7 @@ const ConvToPPh = async (data: res_phone[]): Promise<Phone[]> =>
                 seriennummer: element.SN,
                 status: element.STATUS as any,
                 standort: element.STANDORT,
-                form: element.FORM as any,
+                // form: element.FORM as any,
                 model: element.MODEL as any,
             }
         )

@@ -2,7 +2,11 @@
 <html lang="de">
 
 <head>
+    <meta charset="UTF-8">
     <script>
+      // On page load or when changing themes, best to add inline in `head` to avoid FOUC
+      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) document.documentElement.classList.add('dark')
+      else document.documentElement.classList.remove('dark');
       if(sessionStorage.getItem("username") == null || sessionStorage.getItem("SessionID") == null) 
       {
         //Add current site to history and redirect to login
@@ -11,6 +15,7 @@
       }
     </script>
     <link href="../css/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/switch.css">
     <link rel="stylesheet" href="../css/material.css">
     <link rel="stylesheet" href="../css/table.css">
     <link rel="stylesheet" href="../css/custom.css">
@@ -20,6 +25,7 @@
     <title>Asset-Management</title>
     <script src="../js/jquery-3.6.0.min.js"></script>
     <script defer type="module">
+        import * as dark from "../js/dark.js"; window.dark = dark; 
         import * as main from"../js/main.js"; window.main = main; 
         import * as PC from "../js/PC/main.js"; window.PC = PC;
         main.checkUser();
@@ -27,27 +33,17 @@
         //make first letter uppercase
         x.forEach((e, i) => x[i] = e.charAt(0).toUpperCase() + e.slice(1));
         document.getElementById("SidebarUsername").innerHTML = x[0] + " " + x[1];
+        PC.getData();
+        main.getUsers();
     </script>
 </head>
 
-<body translate="no" class="">
+<body translate="no" class="dark:bg-gray-900 dark:text-white text-black">
     <div class=" flex overflow-x-hidden h-screen" x-data=" {sidebarOpen: false}">
-        <!-- mobile menu bar-->
-
-        <div class="bg-gray-800 text-gray-100 flex justify-between md:hidden">
-            <!-- logo -->
-            <!-- <a href="#" class="block p-4 text-white font-bold" id="SidebarUsername">Better Dev</a> -->
-            <!-- mobile menu button -->
-            <!-- <button class=" mobile-menu-button p-4 focus:outline-none focus:bg-gray-700">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                  </svg>
-            </button> -->
-        </div>
 
         <!-- sidebar -->
         <!-- <div class="space-y-6 py-7 px-2 absolute"> -->
-        <aside class="bg-blue-800 text-blue-100 flex-shrink-0 w-64 flex flex-col border-r transition-all duration-300" :class="{ '-ml-64': sidebarOpen }">
+        <aside class="bg-blue-800 dark:bg-slate-800 text-blue-100 flex-shrink-0 w-64 flex flex-col border-r transition-all duration-300" :class="{ '-ml-64': sidebarOpen }">
             <!-- logo -->
             <a href="#" class="text-white flex items-center space-x-2 px-4">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -62,23 +58,34 @@
             </a>
             <!-- nav -->
             <nav class="">
-                <a href="../" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3">Übersicht</a>
-                <a href="#" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3">PC</a>
-                <a href="../Bildschirm/" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3">Bildschirm</a>
-                <a href="../Phone/" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3">Phones</a>
-                <a href="../Konferenz/" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3">Konferenzeräte</a>
-                <a href="../Mitarbeiter/" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3">Nach Mitarbeiter suchen</a>
+                <a href="../" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 dark:hover:bg-slate-900 p-3">Übersicht</a>
+                <a href="#" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 dark:hover:bg-slate-900 p-3">PC</a>
+                <a href="../Bildschirm/" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 dark:hover:bg-slate-900 p-3">Bildschirm</a>
+                <a href="../Phone/" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 dark:hover:bg-slate-900 p-3">Phones</a>
+                <a href="../Konferenz/" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 dark:hover:bg-slate-900 p-3">Konferenzeräte</a>
+                <a href="../Mitarbeiter/" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 dark:hover:bg-slate-900 p-3">Nach Mitarbeiter suchen</a>
                 <a class="block py-2.5 px-4"></a>
-                <a href="create" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3 font-bold">Antrag erstellen</a>
+                <a href="create" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 dark:hover:bg-slate-900 p-3 font-bold">Antrag erstellen</a>
             </nav>
+            <div class="flex justify-center">
+              <div class="form-check form-switch">
+                <input id="lights-toggle" class="form-check-input appearance-none w-9 -ml-10 rounded-full float-left h-5 align-top bg-white bg-no-repeat bg-contain focus:outline-none cursor-pointer shadow-sm" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+                <label class="form-check-label inline-block text-white dark:text-white" for="flexSwitchCheckDefault">Dark Mode</label>
+              </div>
+            </div>
+            <script>
+              const darkModeSwitch = document.getElementById("lights-toggle");
+              if(localStorage.getItem("theme") === "dark") darkModeSwitch.checked = true;
+              else darkModeSwitch.checked = false;
+            </script>
             <div class="col-span-1 h-96 flex flex-col justify-between items-end">
-                <button href="../login.html" class=" absolute bottom-10 self-center align-bottom py-2.5 px-4 bg-red-900 white transition duration-200 hover:bg-black rounded-lg">Logout</button>
+                <button href="../login.html" class="absolute bottom-10 self-center align-bottom py-2.5 px-4 bg-red-900 white transition duration-200 hover:bg-black rounded-lg">Logout</button>
             </div>
         </aside>
         <!-- </div> -->
 
         <!-- content -->
-        <div id="content" class="flex-1 text-2xl font-bold left-1">
+        <div id="content" class="flex-1 text-2xl font-bold left-1 dark:text-gray-300 text-black">
             <!-- toggle button -->
             <button id="DashBtn" class=" mobile-menu-button p-4 focus:outline-none focus:bg-gray-700" @click="sidebarOpen=! sidebarOpen">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -87,12 +94,12 @@
             </button> Dashboard
             <div class="flex justify-between items-center">
                 <div class="flex-1">
-                    <h1 class="text-2xl font-bold text-center">Suchen Sie nach einer IT-Nummer, um zu filtern</h1>
+                    <h1 class="text-2xl font-bold text-center dark:text-gray-300 text-black">Suchen Sie nach einer IT-Nummer, um zu filtern</h1>
                 </div>
                 <div class="flex-1 self-center">
                     <div class="flex items-center self-center">
                         <div class="flex-1">
-                            <input type="text" class="bg-white text-gray p-2 rounded-full" onkeyup="PC.SearchDevice(this.value);" placeholder="Search">
+                            <input type="text" class="bg-white dark:bg-gray-900 text-gray dark:text-gray-300 p-2 rounded-full" onkeyup="PC.SearchDevice(this.value);" placeholder="Search">
                         </div>
                     </div>
                 </div>
@@ -100,7 +107,7 @@
             <span>
                 <div>
                     <table class="table text-gray-400 border-separate space-y-6 text-sm" id="table">
-                        <thead id="thead" class="bg-blue-500 text-white">
+                        <thead id="thead" class="bg-blue-500 dark:bg-blue-900 text-white">
                           <tr class="bg-blend-darken">
                             <th class="p-3 text-center">IT Nr</th>
                             <th class="p-3 text-center">Typ</th>
@@ -112,38 +119,39 @@
                             <th class="p-3 text-center">Mitarbeiter</th>
                             <th class="p-3 text-center">Form</th>
                             <th class="p-3 text-center">BIOS Passwort</th>
-                            <th class="p-3 text-center">Aktionen</th>
-
+                            <th class="p-3 text-center bg-transparent">Aktionen</th>
                           </tr>
                         </thead>
-                        <tbody class="border-2 border-black" id="tbody">
+                        <tbody class="border-2 border-black dark:border-gray-300 dark:text-gray-300" id="tbody">
                             <tr style="height: 36px" id="inputvalues" onkeyup="main.enableBtn();">
-                                <th class="border-2 border-black" name="IT_Nr"><div><input id="itinput" type="text" class="w-full text-center temp"  placeholder="IT00XXXX" maxlength="8" size="8" value="IT00" title="01 => Laptop&#13;02 => Bildschirm&#13;03 => Konferenzerät&#13;04 => Phone"></div></th>
-                                <th class="border-2 border-black" name="Typ"><select id="SelectInputTyp"></select></th>
-                                <th class="border-2 border-black" name="Hersteller"><select id="SelectHerstellerTyp"></select></th>
-                                <th class="border-2 border-black" name="Seriennummer"><input type="text" id="SeriennummerInput" class="w-full temp" placeholder="XXXXXXXXXXXXXXX" style="font-size: 11px;" title="Bitte hier die Seriennummer eingeben"></th>
-                                <th class="border-2 border-black" name="Equipment"><button class="w-full text-center" id="open-btn" onclick="PC.openform(this.parentElement.parentElement);">Hinzufügen</button></th>
-                                <th class="border-2 border-black" name="text"><input class="w-full text-center temp" id="StandortInput" type="text"></th>
-                                <th class="border-2 border-black" name="text"><select id="SelectInputStatus" class="w-full text-center" type="text"></select></th>
-                                <th class="border-2 border-black" name="Mitarbeiter"><input class="w-full text-center temp" id="BesitzerInput" type="text"></th>
-                                <th class="border-2 border-black" name="Fomular"><select name="" class="text-center" id="FormSelect">
+                                <th class="border-2 border-black dark:border-gray-300" name="IT_Nr"><div><input id="itinput" type="text" class="w-full text-center temp bg-transparent"  placeholder="IT00XXXX" maxlength="8" size="8" value="IT00" title="01 => Laptop&#13;02 => Bildschirm&#13;03 => Konferenzerät&#13;04 => Phone"></div></th>
+                                <th class="border-2 border-black dark:border-gray-300" name="Typ"><select class="bg-transparent" id="SelectInputTyp"></select></th>
+                                <th class="border-2 border-black dark:border-gray-300" name="Hersteller"><select class="bg-transparent" id="SelectHerstellerTyp"></select></th>
+                                <th class="border-2 border-black dark:border-gray-300" name="Seriennummer"><input type="text" class="bg-transparent" id="SeriennummerInput" class="w-full temp" placeholder="XXXXXXXXXXXXXXX" style="font-size: 11px;" title="Bitte hier die Seriennummer eingeben"></th>
+                                <th class="border-2 border-black dark:border-gray-300" name="Equipment"><button class="w-full text-center bg-transparent" id="open-btn" onclick="PC.openform(this.parentElement.parentElement);">Hinzufügen</button></th>
+                                <th class="border-2 border-black dark:border-gray-300" name="text"><input class="w-full text-center temp bg-transparent" id="StandortInput" type="text"></th>
+                                <th class="border-2 border-black dark:border-gray-300" name="text"><select id="SelectInputStatus" class="w-full text-center bg-transparent" type="text"></select></th>
+                                <th class="border-2 border-black dark:border-gray-300" name="Mitarbeiter"><input class="w-full text-center temp bg-transparent" id="BesitzerInput" type="text"></th>
+                                <!-- Select element with dark mdoe for tailwind -->
+
+                                <th class="border-2 border-black dark:border-gray-300" name="Fomular"><select name="" class="text-center bg-transparent" id="FormSelect">
                                     <option value="Nein" selected>Nein</option>
                                     <option value="Ja" onselect="CreateForm(this);">Ja</option>
                                 </select></th>
-                                <th class="border-2 border-black" name="Passwort">
+                                <th class="border-2 border-black dark:border-gray-300" name="Passwort">
                                     <a href="#" onclick="PC.GeneratePassword(this);" class="text-green-600 hover:text-green-300">
                                         <i class="material-icons-outlined">vpn_key</i>
                                     </a>
-                                    <input class="w-full text-center temp" id="bpasswd" type="text">
+                                    <input class="w-full text-center temp bg-transparent dark:text-gray-300" id="bpasswd" type="text">
                                 </th>
                                 <th class="icons">
-                                    <a href="#" class="text-gray-500 hover:text-gray-100">
+                                    <a href="#" class="text-gray-700 hover:text-gray-400">
                                       <i onclick="PC.ShowPassword(this);" class="material-icons-outlined text-base">info</i>
                                     </a>
-                                    <a href="#" class="text-red-400 hover:text-gray-100 mx-2">
+                                    <a href="#" class="text-red-700 hover:text-red-400 mx-2">
                                       <i class="material-icons-outlined text-base" onclick="alert('Hello');" disabled id="DoneBTN">close</i>
                                     </a>
-                                    <a href="#" onclick="main.ResetFields()" class="text-red-400 hover:text-gray-100">
+                                    <a href="#" onclick="main.ResetFields()" class="text-red-700 hover:text-red-400">
                                       <i class="material-icons-round text-base">settings_backup_restore</i>
                                     </a>
                                   </th>
@@ -203,8 +211,8 @@
                             <td class="border-2 border-black duration-500 transition text-center" id="STANDORT">Lager</td>
                             <td class="border-2 border-black duration-500 transition text-center" id="STATUS">Inaktiv</td>
                             <td class="border-2 border-black duration-500 transition text-center" id="MITARBEITER">>-</td>
-                            <td class="border-2 border-black duration-500 transition text-center" id="FORM">>Nein</td>
-                            <td class="border-2 border-black duration-500 transition text-center" id="PASSWORT">><input type="password" class="bpasswd" value="Hallo"></td>
+                            <td class="border-2 border-black duration-500 transition text-center" id="FORM">Nein</td>
+                            <td class="border-2 border-black duration-500 transition text-center" id="PASSWORT"><input type="password" class="bpasswd, text-center, bg-transparent, dark:border-gray-300" value="Hallo"></td>
                             <td class="icons">
                                 <a href="#" class="text-gray-500 hover:text-gray-100">
                                   <i class="material-icons-outlined text-base" onclick="PC.ShowPassword(this);">visibility</i>
@@ -252,8 +260,8 @@
           From:"opacity-100 translate-y-0 sm:scale-100"
           To:"opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
       -->
-                <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-7xl sm:w-full">
-                    <div class="bg-white px-8 pt-5 pb-4 sm:p-6 sm:pb-4 w-20">
+                <div class="inline-block align-bottom bg-white dark:bg-gray-900 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-7xl sm:w-full">
+                    <div class="bg-white dark:bg-gray-900 px-8 pt-5 pb-4 sm:p-6 sm:pb-4 w-20">
                         <div class="sm:flex sm:items-start">
                             <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
                                 <!-- Heroicon name: outline/exclamation -->
@@ -267,24 +275,24 @@
 
                             </div>
                             <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                                <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                                <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-gray-300" id="modal-title">
                                     Zusätzliche Hardware
                                 </h3>
                                 <div class="mt-2">
-                                    <p class="text-sm text-gray-500">
+                                    <p class="text-sm text-gray-500 dark:text-gray-300">
                                         Bitte geben Sie die Seriennummern der zusätzlichen Hardware an.
-                                        <input id="HardwareSearchInput" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" type="text" placeholder="Seriennummer">
+                                        <input id="HardwareSearchInput" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded py-2 px-4 text-gray-700 dark:text-gray-300 leading-tight focus:outline-none focus:bg-white focus:border-gray-500 dark:focus:bg-gray-700 dark:bg-transparent" type="text" placeholder="Seriennummer">
                                         <table class="table-auto">
                                             <thead>
                                                 <tr>
-                                                    <th class="px-4 py-2"></th>
-                                                    <th class="px-4 py-2">IT-Nr</th>
-                                                    <th class="px-4 py-2">Seriennr</th>
-                                                    <th class="px-4 py-2">Typ</th>
-                                                    <th class="px-4 py-2">Hersteller</th>
-                                                    <th class="px-4 py-2">Modell</th>
-                                                    <th class="px-4 py-2">Status</th>
-                                                    <th class="px-4 py-2">Verknüpft mit PC</th>
+                                                    <th class="px-4 py-2 dark:text-gray-300"></th>
+                                                    <th class="px-4 py-2 dark:text-gray-300">IT-Nr</th>
+                                                    <th class="px-4 py-2 dark:text-gray-300">Seriennr</th>
+                                                    <th class="px-4 py-2 dark:text-gray-300">Typ</th>
+                                                    <th class="px-4 py-2 dark:text-gray-300">Hersteller</th>
+                                                    <th class="px-4 py-2 dark:text-gray-300">Modell</th>
+                                                    <th class="px-4 py-2 dark:text-gray-300">Status</th>
+                                                    <th class="px-4 py-2 dark:text-gray-300">Verknüpft mit PC</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="MonTBody" style="overflow-y: scroll;">
@@ -307,8 +315,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                      <button id="ok-btn" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-black hover:bg-green-700 focus:outline-none focus:ring-2
+                    <div class="bg-gray-50 dark:bg-gray-900 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                      <button id="ok-btn" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2
                       focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm" onclick="PC.hideModal(true);">Anwenden</button>
 
                       <button id="cancel-btn" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2
@@ -325,10 +333,9 @@
         <div style="position: relative; float: right; margin-right: 30px;" id="toasts"></div>
 </body>
 <script defer>
-$(document).ready(() => {
-  PC.getData();
-  main.getUsers();
-})
+// $(document).ready(() => {
+  
+// })
 
 </script>
 </html>

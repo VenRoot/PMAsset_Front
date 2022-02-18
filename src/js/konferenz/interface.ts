@@ -7,5 +7,5 @@ export interface res_konferenz
     STANDORT: string;
     STATUS: string;
     BESITZER: string;
-    FORM: string;
+    // FORM: string;
 }

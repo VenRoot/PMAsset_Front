@@ -119,7 +119,18 @@ export const PDF = (auth: IPDF): Promise<reqres> =>
  */
 export const insertRequest = (subdomain: string, auth: pushrequest): Promise<{message: string, code: number}> =>
 {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
+        //Check if auth.device.besitzer is a valid email
+        if(auth.device.besitzer.indexOf("@") == -1)
+        {
+            let u = await getUsers();
+            if(!u) return ShowError("Could not get users", 404);
+            let user = u.find(x => x.cn == auth.device.besitzer);
+            if(user) auth.device.besitzer = user.mail;
+            else return ShowError("User wurde nicht gefunden", 404);
+
+            
+        }
         const xmlhttp = new XMLHttpRequest();
         //push data to the backend
         xmlhttp.onreadystatechange = function () {
