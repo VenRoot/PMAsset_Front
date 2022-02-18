@@ -4,6 +4,6 @@ export * from "./backend.js";
 export * from "./anim.js";
 export * from "./toast.js";
 
-export let DEBUG = true;
+export let DEBUG = false;
 
 console.debug = (...args: any[]) => DEBUG ? console.log(...args) : null;

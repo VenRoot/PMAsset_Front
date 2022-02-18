@@ -28,7 +28,7 @@ const MakeTemplate = async(values: Bildschirm): Promise<HTMLTableRowElement> =>
         {
             const temp = document.createElement("td");
             if(key == "kind") return;
-            temp.classList.add("border-2", "border-black", "duration-500", "transition", "text-center");
+            temp.classList.add("border-2", "border-black", "duration-500", "transition", "text-center", "bg-transparent", "dark:border-gray-300", "text-black", "dark:text-gray-300");
             //console.debug(key);
             switch(key)
             {
@@ -153,7 +153,7 @@ export const EditEntry = (elem: HTMLElement) =>
             default: const inp = document.createElement("input");
             inp.id="SearchInput"
             inp.type="search";
-            inp.classList.add("search", "text-center");
+            inp.classList.add("search", "text-center", "bg-transparent", "dark:text-white");
             inp.value = cell.innerText; 
             cell.innerHTML = "";
             if(i == 8)

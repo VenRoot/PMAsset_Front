@@ -22,12 +22,13 @@ const MakeTemplate = async(values: Phone): Promise<HTMLTableRowElement> =>
     const template = document.createElement("tr");
     template.setAttribute("onmouseover", "main.foc(this);");
     template.setAttribute("onmouseout", "main.unfoc(this);");
+    template.classList.add("dark:bg-gray-900", "dark:text-gray-300", "dark:border-gray-300")
 
     Object.keys(values).forEach(key =>
         {
             const temp = document.createElement("td");
             if(key == "kind") return;
-            temp.classList.add("border-2", "border-black", "duration-500", "transition", "text-center");
+            temp.classList.add("border-2", "border-black", "duration-500", "transition", "text-center", "dark:text-gray-300", "dark:border-gray-300");
             console.debug(key);
             switch(key)
             {
@@ -51,6 +52,7 @@ const MakeTemplate = async(values: Phone): Promise<HTMLTableRowElement> =>
         });
         // console.debug(template, template.children);
         const sortedtemplate = document.createElement("tr");
+        sortedtemplate.classList.add("hover:bg-opacity-50", "dark:text-gray-300");
         sortedtemplate.setAttribute("onmouseover", "main.foc(this);");
         sortedtemplate.setAttribute("onmouseout", "main.unfoc(this);");
         const queries = ["#IT_NR","#SERIENNUMMER", "#MODEL", "#STANDORT", "#STATUS", "#BESITZER", "#FORM"];
