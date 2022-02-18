@@ -1,6 +1,5 @@
 import {ClearTable, enableBtn, getInputValues, ResetFields, tbody} from "../anim.js";
 import {Konferenz, Item,} from "../interface";
-import { FormSelect, StatusSelect } from "../templates.js";
 import { setData } from "./backend.js";
 
 export let devices:Konferenz[] = [];
@@ -26,7 +25,7 @@ const MakeTemplate = async(values: Konferenz): Promise<HTMLTableRowElement> =>
         {
             const temp = document.createElement("td");
             if(key == "kind") return;
-            temp.classList.add("border-2", "border-black", "duration-500", "transition", "text-center");
+            temp.classList.add("border-2", "border-black", "duration-500", "transition", "text-center", "dark:border-white", "dark:text-gray-300", "text-black");
             console.debug(key);
             switch(key)
             {

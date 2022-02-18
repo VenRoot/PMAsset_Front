@@ -67,6 +67,7 @@ export const getMonitors = ():Promise<Bildschirm[]> =>
 //Fetch the data from the backend server
 export const getData = async () =>
 {
+    const p1 = performance.now();
     const username = window.sessionStorage.getItem("username");
     const SessionID = window.sessionStorage.getItem("SessionID");
 
@@ -100,6 +101,8 @@ export const getData = async () =>
     setDevices(pc);
     //Check if the domain is the pc page
     if(document.location.pathname.toLowerCase().includes("/pc")) pc.forEach(entry => AddRow(entry));
+    const p2 = performance.now();
+    console.log("Performance: " + (p2 - p1) + "ms");
     return res;
 }
 export const setData = async (data: Item, method: pushrequest ) =>

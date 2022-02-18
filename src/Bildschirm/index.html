@@ -3,6 +3,9 @@
 
 <head>
   <script>
+    // On page load or when changing themes, best to add inline in `head` to avoid FOUC
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) document.documentElement.classList.add('dark')
+      else document.documentElement.classList.remove('dark');
     if(sessionStorage.getItem("username") == null || sessionStorage.getItem("SessionID") == null) 
     {
       //Add current site to history and redirect to login
@@ -11,6 +14,7 @@
     }
   </script>
     <link href="../css/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/switch.css">
     <link rel="stylesheet" href="../css/material.css">
     <link rel="stylesheet" href="../css/table.css">
     <link rel="stylesheet" href="../css/custom.css">
@@ -21,6 +25,7 @@
     <script src="../js/jquery-3.6.0.min.js"></script>
     <script defer type="module">
       console.log("owo");
+      import * as dark from "../js/dark.js"; window.dark = dark;
         import * as main from"../js/main.js"; window.main = main;
         import * as Bildschirm from "../js/Bildschirm/main.js"; window.Bildschirm = Bildschirm;
         main.checkUser();
@@ -32,24 +37,12 @@
     </script>
 </head>
 
-<body translate="no" class="">
+<body translate="no" class="dark:bg-gray-900 dark:text-white text-black">
     <div class=" flex overflow-x-hidden h-screen" x-data=" {sidebarOpen: false}">
-        <!-- mobile menu bar-->
-
-        <div class="bg-gray-800 text-gray-100 flex justify-between md:hidden">
-            <!-- logo -->
-            <!-- <a href="#" class="block p-4 text-white font-bold">Better Dev</a> -->
-            <!-- mobile menu button -->
-            <!-- <button class=" mobile-menu-button p-4 focus:outline-none focus:bg-gray-700">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                  </svg>
-            </button> -->
-        </div>
 
         <!-- sidebar -->
         <!-- <div class="space-y-6 py-7 px-2 absolute"> -->
-        <aside class="bg-blue-800 text-blue-100 flex-shrink-0 w-64 flex flex-col border-r transition-all duration-300" :class="{ '-ml-64': sidebarOpen }">
+        <aside class="bg-blue-800 dark:bg-slate-800 text-blue-100 flex-shrink-0 w-64 flex flex-col border-r transition-all duration-300" :class="{ '-ml-64': sidebarOpen }">
             <!-- logo -->
             <a href="#" class="text-white flex items-center space-x-2 px-4">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -64,15 +57,29 @@
             </a>
             <!-- nav -->
             <nav class="">
-                <a href="../" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3">Übersicht</a>
-                <a href="../PC" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3">PC</a>
-                <a href="#" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3">Bildschirm</a>
-                <a href="../Phone/" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3">Phones</a>
-                <a href="../Konferenz/" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3">Konferenzeräte</a>
-                <a href="../Mitarbeiter/" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3">Nach Mitarbeiter suchen</a>
+                <a href="../" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 dark:hover:bg-slate-900 p-3">Übersicht</a>
+                <a href="../PC" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 dark:hover:bg-slate-900 p-3">PC</a>
+                <a href="#" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 dark:hover:bg-slate-900 p-3">Bildschirm</a>
+                <a href="../Phone/" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 dark:hover:bg-slate-900 p-3">Phones</a>
+                <a href="../Konferenz/" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 dark:hover:bg-slate-900 p-3">Konferenzeräte</a>
+                <a href="../Mitarbeiter/" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 dark:hover:bg-slate-900 p-3">Nach Mitarbeiter suchen</a>
                 <a class="block py-2.5 px-4"></a>
-                <a href="create" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 p-3 font-bold">Antrag erstellen</a>
+                <a href="create" class="block py-2.5 px-4 white transition duration-200 rounded hover:bg-blue-700 dark:hover:bg-slate-900 p-3 font-bold">Antrag erstellen</a>
             </nav>
+            <div class="flex justify-center">
+              <div class="form-check form-switch">
+                <input id="lights-toggle" class="form-check-input appearance-none w-9 -ml-10 rounded-full float-left h-5 align-top bg-white bg-no-repeat bg-contain focus:outline-none cursor-pointer shadow-sm" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+                <label class="form-check-label inline-block text-white dark:text-white" for="flexSwitchCheckDefault">Dark Mode</label>
+              </div>
+            </div>
+            <script>
+              const darkModeSwitch = document.getElementById("lights-toggle");
+              if(localStorage.getItem("theme") === "dark") darkModeSwitch.checked = true;
+              else darkModeSwitch.checked = false;
+            </script>
+            <div class="col-span-1 h-96 flex flex-col justify-between items-end">
+                <button href="../login.html" class="absolute bottom-10 self-center align-bottom py-2.5 px-4 bg-red-900 white transition duration-200 hover:bg-black rounded-lg">Logout</button>
+            </div>
             <div class="col-span-1 h-96 flex flex-col justify-between items-end">
                 <button href="../login.html" class=" absolute bottom-10 self-center align-bottom py-2.5 px-4 bg-red-900 white transition duration-200 hover:bg-black rounded-lg">Logout</button>
             </div>
@@ -80,7 +87,7 @@
         <!-- </div> -->
 
         <!-- content -->
-        <div id="content" class="flex-1 text-2xl font-bold left-1">
+        <div id="content" class="flex-1 text-2xl font-bold left-1 dark:text-gray-300 text-black">
             <!-- toggle button -->
             <button id="DashBtn" class=" mobile-menu-button p-4 focus:outline-none focus:bg-gray-700" @click="sidebarOpen=! sidebarOpen">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -89,12 +96,12 @@
             </button> Dashboard
             <div class="flex justify-between items-center">
                 <div class="flex-1">
-                    <h1 class="text-2xl font-bold text-center">Suchen Sie nach einer IT-Nummer</h1>
+                    <h1 class="text-2xl font-bold text-center dark:text-gray-300 text-black">Suchen Sie nach einer IT-Nummer</h1>
                 </div>
                 <div class="flex-1 self-center">
                     <div class="flex items-center self-center">
                         <div class="flex-1">
-                            <input type="text" class="bg-white text-gray p-2 rounded-full w-full" placeholder="Search">
+                            <input type="text" class="bg-white dark:bg-gray-900 text-gray dark:text-gray-300 p-2 rounded-full w-full" onkeyup="Bildschirm.SearchDevice(this.value);" placeholder="Search">
                         </div>
                     </div>
                 </div>
@@ -102,7 +109,7 @@
             <span>
                 <div>
                     <table class="table text-gray-400 border-separate space-y-6 text-sm" id="table">
-                        <thead id="thead" class="bg-blue-500 text-white">
+                        <thead id="thead" class="bg-blue-500 dark:bg-blue-900 text-white">
                           <tr class="bg-blend-darken">
                             <th class="p-4 text-center">IT Nr</th>
                             <th class="p-4 text-center">Typ</th>
@@ -117,27 +124,27 @@
                             <th class="p-4 text-center">Aktionen</th>
                           </tr>
                         </thead>
-                        <tbody class="border-2 border-black" id="tbody">
+                        <tbody class="border-2 border-black dark:border-gray-300 dark:text-gray-300" id="tbody">
                             <tr style="height: 36px" onkeyup="main.enableBtn();">
-                                <th class="border-2 border-black" name="IT_Nr"><div><input id="itinput" type="text" onkeypress="main.checkITNr(this);" class="w-full text-center temp"  placeholder="0X-IT00XXXX" maxlength="8" size="8" value="IT00" title="01 => Laptop&#13;02 => Bildschirm&#13;03 => Konferenzerät&#13;04 => Phone"></div></th>
-                                <th class="border-2 border-black" name="Typ"><select id="SelectInputTyp"></select></th>
-                                <th class="border-2 border-black" name="Hersteller"><select id="SelectHerstellerTyp"></select></th>
-                                <th class="border-2 border-black" name="Seriennummer"><input type="text" id="SeriennummerInput" class="w-full temp" placeholder="XXXXXXXXXXXXXXX" style="font-size: 11px;" title="Bitte hier die Seriennummer eingeben"></th>
-                                <th class="border-2 border-black" name="Modellnummer"><input type="text" class="w-full temp" placeholder="XXXXXXXXXXXXXXX" style="font-size: 11px;" id="ModellnummerInput" title="Bitte hier die Modellnummer eingeben"></th>
-                                <th class="border-2 border-black" name="Attached"><input type="text" id="AttachedInput" disabled value="Bitte auf der PC-Seite verknüfen"></th>
-                                <th class="border-2 border-black" name="text"><input class="w-full text-center temp" id="StandortInput" type="text"></th>
-                                <th class="border-2 border-black" name="text"><select id="SelectInputStatus" class="w-full text-center" type="text"></select></th>
-                                <th class="border-2 border-black" name="Mitarbeiter"><input class="w-full text-center temp" id="BesitzerInput" type="text"></th>
-                                <th class="border-2 border-black" name="Formular"><select class="w-full text-center temp" id="FormSelect">
-                                  <option value="Nein" selected>Nein</option>
-                                    <option value="Ja" onselect="CreateForm(this);">Ja</option>
+                                <th class="border-2 border-black dark:border-gray-300" name="IT_Nr"><div><input id="itinput" type="text" onkeypress="main.checkITNr(this);" class="w-full text-center temp bg-transparent"  placeholder="0X-IT00XXXX" maxlength="8" size="8" value="IT00" title="01 => Laptop&#13;02 => Bildschirm&#13;03 => Konferenzerät&#13;04 => Phone"></div></th>
+                                <th class="border-2 border-black dark:border-gray-300" name="Typ"><select id="SelectInputTyp" class="bg-transparent"></select></th>
+                                <th class="border-2 border-black dark:border-gray-300" name="Hersteller"><select id="SelectHerstellerTyp" class="bg-transparent"></select></th>
+                                <th class="border-2 border-black dark:border-gray-300" name="Seriennummer"><input type="text" id="SeriennummerInput" class="w-full temp bg-transparent" placeholder="XXXXXXXXXXXXXXX" style="font-size: 11px;" title="Bitte hier die Seriennummer eingeben"></th>
+                                <th class="border-2 border-black dark:border-gray-300" name="Modellnummer"><input type="text" class="w-full temp bg-transparent" placeholder="XXXXXXXXXXXXXXX" style="font-size: 11px;" id="ModellnummerInput" title="Bitte hier die Modellnummer eingeben"></th>
+                                <th class="border-2 border-black dark:border-gray-300" name="Attached"><input type="text" class="bg-transparent" id="AttachedInput" disabled value="Bitte auf der PC-Seite verknüfen"></th>
+                                <th class="border-2 border-black dark:border-gray-300" name="text"><input class="w-full text-center temp bg-transparent" id="StandortInput" type="text"></th>
+                                <th class="border-2 border-black dark:border-gray-300" name="text"><select id="SelectInputStatus" class="w-full text-center bg-transparent" type="text"></select></th>
+                                <th class="border-2 border-black dark:border-gray-300" name="Mitarbeiter"><input class="w-full text-center temp bg-transparent" id="BesitzerInput" type="text"></th>
+                                <th class="border-2 border-black dark:border-gray-300" name="Formular"><select class="w-full text-center temp bg-transparent" id="FormSelect">
+                                  <option value="Nein" class="bg-transparent" selected>Nein</option>
+                                    <option value="Ja" class="bg-transparent" onselect="CreateForm(this);">Ja</option>
                                 </select></th>
 
                                 <th class="icons">
-                                    <a href="#" class="text-red-400 hover:text-gray-100 mx-2">
+                                    <a href="#" class="text-red-700 hover:text-gray-400 mx-2">
                                       <i class="material-icons-outlined text-base" onclick="alert('Hello');" disabled id="DoneBTN">close</i>
                                     </a>
-                                    <a href="#" onclick="main.ResetFields()" class="text-red-400 hover:text-gray-100">
+                                    <a href="#" onclick="main.ResetFields()" class="text-red-700 hover:text-gray-400">
                                       <i class="material-icons-round text-base">settings_backup_restore</i>
                                     </a>
                                   </th>
@@ -198,6 +205,7 @@
                 </div>
             </span>
         </div>
+        <div style="position: relative; float: right; margin-right: 30px;" id="toasts"></div>
         <script src="../js/alpine.js"></script>
         <div style="position: relative; float: right; margin-right: 30px;">BUILD 20220209_01</div>
 </body>

@@ -5,6 +5,9 @@ import url from "url";
 import dotenv from "dotenv";
 import s from "node-schedule";
 
+//Require the modules for br encoding
+import { brotliCompressSync } from "zlib";
+
 //Check the current directory, make sure it's the server directory
 if(!process.cwd().includes("server"))
 {
@@ -23,13 +26,18 @@ const server = https.createSecureServer(options, async (req, res) => {
     let requrl = path.join(__dirname, `../out/${req.url?.substr(1)}`);
     if(req.url === undefined) return;
     res.setHeader('Cache-control', 'public, max-age=31536000');
+
+    //Enable compression
+    res.setHeader('Content-Encoding', 'br');
+
     const urlstring = url.parse(req.url);
     if(urlstring.pathname && urlstring.pathname != "/" && !urlstring.pathname.endsWith(".html")) {
         console.log("Ist keine HTML");
-        if(urlstring.pathname.endsWith("/css/styles.pure.css"))
+        if(urlstring.pathname.endsWith(".css"))
         {
+            res.removeHeader("Content-Encoding");
             res.writeHead(200, {'Content-Type': 'text/css'});
-            return res.end(fs.readFileSync(path.join(__dirname, "../out/css/styles.pure.css")));
+            return res.end((fs.readFileSync(requrl)));
         }
         console.log(urlstring.pathname);
         console.log(requrl);
@@ -43,31 +51,31 @@ const server = https.createSecureServer(options, async (req, res) => {
                 res.writeHead(200, {
                     "Content-Type": "application/javascript"
                 });
-                return res.end(fs.readFileSync(requrl));
+                return res.end(brotliCompressSync(fs.readFileSync(requrl)));
             }
 
-            if(fs.existsSync(requrl)) { res.writeHead(200); return res.end(fs.readFileSync(requrl)); }
+            if(fs.existsSync(requrl)) { res.writeHead(200); return res.end(brotliCompressSync(fs.readFileSync(requrl))); }
             res.writeHead(404); 
-            return res.end(fs.readFileSync(path.join(__dirname, "../", "out/404.html")));
+            return res.end(brotliCompressSync(fs.readFileSync(path.join(__dirname, "../", "out/404.html"))));
             
         }
         res.writeHead(404);
-        return res.end(fs.readFileSync(path.join(__dirname, "../", "out/404.html")));
+        return res.end(brotliCompressSync(fs.readFileSync(path.join(__dirname, "../", "out/404.html"))));
     }
     console.log(requrl);
     if(fs.existsSync(requrl))
     {
         console.log(`Existiert: ${requrl}`)
         res.writeHead(200);
-        if(fs.lstatSync(requrl).isDirectory()) return res.end(fs.readFileSync(path.join(requrl, "index.html")));
+        if(fs.lstatSync(requrl).isDirectory()) return res.end(brotliCompressSync(fs.readFileSync(path.join(requrl, "index.html"))));
 
         console.log("Nö");
-        return res.end(fs.readFileSync(requrl));
+        return res.end(brotliCompressSync(fs.readFileSync(requrl)));
     }
     else
     {
         res.writeHead(404);
-        return res.end(fs.readFileSync(path.join(__dirname, "../", "out/404.html")));
+        return res.end(brotliCompressSync(fs.readFileSync(path.join(__dirname, "../", "out/404.html"))));
     }
 }).listen(Number(process.env.PORT) || 3000, "0.0.0.0", undefined, undefined).on("listening", () => {
     console.log(`Server listening on port ${process.env.PORT || 3000}`);

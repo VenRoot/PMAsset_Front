@@ -1,4 +1,5 @@
 //@ts-nocheck
+import { isDarkMode } from "../dark.js";
 
 
 export function autocomplete(inp:HTMLInputElement, arr:string[]) {
@@ -15,8 +16,9 @@ export function autocomplete(inp:HTMLInputElement, arr:string[]) {
         currentFocus = -1;
         /*create a DIV element that will contain the items (values):*/
         a = document.createElement("DIV");
+        if(isDarkMode()) a.classList.add("dark");
         a.setAttribute("id", this.id + "autocomplete-list");
-        a.setAttribute("class", "autocomplete-items");
+        a.classList.add("autocomplete-items");
         /*append the DIV element as a child of the autocomplete container:*/
         this.parentNode.appendChild(a);
         /*for each item in the array...*/
@@ -25,6 +27,7 @@ export function autocomplete(inp:HTMLInputElement, arr:string[]) {
           if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
             /*create a DIV element for each matching element:*/
             b = document.createElement("DIV");
+            b.classList.add("dark:bg-gray-900", "dark:text-white", "dark");
             /*make the matching letters bold:*/
             b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
             b.innerHTML += arr[i].substr(val.length);

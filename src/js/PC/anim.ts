@@ -1,5 +1,5 @@
 import {ClearTable, enableBtn, foc, getInputValues, ResetFields, tbody} from "../anim.js";
-import { PDF, ShowError } from "../backend.js";
+import { getUsers, PDF, ShowError } from "../backend.js";
 import {Bildschirm, Item, PC} from "../interface";
 import { makeToast } from "../toast.js";
 import { deletePDF, generatePDF, getData, getMonitors, getPDF, rewritePDF, setData, setEquipment } from "./backend.js";
@@ -65,6 +65,7 @@ export const SearchDevice =(it_nr: string) =>
 
 
     const template = document.createElement("tr");
+    template.classList.add("dark:bg-gray-900", "dark:text-gray-300", "dark:border-gray-300");
     // template.setAttribute("onmouseover", "main.foc(this)");
     // template.setAttribute("onmouseout", "main.unfoc(this)");
 
@@ -73,7 +74,7 @@ export const SearchDevice =(it_nr: string) =>
     Object.keys(values).forEach(key =>
     {
         const temp = document.createElement("td");
-        temp.classList.add("border-2", "border-black", "duration-500", "transition", "text-center");
+        temp.classList.add("border-2", "duration-500", "transition", "text-center", "dark:text-gray-300");
         switch(key)
         {
             case "it_nr": temp.innerText = values.it_nr as any; temp.id = "IT_NR"; break;
@@ -96,15 +97,14 @@ export const SearchDevice =(it_nr: string) =>
             const pwf = document.createElement("input"); pwf.type = "password"; pwf.disabled = true; pwf.value = values.passwort as any; pwf.classList.add("bpasswd");
             temp.innerHTML = pwf.outerHTML; temp.id="PASSWORT"; break;
         }
-        console.debug(temp); 
+        console.debug(temp);
         
         template.append(temp); 
     });
-    console.log(template);
     const sortedtemplate = document.createElement("tr");
     // sortedtemplate.setAttribute("onmouseover", "main.foc(this)");
     // sortedtemplate.setAttribute("onmouseout", "main.unfoc(this)");
-    sortedtemplate.classList.add("hover:bg-opacity-50");
+    sortedtemplate.classList.add("hover:bg-opacity-50", "dark:bg-gray-900", "dark:text-gray-300", "dark:border-gray-300");
     const queries = ["#IT_NR", "#TYP", "#HERSTELLER", "#SERIENNUMMER", "#EQUIPMENT", "#STANDORT", "#STATUS", "#BESITZER", "#FORM", "#PASSWORT"];
     queries.forEach(query => sortedtemplate.appendChild(template.querySelector(query) as HTMLTableCellElement));
 
@@ -115,7 +115,7 @@ export const SearchDevice =(it_nr: string) =>
  }
 
  export const createIcons = () => {
-    const icons = document.createElement("td"); icons.classList.add("icons");
+    const icons = document.createElement("td"); icons.classList.add("icons", "duration-500", "transition", "text-center", "dark:text-gray-300");
     const a1 = document.createElement("a");
     const a2 = document.createElement("a");
     const a3 = document.createElement("a");
@@ -123,9 +123,9 @@ export const SearchDevice =(it_nr: string) =>
     const i2 = document.createElement("i"); i2.classList.add("mx-2");
     // const i3 = document.createElement("i");
 
-    a1.classList.add("text-gray-500", "text-gray-500", "hover:text-gray-100"); a1.href = "#";
-    a2.classList.add("text-yellow-400",  "hover:text-gray-100", "mx-2"); a2.href = "#";
-    a3.classList.add("text-red-400", "hover:text-gray-100"); a3.href = "#";
+    a1.classList.add("text-green-400", "hover:text-green-100"); a1.href = "#";
+    a2.classList.add("text-yellow-400",  "hover:text-yellow-100", "mx-2"); a2.href = "#";
+    a3.classList.add("text-red-400", "hover:text-red-100"); a3.href = "#";
 
     i1.classList.add("material-icons-outlined", "text-base"); i1.innerText = "visibility"; i1.setAttribute("onclick", "PC.ShowPassword(this);");
     i2.classList.add("material-icons-outlined", "text-base"); i2.innerText = "edit"; i2.setAttribute("onclick", "main.EditEntry(this);");
@@ -175,13 +175,13 @@ export const SearchDevice =(it_nr: string) =>
      checkbox.append(checkbox2);
 
 
-     let td0 = document.createElement("td"); td0.classList.add("border-t", "border-gray-200", "px-4", "py-2");
-     let td1 = document.createElement("td"); td1.classList.add("border-t", "border-gray-200", "px-4", "py-2");
-     let td2 = document.createElement("td"); td2.classList.add("border-t", "border-gray-200", "px-4", "py-2");
-     let td3 = document.createElement("td"); td3.classList.add("border-t", "border-gray-200", "px-4", "py-2");
-     let td4 = document.createElement("td"); td4.classList.add("border-t", "border-gray-200", "px-4", "py-2");
-     let td5 = document.createElement("td"); td5.classList.add("border-t", "border-gray-200", "px-4", "py-2");
-     let td6 = document.createElement("td"); td6.classList.add("border-t", "border-gray-200", "px-4", "py-2");
+     let td0 = document.createElement("td"); td0.classList.add("border-t", "border-gray-200", "px-4", "py-2", "dark:text-gray-300", "dark:border-gray-300", "dark:bg-gray-900");
+     let td1 = document.createElement("td"); td1.classList.add("border-t", "border-gray-200", "px-4", "py-2", "dark:text-gray-300", "dark:border-gray-300", "dark:bg-gray-900");
+     let td2 = document.createElement("td"); td2.classList.add("border-t", "border-gray-200", "px-4", "py-2", "dark:text-gray-300", "dark:border-gray-300", "dark:bg-gray-900");
+     let td3 = document.createElement("td"); td3.classList.add("border-t", "border-gray-200", "px-4", "py-2", "dark:text-gray-300", "dark:border-gray-300", "dark:bg-gray-900");
+     let td4 = document.createElement("td"); td4.classList.add("border-t", "border-gray-200", "px-4", "py-2", "dark:text-gray-300", "dark:border-gray-300", "dark:bg-gray-900");
+     let td5 = document.createElement("td"); td5.classList.add("border-t", "border-gray-200", "px-4", "py-2", "dark:text-gray-300", "dark:border-gray-300", "dark:bg-gray-900");
+     let td6 = document.createElement("td"); td6.classList.add("border-t", "border-gray-200", "px-4", "py-2", "dark:text-gray-300", "dark:border-gray-300", "dark:bg-gray-900");
 
      td0.innerText = _values.it_nr;
      td1.innerText = _values.seriennummer;
@@ -231,7 +231,7 @@ export const SearchDevice =(it_nr: string) =>
              const id = tr.children[1].innerHTML;
              Monitors.push(id);
              const input = document.createElement("input");
-             input.classList.add("readonly", "text-center");
+             input.classList.add("readonly", "text-center", "bg-transparent");
              input.value = id;
              //Right click on the input field, which will prompt the user to remove the input field
             input.setAttribute(`oncontextmenu`, `if(confirm('Möchten Sie diesen Bildschirm vom PC trennen?')) { PC.removeMon(this); this.remove();} return false;`);
@@ -309,16 +309,15 @@ export const SearchDevice =(it_nr: string) =>
     const tbody = document.getElementById("tbody")!;
     const count = tbody.children.length;
     if(count % 2 == 0) newRow.classList.add("bg-gray-100");
-    else newRow.classList.add("bg-gray-200");
-    
+    else newRow.classList.add("bg-gray-500");
 
 
     //Set the values into the new row
     Object.keys(values).forEach((key, index) =>
         {
-            if(key == "kind") return;
             const template = newRow.getElementsByTagName("td")[index];
-
+            template.classList.add("bg-transparent", "dark:border-gray-300", "border-black", "text-black", "dark:text-gray-300");
+            if(key == "kind") return;
             switch(index)
             {
                 case 0: template.innerText = values.it_nr as any; break;
@@ -337,7 +336,7 @@ export const SearchDevice =(it_nr: string) =>
                     {
                         const input = document.createElement("input");
                         input.value = equipment;
-                        input.classList.add("text-center");
+                        input.classList.add("text-center", "bg-transparent");
                         input.setAttribute("readonly", "");
                         input.setAttribute("oncontextmenu", "if(confirm('Möchten Sie diesen Bildschirm vom PC trennen?')) { PC.removeMon(this); } return false;");
                         template.append(input);
@@ -393,7 +392,9 @@ export const SearchDevice =(it_nr: string) =>
                 template.setAttribute("oncontextmenu", `PC.ShowContextMenu(this, "${values.it_nr}");`);
                 
                 break;
-                case 9: (template.children[0] as HTMLInputElement).value = values.passwort as any; break;
+                case 9: (template.children[0] as HTMLInputElement).value = values.passwort as any; 
+                template.children[0].classList.add("bg-transparent");
+                break;
             }
 
         // switch(key)
