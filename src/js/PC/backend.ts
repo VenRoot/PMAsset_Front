@@ -41,7 +41,7 @@ export const getMonitors = ():Promise<Bildschirm[]> =>
             attached: element.ATTACHED,
             seriennummer: element.SN as any,
             status: element.STATUS as any,
-            form: element.FORM as any,
+            // form: element.FORM as any,
             standort: "0" as any
         });
         Monitors.push({
@@ -53,7 +53,7 @@ export const getMonitors = ():Promise<Bildschirm[]> =>
             besitzer: element.BESITZER || "",
             it_nr: element.ITNR as any,
             seriennummer: element.SN as any,
-            form: element.FORM as any,
+            // form: element.FORM as any,
             status: element.STATUS as any,
             standort: "0" as any
         });

@@ -112,7 +112,7 @@ FormSelect.style.textAlignLast = "center";
     EquipmentBtn.textContent = "Liste öffnen";
 
     (document.getElementById("SelectInputStatus") as HTMLSelectElement).parentElement!.replaceChild(StatusSelect, document.getElementById("SelectInputStatus")!);
-    (document.getElementById("FormSelect") as HTMLSelectElement).parentElement!.replaceChild(FormSelect, document.getElementById("FormSelect")!);
+    if(document.location.pathname.toLocaleLowerCase().includes("pc")) (document.getElementById("FormSelect") as HTMLSelectElement).parentElement!.replaceChild(FormSelect, document.getElementById("FormSelect")!);
 
     if(document.location.pathname.toLocaleLowerCase().includes('konferenz')) return;
 
