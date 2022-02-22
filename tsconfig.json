@@ -71,6 +71,7 @@
     "pretty": false
   },
   "exclude": [
-    "server"
+    "server",
+    "electron"
   ]
 }
