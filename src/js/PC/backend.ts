@@ -1,10 +1,22 @@
 import { ClearTable } from "../anim.js";
 import {insertRequest, request, ShowError, PDF, tryParseJSON} from "../backend.js";
-import { Item, PC, Bildschirm, pushrequest } from "../interface";
+import { Item, PC, Bildschirm, pushrequest } from "../interface.js";
 import { makeToast } from "../toast.js";
 import { AddRow, devices, GetMonitors, setDevices } from "./anim.js";
 import { PC_res_data, res_monitor } from "./interface.js";
 export const Monitors:Bildschirm[] = [];
+
+declare global
+{
+    interface Window
+    {
+        isElectron: boolean;
+        api: {
+            send: Function,
+            receive: Function
+        }
+    }
+}
 
 
 export const getMonitors = ():Promise<Bildschirm[]> =>
@@ -227,6 +239,14 @@ export const getPDF = async (ITNr: string) =>
         throw new Error(err.message);
     }) as unknown as Blob;
 
+
+    if(window.isElectron)
+    {
+        const base = await (await blobToBase64(res)).split("base64,")[1];
+        console.log(base);
+        window.api.send("toOpenPDF", base, ITNr);
+        return res;
+    }
     const url = window.URL.createObjectURL(res);
     const a = document.createElement("a");
     a.href = url;
@@ -234,6 +254,14 @@ export const getPDF = async (ITNr: string) =>
     a.click();
     return res;
 }
+
+function blobToBase64(blob: Blob): Promise<string> {
+    return new Promise((resolve, _) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.readAsDataURL(blob);
+    });
+  }
 
 const hex2a = (hexx:string) => {
     var hex = hexx.toString();//force conversion

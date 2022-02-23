@@ -24,7 +24,8 @@
     <title>Asset-Management</title>
     <script src="../js/jquery-3.6.0.min.js"></script>
     <script defer type="module">
-      import * as dark from "../js/dark.js"; window.dark = dark;
+        if(window.api && window.api.send && window.api.receive) window.isElectron = true;
+        import * as dark from "../js/dark.js"; window.dark = dark;
         import * as main from"../js/main.js"; window.main = main;
         import * as phone from "../js/phone/main.js"; window.Phone = phone;
         main.checkUser();

@@ -24,6 +24,7 @@
     <title>Asset-Management</title>
     <script src="../js/jquery-3.6.0.min.js"></script>
     <script defer type="module">
+        if(window.api && window.api.send && window.api.receive) window.isElectron = true;
         import * as dark from "../js/dark.js"; window.dark = dark;
         import * as main from"../js/main.js"; window.main = main;
         import * as Konferenz from "../js/konferenz/main.js"; window.Konferenz = Konferenz;

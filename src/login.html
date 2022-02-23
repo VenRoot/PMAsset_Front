@@ -8,6 +8,7 @@
     <title>Asset-Management</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script defer type="module">
+        if(window.api && window.api.send && window.api.receive) window.isElectron = true;
         import * as login from "./js/login.js"; window.login = login; console.log(window.login);
         if(sessionStorage.getItem("redirect"))
         {

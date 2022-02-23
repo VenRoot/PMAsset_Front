@@ -19,7 +19,13 @@
   "license": "MIT",
   "config": {
     "forge": {
-      "packagerConfig": {},
+      "packagerConfig": {
+        "asar": true,
+        "platforms": [
+          "win32",
+          "linux"
+        ]
+      },
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
@@ -53,11 +59,15 @@
     "@typescript-eslint/eslint-plugin": "^5.12.0",
     "@typescript-eslint/parser": "^5.12.0",
     "electron": "17.0.1",
+    "electron-prebuilt-compile": "8.2.0",
     "eslint": "^8.9.0",
     "eslint-plugin-import": "^2.25.4",
     "typescript": "~4.5.4"
   },
   "dependencies": {
+    "@types/node": "^17.0.19",
+    "electron": "^17.0.1",
+    "electron-prebuilt-compile": "8.2.0",
     "electron-squirrel-startup": "^1.0.0"
   }
 }
