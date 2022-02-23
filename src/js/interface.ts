@@ -8,8 +8,8 @@ type EquipmentTypes = "Bildschirm" | "Default";
 
 export type Status = "Aktiv" | "Inaktiv" | "Bestellt" | "Defekt" | "Reserviert" | "Verschrottet";
 
-export type PCHersteller = "Haug" | "Lenovo" | "Microsoft"
-export type PCTypes = "Tower" | "CAD" | "T430" | "T450" | "T470"  | "T480" | "T490" | "T14";
+export type PCHersteller = "Haug" | "Lenovo" | "Microsoft" | "HP"
+export type PCTypes = "Tower" | "CAD" | "T430" | "T450" | "T470"  | "T480" | "T490" | "T14" | "T14s" | "T14s G2" | "Z-Book" | "Z-Book Fury";
 export interface equipment
 {
     type: EquipmentTypes;
