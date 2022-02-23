@@ -106,7 +106,7 @@ FormSelect.style.textAlignLast = "center";
     Nein.classList.add("dark:text-white", "dark:bg-gray-900"), "text-center";
 
     FormSelect.options.add(Nein);
-    FormSelect.options.add(Ja);
+    // FormSelect.options.add(Ja);
 
 
     EquipmentBtn.textContent = "Liste öffnen";
