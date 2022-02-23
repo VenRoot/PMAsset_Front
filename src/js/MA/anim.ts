@@ -204,7 +204,7 @@ const MakeTableTemplate = (device: Item) => {
     {
         case "PC":
             table.id = "PCTable";
-            const attr1 = ["IT-Nr", "Typ", "Seriennummer", "Standort", "Equipment", "Form", "BIOS Passwort"];
+            const attr1 = ["INV-Nr", "Typ", "Seriennummer", "Standort", "Equipment", "Form", "BIOS Passwort"];
             attr1.forEach(attr => {
                 const th = document.createElement("th");
                 th.innerText = attr;
@@ -215,7 +215,7 @@ const MakeTableTemplate = (device: Item) => {
             break;
         case "Monitor":
             table.id = "MonTable";
-            const attr2 = ["IT-Nr", "Typ", "Seriennummer", "Modell", "Standort", "Verknüpft mit"];
+            const attr2 = ["INV-Nr", "Typ", "Seriennummer", "Modell", "Standort", "Verknüpft mit"];
             attr2.forEach(attr => {
                 const th = document.createElement("th");
                 th.innerText = attr;
@@ -225,7 +225,7 @@ const MakeTableTemplate = (device: Item) => {
             break;
         case "Phone":
             table.id = "PhoneTable";
-            const attr3 = ["IT-Nr", "Modell", "Seriennummer", "Standort"];
+            const attr3 = ["INV-Nr", "Modell", "Seriennummer", "Standort"];
             attr3.forEach(attr => {
                 const th = document.createElement("th");
                 th.innerText = attr;

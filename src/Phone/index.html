@@ -122,7 +122,7 @@
                     <table class="table text-gray-400 border-separate space-y-6 text-sm" id="table">
                         <thead id="thead" class="bg-blue-500 dark:bg-blue-900 text-white">
                           <tr class="bg-blend-darken">
-                            <th class="p-4 text-center">IT Nr</th>
+                            <th class="p-4 text-center">INV-Nr</th>
                             <th class="p-4 text-center">Modell</th>
                             <th class="p-4 text-center">Seriennummer</th>
                             <th class="p-4 text-center">Standort</th>
@@ -134,7 +134,7 @@
                         </thead>
                         <tbody class="border-2 border-black dark:border-white" id="tbody">
                             <tr style="height: 36px" onkeyup="main.enableBtn();">
-                                <th class="border-2 border-black dark:border-gray-300" name="IT_Nr"><div><input id="itinput" type="text" onkeypress="main.checkITNr(this);" class="w-full text-center temp bg-transparent"  placeholder="0X-IT00XXXX" maxlength="8" size="8" value="IT00" title="01 => Laptop&#13;02 => Bildschirm&#13;03 => Konferenzerät&#13;04 => Phone"></div></th>
+                                <th class="border-2 border-black dark:border-gray-300" name="IT_Nr"><div><input id="itinput" type="text" onkeypress="main.checkITNr(this);" class="w-full text-center temp bg-transparent"  placeholder="0000" maxlength="4" size="4"></div></th>
                                 <th class="border-2 border-black dark:border-gray-300" name="Typ"><select id="SelectInputTyp"></select></th>
                                 <th class="border-2 border-black dark:border-gray-300" name="Seriennummer"><input type="text" id="SeriennummerInput" class="w-full temp bg-transparent" placeholder="XXXXXXXXXXXXXXX" style="font-size: 11px;" title="Bitte hier die Seriennummer eingeben"></th>
                                 <th class="border-2 border-black dark:border-gray-300" name="text"><input class="w-full text-center temp bg-transparent" id="StandortInput" type="text"></th>

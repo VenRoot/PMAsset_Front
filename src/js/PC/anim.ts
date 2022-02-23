@@ -631,7 +631,7 @@ export const openform = (row: HTMLTableRowElement) => {
     else changeCurrentRow(row.children[0].textContent as string);
     
     
-    if(currentRow == "IT00") return alert("Dies IT-Nr ist nicht vollständig");
+    if(currentRow.length !=4) return alert("Dies IT-Nr ist nicht vollständig");
     GetMonitors(currentRow);
     modal.style.display = "block";
     console.debug(currentRow);
