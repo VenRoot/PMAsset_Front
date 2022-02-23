@@ -98,6 +98,13 @@ export const AddRow = async (_values?: Phone) =>
     else values = _values;
     
     const newRow = await MakeTemplate(values);
+
+
+    let User = await getUsers();
+    if(!User) return ShowError("Fehler beim Laden der Benutzer");
+    let newUser = User.find(user => user.userPrincipalName == values.besitzer);
+    if(newUser) values.besitzer = newUser.cn.split("(")[0];
+    else values.besitzer = values.besitzer.split("@")[0];
     //Set the values into the new row
     Object.keys(values).forEach((key, index) =>
     {
