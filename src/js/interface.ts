@@ -16,7 +16,7 @@ export interface equipment
 
 };
 
-type ITNr = `IT${"00"}${number}`;
+type ITNr = `${number}`;
 
 export type Item = PC | Bildschirm | Phone | Konferenz;
 

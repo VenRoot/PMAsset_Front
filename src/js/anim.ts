@@ -73,7 +73,7 @@ export const getInputValues = async (type: "PC" | "Bildschirm" | "Phone" | "Konf
         //@ts-ignore
         let pc:PC = {
             kind: "PC",
-            it_nr: (document.getElementById("itinput") as HTMLInputElement).value as `IT00${number}`,
+            it_nr: (document.getElementById("itinput") as HTMLInputElement).value as `${number}`,
             type: (document.getElementById("SelectInputTyp")as HTMLSelectElement).selectedOptions[0].value as PCTypes,
             hersteller: (document.getElementById("SelectHerstellerTyp")as HTMLSelectElement).selectedOptions[0].value as PCHersteller,
             seriennummer: (document.getElementById("SeriennummerInput")as HTMLInputElement).value,
@@ -103,7 +103,7 @@ export const getInputValues = async (type: "PC" | "Bildschirm" | "Phone" | "Konf
     {
         let bildschirm:Bildschirm = {
             kind: "Monitor",
-            it_nr: (document.getElementById("itinput") as HTMLInputElement).value as `IT00${number}`,
+            it_nr: (document.getElementById("itinput") as HTMLInputElement).value as `${number}`,
             type: (document.getElementById("SelectInputTyp")as HTMLSelectElement).selectedOptions[0].value as MonTypes,
             hersteller: (document.getElementById("SelectHerstellerTyp")as HTMLSelectElement).selectedOptions[0].value as "Samsung" | "LG" | "Dell",
             seriennummer: (document.getElementById("SeriennummerInput")as HTMLInputElement).value,
@@ -129,7 +129,7 @@ export const getInputValues = async (type: "PC" | "Bildschirm" | "Phone" | "Konf
     {
         let phone:Phone = {
             kind: "Phone",
-            it_nr: (document.getElementById("itinput") as HTMLInputElement).value as `IT00${number}`,
+            it_nr: (document.getElementById("itinput") as HTMLInputElement).value as `${number}`,
             model: (document.getElementById("SelectInputTyp")as HTMLSelectElement).value as phoneTypes,
             seriennummer: (document.getElementById("SeriennummerInput")as HTMLInputElement).value,
             standort: (document.getElementById("StandortInput")as HTMLInputElement).value,
@@ -143,7 +143,7 @@ export const getInputValues = async (type: "PC" | "Bildschirm" | "Phone" | "Konf
     {
         let konferenz:Konferenz = {
             kind: "Konferenz",
-            it_nr: (document.getElementById("itinput") as HTMLInputElement).value as `IT00${number}`,
+            it_nr: (document.getElementById("itinput") as HTMLInputElement).value as `${number}`,
             hersteller: (document.getElementById("SelectHerstellerTyp")as HTMLInputElement).value as KonfHersteller,
             model: (document.getElementById("SelectInputTyp")as HTMLInputElement).value as string,
             seriennummer: (document.getElementById("SeriennummerInput")as HTMLInputElement).value,
@@ -266,14 +266,28 @@ export const AddEquipment = () => {
 };
 
 $("#itinput").keydown(function (e) {
-    if (/^\d+$/.test(e.key) == false && e.key != "Backspace") return e.preventDefault();
-    let oldvalue = $(this).val() as string;
-    let field = this as HTMLInputElement;
-    setTimeout(function () {
-        if (field.value.indexOf('IT00') !== 0) {
-            $(field).val(oldvalue);
-        }
-    }, 1);
+console.log(e.keyCode);
+
+    //allowed keys
+    if (e.keyCode == 8 || e.keyCode == 46 || e.keyCode == 37 || e.keyCode == 39 || e.keyCode == 13 || e.keyCode == 27) return;
+
+
+    //´ und ` sind nicht erlaubt
+    if (e.keyCode == 221 || e.keyCode == 220 || e.keyCode == 229 || e.keyCode == 192) e.preventDefault(); 
+    //only accept numbers
+    if ((e.keyCode < 48 || e.keyCode > 57) && (e.keyCode < 96 || e.keyCode > 105) && e.keyCode != 8) e.preventDefault();
+    //@ts-ignore
+    if(($("#itinput").val().length > 3) && e.keyCode != 8) e.preventDefault();
+
+
+    // if (/^\d+$/.test(e.key) == false && e.key != "Backspace") return e.preventDefault();
+    // let oldvalue = $(this).val() as string;
+    // let field = this as HTMLInputElement;
+    // setTimeout(function () {
+    //     if (field.value.indexOf('IT00') !== 0) {
+    //         $(field).val(oldvalue);
+    //     }
+    // }, 1);
 });
 
 
@@ -322,8 +336,7 @@ export const ResetFields = () =>
     const row = tbody.rows[0];
     //Get all elements with the class "temp" from the row and set their value to ""
     Array.from(row.getElementsByClassName("temp")).forEach(element => {
-        if((element as HTMLInputElement).id == "itinput") (element as HTMLInputElement).value = "IT00";
-        else (element as HTMLInputElement).value = "";
+        (element as HTMLInputElement).value = "";
     });
 }
 
@@ -555,3 +568,9 @@ export const EditColor = () =>
     }
 }
 
+(() => {
+    const el = document.getElementById("itinput") as HTMLInputElement;
+    const style = window.getComputedStyle(el, null).getPropertyValue('font-size');
+    const fontSize = parseFloat(style);
+    const newWidth = el.offsetWidth * 1.5;
+})();
