@@ -182,28 +182,31 @@ async function oo()
 let Users:User[] = [];
 export const getU = (): User[] => Users;
 
-export const getUsers = async () =>
+export const getUsers = () =>
 {
-    const p1 = performance.now();
-    const username = window.sessionStorage.getItem("username");
-    const SessionID = window.sessionStorage.getItem("SessionID");
-    if(username == null || SessionID == null) throw new Error("No SessionID or username found");
-    //@ts-ignore
-    if(Users && Users.length > 0) {
-        console.log(`Cache took: `, performance.now() - p1);
+    return new Promise(async (resolve, reject):Promise<User[] | undefined> => {
+        const p1 = performance.now();
+        const username = window.sessionStorage.getItem("username");
+        const SessionID = window.sessionStorage.getItem("SessionID");
+        if(username == null || SessionID == null) throw new Error("No SessionID or username found");
         //@ts-ignore
-        return Users;
+        if(Users && Users.length > 0) {
+            console.log(`Cache took: `, performance.now() - p1);
+            //@ts-ignore
+            return resolve(Users);
 
-    }
+        }
 
-    let x = await request("getEntries", {method: "getEntries", SessionID: SessionID, username: username, type: "MA"}).catch(err => {
-        if(err) return ShowError(err.message, err.status);
-    });
-    if(!x) return;
-    const users = tryParseJSON(x.message);
-    Users = users;
-    console.log(`Cache took: `, performance.now() - p1);
-    return users as unknown as User[];
+        let x = await request("getEntries", {method: "getEntries", SessionID: SessionID, username: username, type: "MA"}).catch(err => {
+            if(err) return reject(ShowError(err.message, err.status));
+        });
+        if(!x) return;
+        const users = tryParseJSON(x.message);
+        Users = users;
+        console.log(`Cache took: `, performance.now() - p1);
+        return resolve(users) as unknown as User[];
+    }) as Promise<User[] | undefined>;
+    
 }
 
 
