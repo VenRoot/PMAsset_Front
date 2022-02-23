@@ -311,10 +311,16 @@ export const SearchDevice =(it_nr: string) =>
     if(count % 2 == 0) newRow.classList.add("bg-gray-100");
     else newRow.classList.add("bg-gray-500");
 
+    let User = await getUsers();
+    if(!User) return ShowError("Fehler beim Laden der Benutzer");
+    let newUser = User.find(user => user.userPrincipalName == values.besitzer);
+    if(newUser) values.besitzer = newUser.cn.split("(")[0];
+    else values.besitzer = values.besitzer.split("@")[0];
 
     //Set the values into the new row
-    Object.keys(values).forEach((key, index) =>
+    Object.keys(values).forEach(async (key, index) =>
         {
+
             const template = newRow.getElementsByTagName("td")[index];
             template.classList.add("bg-transparent", "dark:border-gray-300", "border-black", "text-black", "dark:text-gray-300");
             if(key == "kind") return;
