@@ -265,7 +265,7 @@ export const AddEquipment = () => {
     document.body.appendChild(popup);
 };
 
-$("#itinput").keydown(function (e) {
+if(document.querySelector("#itinput")) $("#itinput").keydown(function (e) {
 console.log(e.keyCode);
 
     //allowed keys
@@ -570,6 +570,7 @@ export const EditColor = () =>
 
 (() => {
     const el = document.getElementById("itinput") as HTMLInputElement;
+    if(!el) return;
     const style = window.getComputedStyle(el, null).getPropertyValue('font-size');
     const fontSize = parseFloat(style);
     const newWidth = el.offsetWidth * 1.5;
