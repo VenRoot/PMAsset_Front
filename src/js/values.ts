@@ -3,18 +3,23 @@ import { PCTypes, phoneTypes, Bildschirm, MonHersteller, Status, PCHersteller, M
 export const PCTypen: PCTypes[] = Object.seal([
     "CAD",
     "T14",
+    "T14s",
+    "T14s G2",
     "T430",
     "T450",
     "T470",
     "T480",
     "T490",
-    "Tower"
+    "Tower",
+    "Z-Book",
+    "Z-Book Fury"
 ]);
 
 export const PCHerstellerTypen:PCHersteller[] = Object.seal([
     "Haug",
     "Lenovo",
-    "Microsoft"
+    "Microsoft",
+    "HP"
 ]);
 
 export const MonTypen:MonTypes[] = Object.seal([
