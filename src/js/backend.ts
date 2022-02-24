@@ -181,6 +181,7 @@ async function oo()
 
 let Users:User[] = [];
 export const getU = (): User[] => Users;
+export const setU = (u: User[]) => Users = u;
 
 export const getUsers = ():Promise<User[] | undefined> =>
 {

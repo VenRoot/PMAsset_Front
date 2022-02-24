@@ -1,5 +1,5 @@
 import {ClearTable, enableBtn, foc, getInputValues, ResetFields, tbody} from "../anim.js";
-import { getUsers, PDF, ShowError } from "../backend.js";
+import { getUsers, PDF, setU, ShowError } from "../backend.js";
 import {Bildschirm, Item, PC} from "../interface";
 import { makeToast } from "../toast.js";
 import { deletePDF, generatePDF, getData, getMonitors, getPDF, rewritePDF, setData, setEquipment } from "./backend.js";
@@ -314,12 +314,13 @@ export const SearchDevice =(it_nr: string) =>
 
     let User = await getUsers();
     if(!User) return reject(ShowError("Fehler beim Laden der Benutzer"));
+    setU(User);
     let newUser = User.find(user => user.userPrincipalName == values.besitzer);
     if(newUser) values.besitzer = newUser.cn.split("(")[0];
     else values.besitzer = values.besitzer.split("@")[0];
 
     //Set the values into the new row
-    Object.keys(values).forEach(async (key, index) =>
+    Object.keys(values).forEach((key, index) =>
         {
 
             const template = newRow.getElementsByTagName("td")[index];
