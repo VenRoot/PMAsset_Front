@@ -182,7 +182,7 @@ async function oo()
 let Users:User[] = [];
 export const getU = (): User[] => Users;
 
-export const getUsers = () =>
+export const getUsers = ():Promise<User[] | undefined> =>
 {
     return new Promise(async (resolve, reject):Promise<User[] | undefined> => {
         const p1 = performance.now();
@@ -191,21 +191,22 @@ export const getUsers = () =>
         if(username == null || SessionID == null) throw new Error("No SessionID or username found");
         //@ts-ignore
         if(Users && Users.length > 0) {
-            console.log(`Cache took: `, performance.now() - p1);
+            console.log(`FAST! Cache took: `, performance.now() - p1);
+            console.log(Users);
             //@ts-ignore
-            return resolve(Users);
-
+            resolve(Users);
+            return;
         }
 
         let x = await request("getEntries", {method: "getEntries", SessionID: SessionID, username: username, type: "MA"}).catch(err => {
-            if(err) return reject(ShowError(err.message, err.status));
+            if(err) reject(ShowError(err.message, err.status));
         });
-        if(!x) return;
-        const users = tryParseJSON(x.message);
+        if(!x) return undefined;
+        const users = tryParseJSON(x.message) as User[];
         Users = users;
         console.log(`Cache took: `, performance.now() - p1);
-        return resolve(users) as unknown as User[];
-    }) as Promise<User[] | undefined>;
+        resolve(users);
+    });
     
 }
 

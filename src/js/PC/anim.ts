@@ -281,9 +281,10 @@ export const SearchDevice =(it_nr: string) =>
 
  };
 
- export const AddRow = async (_values?: PC) =>
+ export const AddRow = (_values?: PC) =>
 {
-    // const newRow = tbody.rows[1].cloneNode(true) as HTMLTableRowElement;
+   return new Promise(async (resolve, reject) => {
+        // const newRow = tbody.rows[1].cloneNode(true) as HTMLTableRowElement;
     let values:PC;
     
     
@@ -291,7 +292,7 @@ export const SearchDevice =(it_nr: string) =>
     if(!_values)
     {   
         values = await getInputValues("PC") as PC;
-        if(devices.filter(e => e.it_nr == values.it_nr).length > 0) return alert("PC ist bereits in der Liste vorhanden!");
+        if(devices.filter(e => e.it_nr == values.it_nr).length > 0) return resolve(alert("PC ist bereits in der Liste vorhanden!"));
         //@ts-ignore
         if(values.equipment === undefined) values.equipment = [];
         //Es wurden keine Values mitgegeben, also... in die DB
@@ -312,7 +313,7 @@ export const SearchDevice =(it_nr: string) =>
     else newRow.classList.add("bg-gray-500");
 
     let User = await getUsers();
-    if(!User) return ShowError("Fehler beim Laden der Benutzer");
+    if(!User) return reject(ShowError("Fehler beim Laden der Benutzer"));
     let newUser = User.find(user => user.userPrincipalName == values.besitzer);
     if(newUser) values.besitzer = newUser.cn.split("(")[0];
     else values.besitzer = values.besitzer.split("@")[0];
@@ -323,7 +324,7 @@ export const SearchDevice =(it_nr: string) =>
 
             const template = newRow.getElementsByTagName("td")[index];
             template.classList.add("bg-transparent", "dark:border-gray-300", "border-black", "text-black", "dark:text-gray-300");
-            if(key == "kind") return;
+            if(key == "kind") return resolve(false);
             switch(index)
             {
                 case 0: template.innerText = values.it_nr as any; break;
@@ -402,50 +403,14 @@ export const SearchDevice =(it_nr: string) =>
                 template.children[0].classList.add("bg-transparent");
                 break;
             }
-
-        // switch(key)
-        // {
-        //     case "it_nr": template.innerText = values.it_nr as any; break;
-        //     case "type": template.innerText = values.type as any; break;
-        //     case "hersteller": template.innerText = values.hersteller as any; break;
-        //     case "seriennummer": template.innerText = values.seriennummer as any; break;
-        //     case "standort": template.innerText = values.standort as any; break;
-        //     case "status": template.innerText = values.status as any; break;
-        //     case "besitzer":
-        //     const a = document.createElement("a");
-        //     a.href = "#";
-        //     a.classList.add("text-red-900", "hover:text-green-900");
-        //     template.innerText = values.besitzer as any;
-        //     break;
-        //     case "form": template.innerText = values.form as any; break;
-        //     case "passwort": template.innerText = values.passwort as any; break;
-        // }
     });
     
     //Add the new row to the table
     $("#tbody tr:first").after(newRow);
     //Reset the values in the input fields
     ResetFields();
-    
-
-    
-    // if(_values) values = _values;
-    // if(values == undefined) return;    
-    // Array.from(newRow.cells).forEach(async (cell, index) => {
-    //     if(index == 0) cell.innerText = ((values as string[])[index]).slice(3);
-    //     else if(index == 3) cell.innerText = "Bildschirm";
-    //     else if(index == 6) cell.innerText = values![6];
-    //     else if(index == 8) { 
-    //         let input = document.createElement("input"); 
-    //         input.type = "password";
-    //         input.classList.add("bpasswd");
-    //         input.value = values![8] || "";
-    //         cell.innerHTML = "";
-    //         cell.appendChild(input);
-    //  }
-    //     else if(index == 9) return;
-    //     else cell.innerText = values![index];
-    // });
+    resolve(true);
+   });
 };
 
 export const ShowContextMenu = (element: HTMLTableCellElement, itnr: string) =>
