@@ -108,17 +108,17 @@
                 <div>
                     <table class="table text-gray-400 border-separate space-y-6 text-sm" id="table">
                         <thead id="thead" class="bg-blue-500 dark:bg-blue-900 text-white">
-                          <tr class="bg-blend-darken">
-                            <th class="p-3 text-center">INV-Nr</th>
-                            <th class="p-3 text-center">Typ</th>
-                            <th class="p-3 text-center">Hersteller</th>
-                            <th class="p-3 text-center">Seriennummer</th>
-                            <th class="p-3 text-center">Equipment</th>
-                            <th class="p-3 text-center">Standort</th>
-                            <th class="p-3 text-center">Status</th>
-                            <th class="p-3 text-center">Mitarbeiter</th>
-                            <th class="p-3 text-center">Form</th>
-                            <th class="p-3 text-center">BIOS Passwort</th>
+                          <tr class="bg-blend-darken" id="trth">
+                            <th class="p-3 text-center"> <p id="0" class="material-icons-outlined" onclick="PC.sort(this, 'it_nr')">keyboard_arrow_down</p><br>INV-Nr</th>
+                            <th class="p-3 text-center"> <p id="1" class="material-icons-outlined" onclick="PC.sort(this, 'type',)">keyboard_arrow_down</p><br>Typ</th>
+                            <th class="p-3 text-center"> <p id="2" class="material-icons-outlined" onclick="PC.sort(this, 'hersteller')">keyboard_arrow_down</p><br>Hersteller</th>
+                            <th class="p-3 text-center"> <p id="3" class="material-icons-outlined" onclick="PC.sort(this, 'seriennummer')">keyboard_arrow_down</p><br>Seriennummer</th>
+                            <th class="p-3 text-center"> <p id="4" class="material-icons-outlined" onclick="PC.sort(this, 'equipment')">keyboard_arrow_down</p><br>Equipment</th>
+                            <th class="p-3 text-center"> <p id="5" class="material-icons-outlined" onclick="PC.sort(this, 'standort')">keyboard_arrow_down</p><br>Standort</th>
+                            <th class="p-3 text-center"> <p id="6" class="material-icons-outlined" onclick="PC.sort(this, 'status')">keyboard_arrow_down</p><br>Status</th>
+                            <th class="p-3 text-center"> <p id="7" class="material-icons-outlined" onclick="PC.sort(this, 'besitzer')">keyboard_arrow_down</p><br>Mitarbeiter</th>
+                            <th class="p-3 text-center"> <p id="8" class="material-icons-outlined" onclick="PC.sort(this, 'form')">keyboard_arrow_down</p><br>Form</th>
+                            <th class="p-3 text-center"> <p id="9" class="material-icons-outlined" onclick="PC.sort(this, 'passwort')">keyboard_arrow_down</p><br>BIOS Passwort</th>
                             <th class="p-3 text-center bg-transparent">Aktionen</th>
                           </tr>
                         </thead>
