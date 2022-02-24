@@ -1,5 +1,5 @@
 import {ClearTable, enableBtn, foc, getInputValues, ResetFields, tbody} from "../anim.js";
-import { getUsers, PDF, ShowError } from "../backend.js";
+import { getUsers, PDF, setU, ShowError } from "../backend.js";
 import {Bildschirm, Item, PC} from "../interface";
 import { makeToast } from "../toast.js";
 import { deletePDF, generatePDF, getData, getMonitors, getPDF, rewritePDF, setData, setEquipment } from "./backend.js";
@@ -281,9 +281,9 @@ export const SearchDevice =(it_nr: string) =>
 
  };
 
- export const AddRow = (_values?: PC) =>
+ export const AddRow = async (_values?: PC) =>
 {
-   return new Promise(async (resolve, reject) => {
+//    return new Promise(async (resolve, reject) => {
         // const newRow = tbody.rows[1].cloneNode(true) as HTMLTableRowElement;
     let values:PC;
     
@@ -292,7 +292,7 @@ export const SearchDevice =(it_nr: string) =>
     if(!_values)
     {   
         values = await getInputValues("PC") as PC;
-        if(devices.filter(e => e.it_nr == values.it_nr).length > 0) return resolve(alert("PC ist bereits in der Liste vorhanden!"));
+        if(devices.filter(e => e.it_nr == values.it_nr).length > 0) return (alert("PC ist bereits in der Liste vorhanden!"));
         //@ts-ignore
         if(values.equipment === undefined) values.equipment = [];
         //Es wurden keine Values mitgegeben, also... in die DB
@@ -313,18 +313,19 @@ export const SearchDevice =(it_nr: string) =>
     else newRow.classList.add("bg-gray-500");
 
     let User = await getUsers();
-    if(!User) return reject(ShowError("Fehler beim Laden der Benutzer"));
+    if(!User) return (ShowError("Fehler beim Laden der Benutzer"));
+    setU(User);
     let newUser = User.find(user => user.userPrincipalName == values.besitzer);
     if(newUser) values.besitzer = newUser.cn.split("(")[0];
     else values.besitzer = values.besitzer.split("@")[0];
 
     //Set the values into the new row
-    Object.keys(values).forEach(async (key, index) =>
+    Object.keys(values).forEach((key, index) =>
         {
 
             const template = newRow.getElementsByTagName("td")[index];
             template.classList.add("bg-transparent", "dark:border-gray-300", "border-black", "text-black", "dark:text-gray-300");
-            if(key == "kind") return resolve(false);
+            if(key == "kind") return (false);
             switch(index)
             {
                 case 0: template.innerText = values.it_nr as any; break;
@@ -409,9 +410,47 @@ export const SearchDevice =(it_nr: string) =>
     $("#tbody tr:first").after(newRow);
     //Reset the values in the input fields
     ResetFields();
-    resolve(true);
-   });
+    return (true);
+//    });
 };
+
+//Create a function which sorts the values with a parameter based on the keys of the PC interface
+
+
+export const sort = (el: HTMLParagraphElement, by: keyof PC) =>
+{
+    let sortOrder: "aufsteigend" | "absteigend";
+    el.textContent === "keyboard_arrow_down" ? sortOrder = "absteigend" : sortOrder = "aufsteigend";
+    el.textContent === "keyboard_arrow_down" ? el.classList.add("text-green-500") : el.classList.remove("text-green-500");
+    el.textContent === "keyboard_arrow_down" ? el.classList.remove("text-red-500") : el.classList.add("text-red-500");
+    el.textContent === "keyboard_arrow_down" ? console.log(true) : console.log(false);
+    el.textContent === "keyboard_arrow_down" ? el.textContent = "keyboard_arrow_up" : el.textContent = "keyboard_arrow_down";
+    
+    const thead = document.getElementById("trth") as HTMLTableRowElement;
+    //Set all the headers to the default color except the one which is clicked
+    for(let i = 0; i < thead.children.length-2; i++)
+    {
+        if(thead.children[i].children[0].id === el.id) continue;
+        thead.children[i].children[0].classList.remove("text-green-500");
+        thead.children[i].children[0].classList.remove("text-red-500");
+        thead.children[i].children[0].textContent = "keyboard_arrow_down";
+
+    }
+
+    const PCs = getDevices();
+    
+    //Sort the values based on the key
+    const newPCs = PCs.sort((a, b) =>
+    {
+        if(a[by] < b[by]) return (sortOrder == "aufsteigend" ? -1 : 1);
+        if(a[by] > b[by]) return (sortOrder == "aufsteigend" ? 1 : -1);
+        return (0);
+    });
+    console.log(newPCs);
+    ClearTable();
+    newPCs.forEach(PC => AddRow(PC));
+}
+
 
 export const ShowContextMenu = (element: HTMLTableCellElement, itnr: string) =>
 {
