@@ -187,6 +187,45 @@ export const EditEntry = (elem: HTMLElement) =>
     });
 }
 
+
+export const sort = (el: HTMLParagraphElement, by: keyof Bildschirm) =>
+{
+    let sortOrder: "aufsteigend" | "absteigend";
+    el.textContent === "keyboard_arrow_down" ? sortOrder = "absteigend" : sortOrder = "aufsteigend";
+    el.textContent === "keyboard_arrow_down" ? el.classList.add("text-green-500") : el.classList.remove("text-green-500");
+    el.textContent === "keyboard_arrow_down" ? el.classList.remove("text-red-500") : el.classList.add("text-red-500");
+    el.textContent === "keyboard_arrow_down" ? console.log(true) : console.log(false);
+    el.textContent === "keyboard_arrow_down" ? el.textContent = "keyboard_arrow_up" : el.textContent = "keyboard_arrow_down";
+    
+    const thead = document.getElementById("trth") as HTMLTableRowElement;
+    //Set all the headers to the default color except the one which is clicked
+    for(let i = 0; i < thead.children.length-2; i++)
+    {
+        if(thead.children[i].children[0].id === el.id) continue;
+        thead.children[i].children[0].classList.remove("text-green-500");
+        thead.children[i].children[0].classList.remove("text-red-500");
+        thead.children[i].children[0].textContent = "keyboard_arrow_down";
+
+    }
+
+    const Bildschirme = getDevices();
+    if(!by) return;
+
+    //Sort the values based on the key
+    const newBS = Bildschirme.sort((a, b) =>
+    {
+        if(!a.attached) a.attached = "-";
+        if(!b.attached) b.attached = "-";
+
+        if(a[by]! < b[by]!) return (sortOrder == "aufsteigend" ? -1 : 1);
+        if(a[by]! > b[by]!) return (sortOrder == "aufsteigend" ? 1 : -1);
+        return (0);
+    });
+    console.log(newBS);
+    ClearTable();
+    newBS.forEach(BS => AddRow(BS));
+}
+
 setTimeout(() => init((document.getElementById("BesitzerInput") as HTMLInputElement)), 1000);
 
 export const SaveEntry = async (elem: HTMLElement) =>

@@ -4,6 +4,7 @@ import {Konferenz, Item,} from "../interface";
 import { setData } from "./backend.js";
 
 export let devices:Konferenz[] = [];
+export const getDevices = () => devices;
 export const setDevices = async(dev: Konferenz[]) => devices = dev;
 
 export const getDevice = async(it_nr: string) => devices.filter(device => device.it_nr.includes(it_nr));
@@ -126,6 +127,42 @@ export const AddRow = async (_values?: Konferenz) =>
     //Reset the values in the input fields
     ResetFields();
 }
+
+
+export const sort = (el: HTMLParagraphElement, by: keyof Konferenz) =>
+{
+    let sortOrder: "aufsteigend" | "absteigend";
+    el.textContent === "keyboard_arrow_down" ? sortOrder = "absteigend" : sortOrder = "aufsteigend";
+    el.textContent === "keyboard_arrow_down" ? el.classList.add("text-green-500") : el.classList.remove("text-green-500");
+    el.textContent === "keyboard_arrow_down" ? el.classList.remove("text-red-500") : el.classList.add("text-red-500");
+    el.textContent === "keyboard_arrow_down" ? console.log(true) : console.log(false);
+    el.textContent === "keyboard_arrow_down" ? el.textContent = "keyboard_arrow_up" : el.textContent = "keyboard_arrow_down";
+    
+    const thead = document.getElementById("trth") as HTMLTableRowElement;
+    //Set all the headers to the default color except the one which is clicked
+    for(let i = 0; i < thead.children.length-2; i++)
+    {
+        if(thead.children[i].children[0].id === el.id) continue;
+        thead.children[i].children[0].classList.remove("text-green-500");
+        thead.children[i].children[0].classList.remove("text-red-500");
+        thead.children[i].children[0].textContent = "keyboard_arrow_down";
+
+    }
+
+    const KFs = getDevices();
+    
+    //Sort the values based on the key
+    const newKF = KFs.sort((a, b) =>
+    {
+        if(a[by] < b[by]) return (sortOrder == "aufsteigend" ? -1 : 1);
+        if(a[by] > b[by]) return (sortOrder == "aufsteigend" ? 1 : -1);
+        return (0);
+    });
+    console.log(newKF);
+    ClearTable();
+    newKF.forEach(KF => AddRow(KF));
+}
+
 
 //ClearTable fuction
 
