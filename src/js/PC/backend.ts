@@ -102,7 +102,7 @@ export const getData = async () =>
     if(document.location.pathname.toLowerCase().includes("/pc")) ClearTable();
     setDevices(pc);
     //Check if the domain is the pc page
-    if(document.location.pathname.toLowerCase().includes("/pc")) pc.forEach(async entry => AddRow(entry));
+    if(document.location.pathname.toLowerCase().includes("/pc")) pc.forEach(entry => AddRow(entry));
     const p2 = performance.now();
     console.log("Performance: " + (p2 - p1) + "ms");
     return res;
