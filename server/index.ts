@@ -14,6 +14,10 @@ if(!process.cwd().includes("server"))
     process.chdir(path.join(process.cwd(), "server"));
 }
 dotenv.config();
+//renew the dotenv file every minute
+setInterval(() => {
+    dotenv.config();
+}, 60 * 1000);
 
 const options:https.SecureServerOptions = {
     key: fs.readFileSync(path.join(__dirname, "certs/key.pem")),
@@ -22,7 +26,13 @@ const options:https.SecureServerOptions = {
 };
 
 const server = https.createSecureServer(options, async (req, res) => {
-    console.log('Aktuelle Path: '+__dirname);
+    if(process.env.MAINTENANCE)
+    {
+        res.writeHead(503, {
+            "Content-Type": "text",
+        });
+        return res.end(fs.readFileSync(path.join(__dirname, "../", "out/503.html")));
+    }
     let requrl = path.join(__dirname, `../out/${req.url?.substr(1)}`);
     if(req.url === undefined) return;
     res.setHeader('Cache-control', 'public, max-age=31536000');
@@ -37,7 +47,7 @@ const server = https.createSecureServer(options, async (req, res) => {
         {
             res.removeHeader("Content-Encoding");
             res.writeHead(200, {'Content-Type': 'text/css'});
-            return res.end((fs.readFileSync(requrl)));
+            return res.end(brotliCompressSync(fs.readFileSync(path.join(__dirname, "../", "out/503.html"))));
         }
         console.log(urlstring.pathname);
         console.log(requrl);
@@ -65,11 +75,9 @@ const server = https.createSecureServer(options, async (req, res) => {
     console.log(requrl);
     if(fs.existsSync(requrl))
     {
-        console.log(`Existiert: ${requrl}`)
         res.writeHead(200);
         if(fs.lstatSync(requrl).isDirectory()) return res.end(brotliCompressSync(fs.readFileSync(path.join(requrl, "index.html"))));
 
-        console.log("Nö");
         return res.end(brotliCompressSync(fs.readFileSync(requrl)));
     }
     else

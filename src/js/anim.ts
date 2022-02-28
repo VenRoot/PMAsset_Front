@@ -9,7 +9,7 @@ import { Bildschirm, InputName, Konferenz, KonfHersteller, MonTypes, PC, PCHerst
 import { uwu } from "./cart.js";
 import { PCHerstellerTypen, PCTypen, StatusTypen, MonitorTypen, PhoneTypen, MonTypen } from "./values.js";
 import {FormSelect, HerstellerSelect, StatusSelect, TypSelect} from "./templates.js";
-import { changeCurrentRow, currentRow, GetMonitors } from "./PC/anim.js";
+import { changeCurrentRow, currentRow, getDevices, GetMonitors } from "./PC/anim.js";
 import { getUsers, ShowError } from "./backend.js";
 import { setData } from "./PC/backend.js";
 import { autocomplete } from "./MA/ac.js";
@@ -338,6 +338,73 @@ export const ResetFields = () =>
     Array.from(row.getElementsByClassName("temp")).forEach(element => {
         (element as HTMLInputElement).value = "";
     });
+}
+
+
+export const AddCustomTitle = (el: HTMLTableCellElement, values: PC) => {
+
+    // const title = document.createElement("div") as HTMLDivElement;
+
+    // title.oncontextmenu = (e) => title.remove();
+
+    // title.classList.add("text-center", "text-white", "text-sm", "px-2", "py-1", "bg-gray-800", "font-semibold", "rounded-full", "text-xs", "uppercase");
+    // title.innerHTML = "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Earum facilis quis excepturi, enim aperiam corporis veniam vitae reprehenderit fuga illum. Illo libero iure mollitia eum alias minus iusto odio dolores. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Earum facilis quis excepturi, enim aperiam corporis veniam vitae reprehenderit fuga illum. Illo libero iure mollitia eum alias minus iusto odio dolores. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Earum facilis quis excepturi, enim aperiam corporis veniam vitae reprehenderit fuga illum. Illo libero iure mollitia eum alias minus iusto odio dolores. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Earum facilis quis excepturi, enim aperiam corporis veniam vitae reprehenderit fuga illum. Illo libero iure mollitia eum alias minus iusto odio dolores. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Earum facilis quis excepturi, enim aperiam corporis veniam vitae reprehenderit fuga illum. Illo libero iure mollitia eum alias minus iusto odio dolores. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Earum facilis quis excepturi, enim aperiam corporis veniam vitae reprehenderit fuga illum. Illo libero iure mollitia eum alias minus iusto odio dolores. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Earum facilis quis excepturi, enim aperiam corporis veniam vitae reprehenderit fuga illum. Illo libero iure mollitia eum alias minus iusto odio dolores.";
+    
+    // //the title should lay over the page
+    // title.style.position = "absolute";
+
+    // //let it appear at the cursor position
+    // title.style.top = `${el.offsetTop}px`;
+    // title.style.left = `${el.offsetLeft}px`;
+    if(values == null) return;
+    el.addEventListener("contextmenu", e => {
+
+
+        //Make a contextmenu and add the options
+                    
+        //First, remove the contextmenu if it already exists
+        const _menu = document.getElementById("contextmenu") as HTMLDivElement;
+        if(_menu) _menu.remove();
+        const contextmenu = document.createElement("div");
+        contextmenu.id = "contextmenu";
+        contextmenu.setAttribute("row", values.it_nr);
+        contextmenu.classList.add("bg-gray-100", "text-gray-900", "rounded", "absolute", "z-50", "p-2", "border", "border-gray-400", "text-sm", "font-semibold", "right-0", "top-0", "transform-origin", "center", "transition");
+        const {clientX: mouseX, clientY: mouseY} = e;
+
+                const item = document.createElement("div");
+                item.classList.add("item");
+                item.ondblclick = (ev) => SwitchToEditMode(el);
+                contextmenu.append(item);
+        contextmenu.style.left = `${mouseX}px`; 
+        contextmenu.style.top = `${mouseY}px`;
+        contextmenu.style.backgroundColor = "black";
+        contextmenu.style.color = "white";
+        document.body.append(contextmenu);
+        //Add a listener to the contextmenu, which will remove the contextmenu when clicked
+        contextmenu.addEventListener("click", () => contextmenu.remove());
+        window.addEventListener("click", (e) => {
+            //Check if the clicked element is the contextmenu 
+            if(e.target != contextmenu) contextmenu.remove();
+        });
+        e.preventDefault();
+    });
+    return el;
+}
+
+
+const SwitchToEditMode = (el: HTMLElement) => {
+    const ta = document.createElement("textarea");
+    el.classList.forEach(x => ta.classList.add(x));
+    ta.textContent = el.textContent;
+    ta.ondblclick = (ev) => SwitchToViewMode(el);
+
+}
+
+const SwitchToViewMode = (el: HTMLElement) => {
+    const ta = document.createElement("div");
+    el.classList.forEach(x => ta.classList.add(x));
+    ta.textContent = el.textContent;
+    ta.ondblclick = (ev) => SwitchToEditMode(el);
 }
 
 const itinput = document.getElementById("itinput") as HTMLInputElement;

@@ -95,7 +95,8 @@ export const getData = async () =>
                 status: element.STATUS as any,
                 standort: element.STANDORT,
                 form: element.FORM as any,
-                equipment: element.EQUIPMENT!                    
+                equipment: element.EQUIPMENT!,
+                kommentar: element.KOMMENTAR || "",            
             }
         )
     });
@@ -107,7 +108,7 @@ export const getData = async () =>
     console.log("Performance: " + (p2 - p1) + "ms");
     return res;
 }
-export const setData = async (data: Item, method: pushrequest ) =>
+export const setData = (data: Item, method: pushrequest ): Promise<{message: string, status: number}> =>
 {
     return new Promise(async (resolve, reject) => {
 
@@ -129,12 +130,18 @@ export const setData = async (data: Item, method: pushrequest ) =>
                 besitzer: data.besitzer || "",
                 form: data.form || "",
                 passwort: data.passwort || "",
+                kommentar: data.kommentar || ""
             }}).catch((err: {message: string, status: number}) => {
                 ShowError(err.message, err.status);
                 reject();
             });
+            if(!res) throw new Error("No response from server");
                 resolve(res);
-        }        
+        }  
+        else
+        {
+            reject(new Error("No kind found"));
+        }      
     })
 }
 

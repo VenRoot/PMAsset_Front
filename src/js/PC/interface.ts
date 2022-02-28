@@ -11,6 +11,7 @@ export interface PC_res_data {
     STATUS: string;
     TYPE: string;
     STANDORT: string;
+    KOMMENTAR?: string;
 }
 
 export interface res_monitor
