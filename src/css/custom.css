@@ -42,4 +42,12 @@ textarea
     overflow: hidden;
     min-height: 50px;
     max-height: 500px;
+    min-width: 50px;
+}
+
+.p
+{
+    resize: none;
+    min-width: 50px;
+    min-height: 50px;
 }

@@ -15,9 +15,9 @@ if(!process.cwd().includes("server"))
 }
 dotenv.config();
 //renew the dotenv file every minute
-setInterval(() => {
-    dotenv.config();
-}, 60 * 1000);
+// setInterval(() => {
+//     dotenv.config();
+// }, 60 * 1000);
 
 const options:https.SecureServerOptions = {
     key: fs.readFileSync(path.join(__dirname, "certs/key.pem")),
@@ -26,13 +26,14 @@ const options:https.SecureServerOptions = {
 };
 
 const server = https.createSecureServer(options, async (req, res) => {
-    if(process.env.MAINTENANCE)
-    {
-        res.writeHead(503, {
-            "Content-Type": "text",
-        });
-        return res.end(fs.readFileSync(path.join(__dirname, "../", "out/503.html")));
-    }
+    const p0 = performance.now();
+    // if(process.env.MAINTENANCE)
+    // {
+    //     res.writeHead(503, {
+    //         "Content-Type": "text",
+    //     });
+    //     return res.end(fs.readFileSync(path.join(__dirname, "../", "out/503.html")));
+    // }
     let requrl = path.join(__dirname, `../out/${req.url?.substr(1)}`);
     if(req.url === undefined) return;
     res.setHeader('Cache-control', 'public, max-age=31536000');
@@ -47,7 +48,7 @@ const server = https.createSecureServer(options, async (req, res) => {
         {
             res.removeHeader("Content-Encoding");
             res.writeHead(200, {'Content-Type': 'text/css'});
-            return res.end(brotliCompressSync(fs.readFileSync(path.join(__dirname, "../", "out/503.html"))));
+            return res.end(fs.readFileSync(requrl));
         }
         console.log(urlstring.pathname);
         console.log(requrl);
@@ -76,6 +77,8 @@ const server = https.createSecureServer(options, async (req, res) => {
     if(fs.existsSync(requrl))
     {
         res.writeHead(200);
+        const p1 = performance.now();console.log(`${req.url} loaded in ${p1 - p0}ms`);
+        
         if(fs.lstatSync(requrl).isDirectory()) return res.end(brotliCompressSync(fs.readFileSync(path.join(requrl, "index.html"))));
 
         return res.end(brotliCompressSync(fs.readFileSync(requrl)));
@@ -83,6 +86,7 @@ const server = https.createSecureServer(options, async (req, res) => {
     else
     {
         res.writeHead(404);
+        const p1 = performance.now();console.log(`${req.url} loaded in ${p1 - p0}ms`);
         return res.end(brotliCompressSync(fs.readFileSync(path.join(__dirname, "../", "out/404.html"))));
     }
 }).listen(Number(process.env.PORT) || 3000, "0.0.0.0", undefined, undefined).on("listening", () => {

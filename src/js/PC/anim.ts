@@ -349,6 +349,7 @@ export const SearchDevice =(it_nr: string) =>
                     if(_menu) _menu.remove();
                     const contextmenu = document.createElement("div");
                     const p = document.createElement("p");
+                    p.classList.add("p");
                     contextmenu.id = "contextmenu";
                     contextmenu.setAttribute("row", values.it_nr);
                     contextmenu.classList.add("bg-gray-100", "text-gray-900", "rounded", "absolute", "z-50", "p-2", "border", "border-gray-400", "text-sm", "font-semibold", "right-0", "top-0", "transform-origin", "center", "transition");
@@ -480,6 +481,8 @@ export const editComment = (ev: MouseEvent, element: HTMLParagraphElement) =>
     console.warn(element.nodeName, element.firstChild?.nodeName);
     
     if((ev.target as HTMLElement).nodeName == "TEXTAREA") return;
+    //if no child exists, create an empty text
+    if(!element.firstChild) element.appendChild(document.createTextNode(""));
 
     console.log("editComment");
     console.dir(element);
@@ -505,6 +508,7 @@ export const editComment = (ev: MouseEvent, element: HTMLParagraphElement) =>
         })
     })
     element.replaceChild(ta, element.firstChild!);
+    ta.focus();
 
 
 } 
