@@ -10,7 +10,9 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/node": "^17.0.10",
-    "adal-node": "^0.2.3"
+    "@types/node": "^17.0.21"
+  },
+  "dependencies": {
+    "@azure/msal-node": "^1.6.0"
   }
 }
