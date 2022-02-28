@@ -2,11 +2,12 @@ import { PCTypes, phoneTypes, Bildschirm, MonHersteller, Status, PCHersteller, M
 
 export const PCTypen: PCTypes[] = Object.seal([
     "CAD",
-    "T14",
-    "T14s",
+    "T14 G1",
+    "T14 G2",
     "T14s G2",
     "T430",
     "T450",
+    "T460",
     "T470",
     "T480",
     "T490",
