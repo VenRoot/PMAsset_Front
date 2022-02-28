@@ -57,6 +57,7 @@ export interface PC extends Gerät
     hersteller: PCHersteller;
     passwort: string;
     form: string;
+    kommentar?: string;
 }
 
 export interface Bildschirm extends Gerät

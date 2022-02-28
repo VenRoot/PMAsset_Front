@@ -4,6 +4,12 @@ export const makeToast = (message: string, type: "success" | "error" | "info" | 
     console.log(message);
     if(!toasts) return;
     const toast = document.createElement("div");
+    toast.style.position = "absolute";
+    toast.style.top = "0";
+    toast.style.right = "0";
+    toast.style.width = "300px";
+    toast.style.marginRight = parseFloat(toast.style.width)/10 + "px";
+    //Make sure the toast doesn't leave the screen
     toast.id=`toast-${type}`;
     classList.forEach(className => toast.classList.add(className));
     toast.setAttribute("role", "alert");
@@ -24,8 +30,8 @@ export const makeToast = (message: string, type: "success" | "error" | "info" | 
             toast.classList.remove("show");
             setTimeout(() => {
                 toasts.removeChild(toast);
-            }, 500);
-        }, 3000);
+            }, 0);
+        }, 5000);
     }, 100);
 };
 
