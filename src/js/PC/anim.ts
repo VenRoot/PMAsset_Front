@@ -1,4 +1,4 @@
-import {ClearTable, enableBtn, foc, getInputValues, ResetFields, tbody} from "../anim.js";
+import {AddCustomTitle, ClearTable, enableBtn, foc, getInputValues, ResetFields, tbody} from "../anim.js";
 import { getUsers, PDF, setU, ShowError } from "../backend.js";
 import {Bildschirm, Item, PC} from "../interface";
 import { makeToast } from "../toast.js";
@@ -288,7 +288,7 @@ export const SearchDevice =(it_nr: string) =>
     let values:PC;
     
     
-
+    
     if(!_values)
     {   
         values = await getInputValues("PC") as PC;
@@ -319,16 +319,72 @@ export const SearchDevice =(it_nr: string) =>
     if(newUser) values.besitzer = newUser.cn.split("(")[0];
     else values.besitzer = values.besitzer.split("@")[0];
 
+    //remove kind from values
+    //@ts-ignore
+    delete values.kind;
+    console.log(values);
+    
+
     //Set the values into the new row
     Object.keys(values).forEach((key, index) =>
         {
-
-            const template = newRow.getElementsByTagName("td")[index];
+            let template = newRow.getElementsByTagName("td")[index];
             template.classList.add("bg-transparent", "dark:border-gray-300", "border-black", "text-black", "dark:text-gray-300");
-            if(key == "kind") return (false);
+            if(key == "kind") {
+                index--;
+                return (false);
+            }
             switch(index)
             {
-                case 0: template.innerText = values.it_nr as any; break;
+                case 0: 
+                // template = AddCustomTitle(template, values) ?? template;
+                const div = document.createElement("div");
+                //Set the div to the same size as the template
+                div.style.width = template.style.width;
+                div.style.height = template.style.height;
+                div.innerText = values.it_nr as any; 
+                div.addEventListener("contextmenu", (ev) => {
+                    //First, remove the contextmenu if it already exists
+                    const _menu = document.getElementById("contextmenu") as HTMLDivElement;
+                    if(_menu) _menu.remove();
+                    const contextmenu = document.createElement("div");
+                    const p = document.createElement("p");
+                    contextmenu.id = "contextmenu";
+                    contextmenu.setAttribute("row", values.it_nr);
+                    contextmenu.classList.add("bg-gray-100", "text-gray-900", "rounded", "absolute", "z-50", "p-2", "border", "border-gray-400", "text-sm", "font-semibold", "right-0", "top-0", "transform-origin", "center", "transition");
+                    const {clientX: mouseX, clientY: mouseY} = ev;
+                    contextmenu.style.display = "block";
+                    contextmenu.style.overflow = "auto";
+
+
+                    console.log(values.it_nr, values.kommentar);
+                    p.textContent = values.kommentar || "";
+                    p.addEventListener("dblclick", (ev) => editComment(ev, p));
+                    // p.setAttribute("ondblclick", "PC.editComment(this)");
+                    contextmenu.appendChild(p);
+                            
+                    contextmenu.style.left = `${mouseX}px`; 
+                    contextmenu.style.top = `${mouseY}px`;
+                    contextmenu.style.backgroundColor = "black";
+                    contextmenu.style.color = "white";
+                    document.body.append(contextmenu);
+                    console.log(contextmenu, values);
+                    //Add a listener to the contextmenu, which will remove the contextmenu when clicked
+                    // contextmenu.addEventListener("click", () => contextmenu.remove());
+                    window.addEventListener("click", (e) => {
+                        //Check if the clicked element is the contextmenu 
+                        if(e.target == contextmenu) return;
+                        if(e.target == p) return;
+                        if(p.hasChildNodes()) {
+                            if(e.target == p.children[0]) return;
+                        }
+                        contextmenu.remove();
+                    });
+                    ev.preventDefault();
+                });
+                template.innerHTML = "";
+                template.appendChild(div);
+                break;
                 case 1: template.innerText = values.type as any; break;
                 case 2: template.innerText = values.hersteller as any; break;
                 case 3: template.innerText = values.seriennummer as any; break;
@@ -396,9 +452,7 @@ export const SearchDevice =(it_nr: string) =>
                         if(e.target != contextmenu) contextmenu.remove();
                     });
                     e.preventDefault();
-                });
-                template.setAttribute("oncontextmenu", `PC.ShowContextMenu(this, "${values.it_nr}");`);
-                
+                });                
                 break;
                 case 9: (template.children[0] as HTMLInputElement).value = values.passwort as any; 
                 template.children[0].classList.add("bg-transparent");
@@ -413,6 +467,47 @@ export const SearchDevice =(it_nr: string) =>
     return (true);
 //    });
 };
+
+export const autoGrow = (element: HTMLTextAreaElement) => {
+    element.style.height = "5px";
+    element.style.height = (element.scrollHeight) + "px";
+};
+
+
+export const editComment = (ev: MouseEvent, element: HTMLParagraphElement) =>
+{
+    console.warn(ev, ev.target);
+    console.warn(element.nodeName, element.firstChild?.nodeName);
+    
+    if((ev.target as HTMLElement).nodeName == "TEXTAREA") return;
+
+    console.log("editComment");
+    console.dir(element);
+    //convert the p element to an textarea element
+    const ta = document.createElement("textarea");
+    ta.value = element.innerText;
+    ta.setAttribute("oninput", "this.style.height = this.scrollHeight + 'px';");
+    ta.classList.add("bg-transparent", "border-none", "text-sm", "font-semibold", "w-full", "h-full");
+    ta.addEventListener("dblclick", () => {
+        // p.removeChild(p!.firstChild!);
+        console.warn(document.getElementById("contextmenu")!.firstChild!);
+        (document.getElementById("contextmenu")!.firstChild as HTMLParagraphElement).innerText = ta.value;
+        const PC = getDevices().find(dev => dev.it_nr == document.getElementById("contextmenu")!.getAttribute("row")!);
+        if(!PC) return makeToast("Fehler: PC nicht gefunden", "error");
+        PC.kommentar = ta.value;
+        PC.kind = "PC";
+        const key = sessionStorage.getItem("SessionID");
+        const username = sessionStorage.getItem("username");
+        if(!key || !username) return makeToast("Fehler: Ungültige Anmeldedaten", "error");
+        setData(PC, {device: PC, method: "POST", SessionID: key, username: username}).then(({status, message}) => {
+            if(status != 200) return makeToast(message+"\n"+status, "error");
+            makeToast("Kommentar erfolgreich gespeichert", "success");
+        })
+    })
+    element.replaceChild(ta, element.firstChild!);
+
+
+} 
 
 //Create a function which sorts the values with a parameter based on the keys of the PC interface
 
@@ -438,12 +533,16 @@ export const sort = (el: HTMLParagraphElement, by: keyof PC) =>
     }
 
     const PCs = getDevices();
+    if(!by) return;
     
     //Sort the values based on the key
     const newPCs = PCs.sort((a, b) =>
     {
-        if(a[by] < b[by]) return (sortOrder == "aufsteigend" ? -1 : 1);
-        if(a[by] > b[by]) return (sortOrder == "aufsteigend" ? 1 : -1);
+        if(!a.kommentar) a.kommentar = "";
+        if(!b.kommentar) b.kommentar = "";
+
+        if(a[by]! < b[by]!) return (sortOrder == "aufsteigend" ? -1 : 1);
+        if(a[by]! > b[by]!) return (sortOrder == "aufsteigend" ? 1 : -1);
         return (0);
     });
     console.log(newPCs);

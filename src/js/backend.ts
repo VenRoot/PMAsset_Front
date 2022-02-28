@@ -117,7 +117,7 @@ export const PDF = (auth: IPDF): Promise<reqres> =>
  * @param auth 
  * @param callback 
  */
-export const insertRequest = (subdomain: string, auth: pushrequest): Promise<{message: string, code: number}> =>
+export const insertRequest = (subdomain: string, auth: pushrequest): Promise<{message: string, status: number}> =>
 {
     return new Promise(async (resolve, reject) => {
         //Check if auth.device.besitzer is a valid email
@@ -148,7 +148,7 @@ export const insertRequest = (subdomain: string, auth: pushrequest): Promise<{me
         switch(auth.method)
         {
             case "PUT": case "POST": case "DELETE": 
-            if(!auth.SessionID || !auth.username) reject({message: "Missing parameters", code: 400});
+            if(!auth.SessionID || !auth.username) reject({message: "Missing parameters", status: 400});
             xmlhttp.setRequestHeader("device", JSON.stringify(auth.device));
             break;
             default: xmlhttp.abort(); reject({status: 400, message: "Invalid method"});
