@@ -117,6 +117,7 @@ export const getPCs = async ():Promise<PC[]> =>
                 status: element.STATUS as any,
                 standort: element.STANDORT,
                 form: element.FORM as any,
+                check: element.CHECK as any,
                 equipment: element.EQUIPMENT!                    
             }
         )
