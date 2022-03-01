@@ -92,7 +92,7 @@ export const PDF = (auth: IPDF): Promise<reqres> =>
             xmlhttp.responseType = "blob";
 
             case "PUT": case "POST": case "DELETE":
-            xmlhttp.setRequestHeader("data", JSON.stringify({ITNr: auth.ITNr, type: "PC", own: auth.uploadOwn || false}));
+            xmlhttp.setRequestHeader("data", JSON.stringify({ITNr: auth.ITNr, type: "PC", own: auth.uploadOwn || false, User: auth.type}))
             break;
         }
         if(auth.file)
@@ -128,10 +128,12 @@ export const insertRequest = (subdomain: string, auth: pushrequest): Promise<{me
             let user = u.find(x => x.cn == auth.device.besitzer);
             if(user) auth.device.besitzer = user.mail;
             else return ShowError("User wurde nicht gefunden", 404);
-
-            
         }
         if(auth.device.status == "Bestellt") auth.device.seriennummer = "0";
+        if(auth.device.kind == "PC" && auth.device.form.indexOf("|") == -1)
+        {
+            auth.device.form = `${auth.device.form || "Nein"} | ${auth.device.check || "Nein"}`; 
+        }
         const xmlhttp = new XMLHttpRequest();
         //push data to the backend
         xmlhttp.onreadystatechange = function () {
@@ -274,6 +276,47 @@ const refreshSession = async () =>
         }
         ShowError("Ihre Session ist abgelaufen oder nicht gültig. Bitte neu anmelden", res.status);
     }
+}
+
+
+export const performanceTest = async () =>
+{
+    const p0 = performance.now();
+    const res = await request("getEntries", {method: "getEntries", SessionID: window.sessionStorage.getItem("SessionID") as string, type: "ALL", username: window.sessionStorage.getItem("username") as string}, {mail: "markus.loeffler@putzmeister.com"}).catch(err => Promise.reject(err));
+    const res2 = await request("getEntries", {method: "getEntries", SessionID: window.sessionStorage.getItem("SessionID") as string, type: "MA", username: window.sessionStorage.getItem("username") as string}, {mail: "markus.loeffler@putzmeister.com"}).catch(err => Promise.reject(err));
+    const p1 = performance.now();
+
+    const [res3, res4] = await Promise.all([
+        request("getEntries", {method: "getEntries", SessionID: window.sessionStorage.getItem("SessionID") as string, type: "ALL", username: window.sessionStorage.getItem("username") as string}, {mail: "markus.loeffler@putzmeister.com"}).catch(err => Promise.reject(err)),
+        request("getEntries", {method: "getEntries", SessionID: window.sessionStorage.getItem("SessionID") as string, type: "MA", username: window.sessionStorage.getItem("username") as string}, {mail: "markus.loeffler@putzmeister.com"}).catch(err => Promise.reject(err))
+    ]);
+    const p2 = performance.now();
+
+    const res5 = await request("getEntries", {method: "getEntries", SessionID: window.sessionStorage.getItem("SessionID") as string, type: "ALLALL", username: window.sessionStorage.getItem("username") as string}, {mail: "markus.loeffler@putzmeister.com"}).catch(err => Promise.reject(err));
+    const p3 = performance.now();
+
+    console.log(`2x await: ${p1 - p0}`);
+    console.log(`Promise.all: ${p2 - p1}`);
+    console.log(`Promise.all + 1 Request: ${p3 - p2}`);
+    return [p1 - p0, p2 - p1, p3 - p2];
+}
+
+export const Benchmark = async () =>
+{
+    let perfs = {
+        "2x await": 0,
+        "Promise.all": 0,
+        "Promise.all + 1 Request": 0
+    }
+    for(let i = 0; i < 100; i++)
+    {
+        const p = await performanceTest();
+        perfs["2x await"] += p[0];
+        perfs["Promise.all"] += p[1];
+        perfs["Promise.all + 1 Request"] += p[2];
+    }
+    console.table(perfs);
+    return perfs;
 }
 
 setInterval(refreshSession, 1000 * 60);

@@ -482,7 +482,7 @@ export const EditEntry = (elem: HTMLElement) =>
             case 1: cell.innerHTML="";  cell.appendChild(document.getElementById("SelectInputTyp")?.cloneNode(true)!); console.debug(cell); break;
             case 4: break; cell.children[0].classList.remove("disabled"); break;
             case 6: StatusSelect.value = cell.innerHTML; cell.innerHTML=""; cell.appendChild(StatusSelect.cloneNode(true)); console.warn(cell); break;
-            case 8: FormSelect.value = cell.innerHTML; cell.innerHTML=""; cell.appendChild(FormSelect.cloneNode(true)); break;
+            case 8: break; FormSelect.value = cell.innerHTML; cell.innerHTML=""; cell.appendChild(FormSelect.cloneNode(true)); break;
             case 9: cell.children[0].removeAttribute("disabled"); (cell.children[0] as HTMLInputElement).type = "text"; break;
             case 10: break;
             default:
@@ -568,9 +568,9 @@ export const SaveEntry = async (elem: HTMLElement) =>
             Array.from(grandparent.cells).forEach(async (cell, i) => {
                 switch(i)
                     {
-                        case 1: case 5: case 8: cell.innerHTML = (cell.children[0] as HTMLSelectElement).value; break;
+                        case 1: case 5: cell.innerHTML = (cell.children[0] as HTMLSelectElement).value; break;
                         case 9: cell.children[0].setAttribute("disabled", ""); (cell.children[0] as HTMLInputElement).type = "password"; break;
-                        case 4: break;
+                        case 4: case 8: break;
                         case 10: resolve(void 0); break;
                         default: 
                         if(i != 7) cell.innerHTML = (cell.children[0] as HTMLInputElement).value;
@@ -608,6 +608,7 @@ export const SaveEntry = async (elem: HTMLElement) =>
         seriennummer: grandparent.children[3].textContent || "" as any,
         besitzer: grandparent.children[7].textContent || "" as any,
         form: grandparent.children[8].textContent || "" as any,
+        check: grandparent.children[8].textContent || "" as any,
         passwort: (grandparent.children[9].children[0] as HTMLInputElement).value || "" as any,
         it_nr: device.it_nr,
         standort: grandparent.children[5].textContent || "" as any,

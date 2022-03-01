@@ -57,6 +57,7 @@ export interface PC extends Gerät
     hersteller: PCHersteller;
     passwort: string;
     form: string;
+    check?: string;
     kommentar?: string;
 }
 
@@ -92,7 +93,7 @@ type method = "newKey" | "getEntries" | "auth" | "check" | "refresh" | "setMonit
 export interface pullrequest
 {
     method: method;
-    type?: "PC" | "Monitor" | "Phone" | "Konferenz" | "ALL" | "MA"; 
+    type?: "PC" | "Monitor" | "Phone" | "Konferenz" | "ALL" | "MA" | "ALLALL"; 
     SessionID?: string;
     username?: string;
     password?: string;
@@ -108,6 +109,7 @@ export interface pushrequest {
 export interface IPDF
 {
     method: "POST" | "GET" | "DELETE" | "PUT";
+    type: "User" | "Check";
     SessionID?: string;
     username?: string;
     ITNr: string;

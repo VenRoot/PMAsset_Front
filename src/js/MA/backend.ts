@@ -54,6 +54,7 @@ const ConvToPC = async (data: PC_res_data[]): Promise<PC[]> =>
                 status: element.STATUS as any,
                 standort: element.STANDORT,
                 form: element.FORM as any,
+                check: element.CHECK as any,
                 equipment: element.EQUIPMENT!                    
             }
         )
