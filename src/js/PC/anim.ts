@@ -91,7 +91,7 @@ export const SearchDevice =(it_nr: string) =>
             temp.innerText = values.besitzer as any; 
             temp.id="BESITZER";
             break;
-            case "form": temp.innerText = values.form as any; temp.id="FORM";         
+            case "form": temp.innerText = `${values.form || "Nein"} | ${values.check || "Nein"}`; temp.id="FORM";         
             break;
             case "passwort": 
             const pwf = document.createElement("input"); pwf.type = "password"; pwf.disabled = true; pwf.value = values.passwort as any; pwf.classList.add("bpasswd");
@@ -320,8 +320,15 @@ export const SearchDevice =(it_nr: string) =>
     else values.besitzer = values.besitzer.split("@")[0];
 
     //remove kind from values
+
+    const temp = values.kommentar || "";
+
     //@ts-ignore
-    delete values.kind;
+    delete values.kind; delete values.kommentar;
+    
+
+    
+
     console.log(values);
     
 
@@ -329,11 +336,11 @@ export const SearchDevice =(it_nr: string) =>
     Object.keys(values).forEach((key, index) =>
         {
             let template = newRow.getElementsByTagName("td")[index];
-            template.classList.add("bg-transparent", "dark:border-gray-300", "border-black", "text-black", "dark:text-gray-300");
             if(key == "kind") {
                 index--;
                 return (false);
             }
+            template.classList.add("bg-transparent", "dark:border-gray-300", "border-black", "text-black", "dark:text-gray-300");
             switch(index)
             {
                 case 0: 
@@ -412,7 +419,7 @@ export const SearchDevice =(it_nr: string) =>
                 case 5: template.innerText = values.standort as any; break;
                 case 6: template.innerText = values.status as any; break;
                 case 7: template.innerText = values.besitzer as any; break;
-                case 8: template.innerText = values.form as any; 
+                case 8: template.innerText = `${values.form || "Nein"} | ${values.check || "Nein"}`; 
                 
                 //Make a custom contextmenu, which will show several options
                 template.addEventListener("contextmenu", e => {
@@ -426,18 +433,24 @@ export const SearchDevice =(it_nr: string) =>
                     contextmenu.setAttribute("row", values.it_nr);
                     contextmenu.classList.add("bg-gray-100", "text-gray-900", "rounded", "absolute", "z-50", "p-2", "border", "border-gray-400", "text-sm", "font-semibold", "right-0", "top-0", "transform-origin", "center", "transition");
                     const {clientX: mouseX, clientY: mouseY} = e;
-                    let options:{option:string, func: string}[] = [];
+                    let options:{option:string, func: string, User: boolean}[] = [];
                     switch(values.form)
                     {
-                        case "Ja": options = [{option: "Anzeigen", func: "PDFAnzeigen"}, {option: "Neu erstellen", func: "PDFNeuGenerieren"}, {option: "Entfernen", func: "PDFEntfernen"}, {option: "Mit lokaler PDF überschreiben", func: "AddCustomPDF"}]; break;
-                        case "Nein": options = [{option: "Hinzufügen", func: "PDFHinzufuegen"}, {option: "Bereits vorhandene PDF bereitstellen", func: "AddCustomPDF"}]; break;
+                        case "Ja": options = [{option: "Anzeigen", func: "PDFAnzeigen", User: true}, {option: "Neu erstellen", func: "PDFNeuGenerieren", User: true}, {option: "Entfernen", func: "PDFEntfernen", User: true}, {option: "Mit lokaler PDF überschreiben", func: "AddCustomPDF", User: true}]; break;
+                        case "Nein": options = [{option: "Generieren", func: "PDFGenerieren", User: true}, {option: "Bereits vorhandene PDF bereitstellen", func: "AddCustomPDF", User: true}]; break;
+                    }
+                    options.push({option: "", func: "", User: true});
+                    switch(values.check)
+                    {
+                        case "Ja": options.push({option: "Checkliste anzeigen", func: "CheckAnzeigen", User: false}, {option: "Checkliste überschreiben", func: "CheckBearbeiten", User: false}, {option: "Checkliste entfernen", func: "CheckEntfernen", User: false}); break;
+                        case "Nein": options.push({option: "Checkliste hinzufügen", func: "CheckHinzufuegen", User: false}); break;
                     }
                     options.forEach(option =>
                         {
                             const item = document.createElement("div");
                             item.classList.add("item");
                             item.innerText = option.option;
-                            item.setAttribute("onclick", `PC.${option.func}("${values.it_nr}");`);
+                            option.User ? item.setAttribute("onclick", `PC.${option.func}("${values.it_nr}", true);`) : item.setAttribute("onclick", `PC.${option.func}("${values.it_nr}", false);`);
                             contextmenu.append(item);
                         });
 
@@ -465,6 +478,10 @@ export const SearchDevice =(it_nr: string) =>
     $("#tbody tr:first").after(newRow);
     //Reset the values in the input fields
     ResetFields();
+
+    values.kommentar = temp;
+    setDevices(devices);
+
     return (true);
 //    });
 };
@@ -574,12 +591,15 @@ export const ShowContextMenu = (element: HTMLTableCellElement, itnr: string) =>
 
 }
 
-export const PDFAnzeigen = (ITNr: string) =>
+export const CheckHinzufuegen = (ITNr: string) => AddCustomPDF(ITNr, false);
+export const CheckAnzeigen = (ITNr: string) => getPDF(ITNr, false);
+
+export const PDFAnzeigen = (ITNr: string, User: boolean) =>
 {
-    getPDF(ITNr);
+    getPDF(ITNr, User);
 }
 
-export const PDFHinzufuegen = async (ITNr: string) =>
+export const PDFGenerieren = async (ITNr: string) =>
 {
     const username = sessionStorage.getItem("username");
     const key = sessionStorage.getItem("SessionID");
@@ -601,11 +621,11 @@ export const PDFHinzufuegen = async (ITNr: string) =>
     setData(device, {device: device, method: "POST", username: username, SessionID: key});
 }
 
-export const AddCustomPDF = (ITNr: string) => {
+export const AddCustomPDF = (ITNr: string, User: boolean) => {
     const username = sessionStorage.getItem("username");
     const key = sessionStorage.getItem("SessionID");
     if(!username || !key) return alert("Bitte loggen Sie sich erneut ein!");
-    if(!confirm("PDF lokal hochladen? ⚠️ES WIRD KEIN VALUE-CHECK VORGENOMMEN\n(DIE TABELLENDATEN KÖNNTEN VOM PDF-INHALT ABWEICHEN)")) return;
+    if(User && !confirm("PDF lokal hochladen? ⚠️ES WIRD KEIN VALUE-CHECK VORGENOMMEN\n(DIE TABELLENDATEN KÖNNTEN VOM PDF-INHALT ABWEICHEN)")) return;
     const device = devices.find(device => device.it_nr == ITNr);
     if(!device) return;
 
@@ -622,10 +642,10 @@ export const AddCustomPDF = (ITNr: string) => {
         reader.readAsBinaryString(f);
         reader.addEventListener("load", async () => {
 
-            device.form = "Ja";
+            User ? device.form = "Ja" : device.check = "Ja";
             UpdateTable(device);
             setData(device, {device: device, method: "POST", username: username, SessionID: key});
-            let res = await PDF({ITNr: ITNr, method: "POST", SessionID: key, username: username, uploadOwn: true, file: file});
+            let res = await PDF({ITNr: ITNr, method: "POST", type: User ? "User" : "Check", SessionID: key, username: username, uploadOwn: true, file: file});
 
             if(res.status == 200) makeToast("PDF hochgeladen!", "success");
             else makeToast("Fehler beim Hochladen der PDF!", "error");
@@ -636,7 +656,7 @@ export const AddCustomPDF = (ITNr: string) => {
     
 }
 
-export const PDFEntfernen = (ITNr: string) =>
+export const PDFEntfernen = (ITNr: string, User: boolean) =>
 {
     const username = sessionStorage.getItem("username");
     const key = sessionStorage.getItem("SessionID");
@@ -644,7 +664,7 @@ export const PDFEntfernen = (ITNr: string) =>
     if(!confirm("PDF mit aktuellen Werten entfernen?")) return;
     const device = devices.find(device => device.it_nr == ITNr);
     if(!device) return;
-    deletePDF(device.it_nr);
+    deletePDF(device.it_nr, User);
     // if(!device) return;
 
     // device.form = "Nein";
@@ -697,7 +717,7 @@ export const UpdateTable = (device: PC) =>
         else if(index == 5) cell.innerText = device.standort;
         else if(index == 6) cell.innerText = device.status;
         else if(index == 7) cell.innerText = device.besitzer;
-        else if(index == 8) cell.innerText = device.form;
+        else if(index == 8) cell.innerText = (device.form || "Nein") + "|" + (device.check || "Nein");
         else if(index == 9) {
             const ele = document.createElement("input");
             ele.type = "password";
