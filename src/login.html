@@ -7,7 +7,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Asset-Management</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://alcdn.msauth.net/browser/2.15.0/js/msal-browser.js"
+    integrity="sha384-dFzMiVGB5HpWZ+5w5VSif6jhWfNeplSw9ACYmQKZcY2azuT9kCxVWVI9HyfGdkHV"
+    crossorigin="anonymous"></script>
+
+    <!-- To help ensure reliability, Microsoft provides a second CDN -->
+    <script type="text/javascript">
+      if (typeof Msal === 'undefined') document.write(unescape("%3Cscript src='https://alcdn.msftauth.net/browser/2.15.0/js/msal-browser.js' type='text/javascript' crossorigin='anonymous' %3E%3C/script%3E"));
+    </script>
     <script defer type="module">
+        import {showWelcomeMessage} from "./js/AAD/ui.js";  window.showWelcomeMessage = showWelcomeMessage;
         import * as login from "./js/login.js"; window.login = login; console.log(window.login);
         if(sessionStorage.getItem("redirect"))
         {
@@ -51,9 +60,48 @@
           Forgot Password?
         </a> -->
       </div>
+      <h1>Neu: Azure SSO</h1>
+      <br>
+      <button type="button" id="SignIn" class="btn btn-secondary" onclick="signIn()">
+        Sign In
+      </button>
+      <br>
+      <div class="row" style="margin:auto">
+        <div id="card-div" class="col-md-3" style="display:none">
+          <div class="card text-center">
+            <div class="card-body">
+              <h5 class="card-title" id="WelcomeMessage">Please sign-in to see your profile and read your mails</h5>
+              <div id="profile-div"></div>
+              <br>
+              <br>
+              <button class="btn btn-primary" id="seeProfile" onclick="seeProfile()">See Profile</button>
+              <br>
+              <br>
+              <button class="btn btn-primary" id="readMail" onclick="readMail()">Read Mails</button>
+            </div>
+          </div>
+        </div>
+        <br>
+        <br>
+        <div class="col-md-4">
+          <div class="list-group" id="list-tab" role="tablist">
+          </div>
+        </div>
+        <div class="col-md-5">
+          <div class="tab-content" id="nav-tabContent">
+          </div>
+        </div>
+      </div>
   </div>
   <div id="toasts">
 
   </div>
+  <script type="text/javascript" src="./js/AAD/authConfig.js"></script>
+  <script type="text/javascript" src="./js/AAD/graphConfig.js"></script>
+  <script type="module" src="./js/AAD/ui.js"></script>
+  <!-- <script type="text/javascript" defer src="./js/AAD/authRedirect.js"></script>   -->
+  <!-- uncomment the above line and comment the line below if you would like to use the redirect flow -->
+  <script type="text/javascript" src="./js/AAD/authPopup.js"></script>
+  <script type="text/javascript" src="./js/AAD/graph.js"></script>
 </body>
 </html>

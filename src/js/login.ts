@@ -52,3 +52,25 @@ export const login = async (username: string, password: string) =>
         else ShowError(res.message, res.status);
     })
 }
+
+export const AAD_login = async(username: string, token: string) =>
+{
+    let key = await getKey();
+    if(!key) return ShowError("Es konnte kein Key abgerufen werden! Ist der Server down oder wird er blockiert?", 500);
+    if(!username || !token) return ShowError("Bitte überprüfen Sie Ihre Angaben");
+    let res = await request("auth", {method: "auth", SessionID: key, username: username, password: token}, {AAD: true}).catch(err => {
+        ShowError(err.message, err.status);
+        throw new Error(err.message);
+    });
+
+    if(!res) return ShowError("Es konnte keine Verbindung zum Server hergestellt werden!", 500);
+    console.debug(res);
+    if(res.status >= 200 && res.status < 300)
+    {
+        sessionStorage.setItem("username", username);
+        document.getElementById("username")?.classList.add("border-green-500");
+        document.getElementById("password")?.classList.add("border-green-500");
+        Continue(1000);
+    }
+
+}

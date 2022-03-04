@@ -88,7 +88,7 @@ export interface response {
     DATA: string;
 }
 
-type method = "newKey" | "getEntries" | "auth" | "check" | "refresh" | "setMonitors";
+type method = "newKey" | "getEntries" | "auth" | "AuthADUser" | "check" | "refresh" | "setMonitors";
 
 export interface pullrequest
 {
