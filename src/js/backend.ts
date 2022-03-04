@@ -28,7 +28,9 @@ export const request = (subdomain: string, auth: pullrequest, optional?: any):Pr
             case "newKey": xmlhttp.setRequestHeader("auth", JSON.stringify({type: "RequestKey"})); break;
 
             case "auth": if(!auth.SessionID || !auth.username || !auth.password) throw new Error("Missing parameters");
-            xmlhttp.setRequestHeader("auth", JSON.stringify({type: "AuthUser", SessionID: auth.SessionID, username: auth.username, password: auth.password}));
+            optional.AAD ? xmlhttp.setRequestHeader("auth", JSON.stringify({type: "AuthADUser", SessionID: auth.SessionID, username: auth.username, ADtoken: auth.password}))
+                         : xmlhttp.setRequestHeader("auth", JSON.stringify({type: "AuthUser", SessionID: auth.SessionID, username: auth.username, password: auth.password}));
+                         
             break;
 
             case "getEntries": if(!auth.SessionID || !auth.username) throw new Error("Missing parameters");
