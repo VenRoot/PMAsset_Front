@@ -42,26 +42,26 @@
 </head>
 <body class="dark:bg-gray-900 dark:text-white text-black">
     <!-- Make a giant log div -->
-    <textarea id="Log" class="w-full">
+    <textarea id="Log" class="w-full dark:bg-gray-900 dark:text-white">
         
     </textarea>
     <!-- component -->
-  <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col">
+  <div class="bg-white dark:bg-gray-900 dark:text-white shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col">
     <!-- Make a headline with a smaller headline underneath it -->
-    <h1 class="text-black text-xl">Azure Login</h1>
+    <h1 class="text-black dark:bg-gray-900 dark:text-white text-xl">Azure Login</h1>
     <h2 class="text-gray-600 text-xs">Melden Sie sich mit Ihren Microsoft Daten an</h2> <br> <br>
 
-      <div class="mb-4">
+      <div class="mb-4 dark:bg-gray-900 dark:text-white">
         <label class="block text-grey-darker text-sm font-bold mb-2" for="username">
           Username
         </label>
-        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker" id="username" onkeydown="if(event.keyCode == 13) login.login(document.getElementById('username').value, document.getElementById('password').value);" type="text" placeholder="Vorname.Nachname">
+        <input class="shadow dark:bg-gray-900 dark:text-white appearance-none border rounded w-full py-2 px-3 text-grey-darker" id="username" onkeydown="if(event.keyCode == 13) login.login(document.getElementById('username').value, document.getElementById('password').value);" type="text" placeholder="Vorname.Nachname">
       </div>
       <div class="mb-6">
-        <label class="block text-grey-darker text-sm font-bold mb-2" for="password">
+        <label class="block dark:bg-gray-900 dark:text-white text-grey-darker text-sm font-bold mb-2" for="password">
           Password
         </label>
-        <input class="shadow appearance-none border border-red rounded w-full py-2 px-3 text-grey-darker mb-3" onkeydown="if(event.keyCode == 13) login.login(document.getElementById('username').value, document.getElementById('password').value);" id="password" type="password" placeholder="******************">
+        <input class="shadow dark:bg-gray-900 dark:text-white appearance-none border border-red rounded w-full py-2 px-3 text-grey-darker mb-3" onkeydown="if(event.keyCode == 13) login.login(document.getElementById('username').value, document.getElementById('password').value);" id="password" type="password" placeholder="******************">
         <p class="text-red text-xs italic">Bitte geben Sie ein Passwort ein</p>
       </div>
       <div class="flex items-center justify-between">
@@ -74,7 +74,7 @@
       </div>
       <h1>Neu: Azure SSO</h1>
       <br>
-      <button type="button" id="SignIn" class="btn btn-secondary" onclick="signIn()">
+      <button type="button" id="SignIn" class="btn btn-secondary dark:bg-gray-900 dark:text-white" onclick="signIn()">
         Sign In
       </button>
       <br>
