@@ -24,7 +24,7 @@ dotenv.config();
 // http2 does not support unencrypted http, so we need to use the http1 module
 http.createServer((req, res) => {
     res.writeHead(301, {
-        Location: `https://${req.headers.host}${req.url}:${process.env.PORT || 3000}`
+        Location: `https://${req.headers.host}:${process.env.PORT || 3000}${req.url}`
     });
     res.end();
 }).listen(80, "0.0.0.0").on("listening", () => {
