@@ -1,4 +1,5 @@
 import https from "http2";
+import http from "http";
 import fs from "fs";
 import path from "path";
 import url from "url";
@@ -18,6 +19,17 @@ dotenv.config();
 // setInterval(() => {
 //     dotenv.config();
 // }, 60 * 1000);
+
+
+// http2 does not support unencrypted http, so we need to use the http1 module
+http.createServer((req, res) => {
+    res.writeHead(301, {
+        Location: `https://${req.headers.host}${req.url}:${process.env.PORT || 3000}`
+    });
+    res.end();
+}).listen(80, "0.0.0.0").on("listening", () => {
+    console.log("Listening on port 80");
+})
 
 const options:https.SecureServerOptions = {
     key: fs.readFileSync(path.join(__dirname, "certs/key.pem")),
