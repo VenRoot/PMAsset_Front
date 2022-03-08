@@ -1,11 +1,11 @@
 //@ts-nocheck
-
+import {SERVERADDR, FRONTADDR} from "../vars.js";
 /**
  * Configuration object to be passed to MSAL instance on creation. 
  * For a full list of MSAL.js configuration parameters, visit:
  * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/configuration.md 
  */
- const msalConfig = {
+ export const msalConfig = {
     auth: {
         clientId: "e7d2cb96-eb58-4ce6-a373-f8a5bbbf6298",
         // authority: "https://sts.windows.net/b5ce0e47-3753-4f10-b705-9d0447ccf182/",
@@ -13,7 +13,7 @@
         knownAuthorities: ["https://login.microsoftonline.com/",
         "https://sts.windows.net"
     ],
-        redirectUri: "https://localhost:2000",
+        redirectUri: FRONTADDR,
     },
     cache: {
         cacheLocation: "sessionStorage", // This configures where your cache will be stored
@@ -50,7 +50,7 @@
  * For more information about OIDC scopes, visit: 
  * https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-permissions-and-consent#openid-connect-scopes
  */
-const loginRequest = {
+export const loginRequest = {
     scopes: ["User.Read"]
 };
 
@@ -58,7 +58,7 @@ const loginRequest = {
  * Add here the scopes to request when obtaining an access token for MS Graph API. For more information, see:
  * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/resources-and-scopes.md
  */
-const tokenRequest = {
+export const tokenRequest = {
     scopes: ["User.Read", "Mail.Read"],
     forceRefresh: false // Set this to "true" to skip a cached token and go to the server to get a new token
 };
