@@ -32,7 +32,7 @@ export const login = async (username: string, password: string) =>
         if(!username || !password) return ShowError("Bitte überprüfen Sie ihre Angaben");
         //Check if username doesn't include @putzmeister.com
         if(!username.includes("@putzmeister.com")) username = username+="@putzmeister.com";
-        let res = await request("auth", {method: "auth", SessionID: key, username: username, password: password}).catch(err => {
+        let res = await request("auth", {method: "auth", SessionID: key, username: username, password: password}, {AAD: false}).catch(err => {
                 document.getElementById("username")?.classList.add("border-red-500");
                 document.getElementById("password")?.classList.add("border-red-500");
                 ShowError(err.message, err.status);

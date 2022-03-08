@@ -29,12 +29,13 @@
         import * as main from"../js/main.js"; window.main = main; 
         import * as PC from "../js/PC/main.js"; window.PC = PC;
         main.checkUser();
+        main.getUsers().then(() => {
+          PC.getData();
+        })
         let x = sessionStorage.getItem("username").split("@")[0].split(".");
         //make first letter uppercase
         x.forEach((e, i) => x[i] = e.charAt(0).toUpperCase() + e.slice(1));
         document.getElementById("SidebarUsername").innerHTML = x[0] + " " + x[1];
-        PC.getData();
-        main.getUsers();
     </script>
 </head>
 
