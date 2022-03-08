@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script type="module">
+      import * as auth from "./js/AAD/authConfig.js"; window.auth = auth;
+        Object.keys(auth).forEach(key => {
+            window[key] = auth[key];
+        });
+    </script>
     <link href="./css/tailwind.min.css" rel="stylesheet">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -16,6 +22,7 @@
       if (typeof Msal === 'undefined') document.write(unescape("%3Cscript src='https://alcdn.msftauth.net/browser/2.15.0/js/msal-browser.js' type='text/javascript' crossorigin='anonymous' %3E%3C/script%3E"));
     </script>
     <script defer type="module">
+        
         import {showWelcomeMessage} from "./js/AAD/ui.js";  window.showWelcomeMessage = showWelcomeMessage;
         import * as login from "./js/login.js"; window.login = login; console.log(window.login);
         if(sessionStorage.getItem("redirect"))
@@ -96,12 +103,12 @@
   <div id="toasts">
 
   </div>
-  <script type="text/javascript" src="./js/AAD/authConfig.js"></script>
-  <script type="text/javascript" src="./js/AAD/graphConfig.js"></script>
-  <script type="module" src="./js/AAD/ui.js"></script>
+  <script type="module" src="./js/AAD/authConfig.js"></script>
+  <script type="text/javascript" defer src="./js/AAD/graphConfig.js"></script>
+  <script type="module" defer src="./js/AAD/ui.js"></script>
   <!-- <script type="text/javascript" defer src="./js/AAD/authRedirect.js"></script>   -->
   <!-- uncomment the above line and comment the line below if you would like to use the redirect flow -->
-  <script type="text/javascript" src="./js/AAD/authPopup.js"></script>
-  <script type="text/javascript" src="./js/AAD/graph.js"></script>
+  <script type="text/javascript" defer src="./js/AAD/authPopup.js"></script>
+  <script type="text/javascript" defer src="./js/AAD/graph.js"></script>
 </body>
 </html>
