@@ -1,2 +1,2 @@
 export const SERVERADDR = navigator.appVersion.indexOf("Win")!=-1 ? "https://azrweunodejs01:5000/" : "https://localhost:5000/";
-export const FRONTADDR = navigator.appVersion.indexOf("Win")!=-1 ? "https://azrweunodejs01:3000/" : "https://localhost:3000/";
+export const FRONTADDR = navigator.appVersion.indexOf("Win")!=-1 ? "https://azrweunodejs01:4000/" : "https://localhost:4000/";
