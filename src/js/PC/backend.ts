@@ -235,7 +235,14 @@ export const getPDF = async (ITNr: string, User: boolean) =>
     const username = window.sessionStorage.getItem("username");
     const SessionID = window.sessionStorage.getItem("SessionID");
     if(username == null || SessionID == null) return makeToast("No SessionID or username found", "error");
-    if(devices.find(entry => entry.it_nr == ITNr)?.form == "Nein") return alert("Keine PDF vorhanden. Bitte erstellen Sie diese");
+    if(User)
+    {
+        if(devices.find(entry => entry.it_nr == ITNr)?.form == "Nein") return alert("Keine PDF vorhanden. Bitte erstellen Sie diese");
+    }
+    else
+    {
+        if(devices.find(entry => entry.it_nr == ITNr)?.check == "Nein") return alert("Keine Checkliste vorhanden. Bitte erstellen Sie diese");
+    }
     const res = await PDF({method: "GET", SessionID: SessionID, type: User ? "User" : "Check",  username: username, ITNr: ITNr}).catch((err: {resText: object | string, status: number, message: string}) => {
         ShowError(err.message, err.status);
         throw new Error(err.message);
@@ -249,10 +256,9 @@ export const getPDF = async (ITNr: string, User: boolean) =>
     return res;
 }
 
-const hex2a = (hexx:string) => {
-    var hex = hexx.toString();//force conversion
-    var str = '';
-    for (var i = 0; i < hex.length; i += 2)
+const hex2a = (hex:string) => {
+    let str = '';
+    for (let i = 0; i < hex.length; i += 2)
         str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
     return str;
 }
