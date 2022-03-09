@@ -251,7 +251,7 @@ export const getPDF = async (ITNr: string, User: boolean) =>
     const url = window.URL.createObjectURL(res);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${ITNr}.pdf`;
+    a.download = `${User ? ITNr : ITNr+"_Check"}.pdf`;
     a.click();
     return res;
 }
