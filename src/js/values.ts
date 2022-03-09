@@ -13,7 +13,10 @@ export const PCTypen: PCTypes[] = Object.seal([
     "T490",
     "Tower",
     "Z-Book",
-    "Z-Book Fury"
+    "Z-Book Fury",
+    "Surface Book 2",
+    "Surface Pro 6",
+    "Surface Pro 7"
 ]);
 
 export const PCHerstellerTypen:PCHersteller[] = Object.seal([
