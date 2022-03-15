@@ -8,6 +8,7 @@ export interface res_monitor
     TYPE: string;
     STATUS: string;
     ATTACHED: string;
+    STANDORT: string;
     BESITZER: string;
     MODEL: string;
     // FORM: string;

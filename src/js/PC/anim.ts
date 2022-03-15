@@ -663,7 +663,7 @@ export const PDFEntfernen = (ITNr: string, User: boolean) =>
     if(!username || !key) return alert("Bitte loggen Sie sich erneut ein!");
     if(!confirm("PDF mit aktuellen Werten entfernen?")) return;
     const device = devices.find(device => device.it_nr == ITNr);
-    if(!device) return;
+    if(!device) return ShowError(`Das Gerät ${ITNr} wurde nicht gefunden!`);
     deletePDF(device.it_nr, User);
     // if(!device) return;
 

@@ -47,7 +47,7 @@ export const getData = async() =>
             besitzer: element.BESITZER || "",
             seriennummer: element.SN as any,
             status: element.STATUS as any,
-            standort: "0" as any
+            standort: element.STANDORT as any
         });
     });
     setDevices(Monitors);
