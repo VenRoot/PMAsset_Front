@@ -1,4 +1,4 @@
-import { IPDF, pullrequest, pushrequest, response, User } from "./interface";
+import { FSFile, IPDF, pullrequest, pushrequest, response, User } from "./interface.js";
 import { makeToast } from "./toast.js";
 import {SERVERADDR} from "./vars.js";
 
@@ -99,6 +99,12 @@ export const PDF = (auth: IPDF): Promise<reqres> =>
         }
         if(auth.file)
             {
+                if(auth.file instanceof FSFile) {
+                    //Set the Content-Size header to the size of the file
+                    xmlhttp.setRequestHeader("Content-Size", auth.file.size.toString());
+                    xmlhttp.send(auth.file.data);
+                    return;
+                }
                 const formData = new FormData();
                 if(!auth.file.files) throw new Error("Missing file");
                 const file = auth.file.files[0];
@@ -107,7 +113,6 @@ export const PDF = (auth: IPDF): Promise<reqres> =>
                 xmlhttp.send(formData);
             }
         else xmlhttp.send();
-        // }
     });
 
     

@@ -114,5 +114,17 @@ export interface IPDF
     username?: string;
     ITNr: string;
     uploadOwn?: boolean;
-    file?: HTMLInputElement;
+    file?: HTMLInputElement | FSFile;
+}
+
+export class FSFile
+{
+    public data: FormData;
+    public size: number;
+
+    constructor(data: FormData, size: number)
+    {
+        this.data = data;
+        this.size = size;
+    }
 }

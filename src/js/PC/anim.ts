@@ -5,6 +5,14 @@ import { makeToast } from "../toast.js";
 import { deletePDF, generatePDF, getData, getMonitors, getPDF, rewritePDF, setData, setEquipment } from "./backend.js";
 import { tryParseJSON } from "../backend.js";
 
+declare global
+{
+    interface Window
+    {
+        isElectron: boolean;
+    }
+}
+
 const genPasswd = (length: number) =>
 {
     const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\"\'§$%&/()=\\`´!#-_<>!+~?°^';
@@ -619,6 +627,10 @@ export const PDFGenerieren = async (ITNr: string) =>
     makeToast("PDF erfolgreich generiert", "success");
     //Update the database
     setData(device, {device: device, method: "POST", username: username, SessionID: key});
+    if(window.isElectron && confirm("Möchten Sie die PDF anzeigen/unterschreiben lassen?"))
+    {
+        PDFAnzeigen(device.it_nr);
+    }
 }
 
 export const AddCustomPDF = (ITNr: string, User: boolean) => {

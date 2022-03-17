@@ -29,6 +29,7 @@
     <script defer type="module">
         
         import {showWelcomeMessage} from "./js/AAD/ui.js";  window.showWelcomeMessage = showWelcomeMessage;
+        if(window.api && window.api.send && window.api.receive) window.isElectron = true;
         import * as login from "./js/login.js"; window.login = login; console.log(window.login);
         if(sessionStorage.getItem("redirect"))
         {

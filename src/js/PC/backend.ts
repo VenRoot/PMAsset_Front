@@ -6,6 +6,18 @@ import { AddRow, devices, GetMonitors, setDevices } from "./anim.js";
 import { PC_res_data, res_monitor } from "./interface.js";
 export const Monitors:Bildschirm[] = [];
 
+declare global
+{
+    interface Window
+    {
+        isElectron: boolean;
+        api: {
+            send: Function,
+            receive: Function
+        }
+    }
+}
+
 
 export const getMonitors = ():Promise<Bildschirm[]> =>
 {
@@ -248,6 +260,14 @@ export const getPDF = async (ITNr: string, User: boolean) =>
         throw new Error(err.message);
     }) as unknown as Blob;
 
+
+    if(window.isElectron)
+    {
+        const base = await (await blobToBase64(res)).split("base64,")[1];
+        console.log(base);
+        window.api.send("toOpenPDF", base, ITNr);
+        return res;
+    }
     const url = window.URL.createObjectURL(res);
     const a = document.createElement("a");
     a.href = url;
@@ -256,9 +276,18 @@ export const getPDF = async (ITNr: string, User: boolean) =>
     return res;
 }
 
-const hex2a = (hex:string) => {
-    let str = '';
-    for (let i = 0; i < hex.length; i += 2)
+function blobToBase64(blob: Blob): Promise<string> {
+    return new Promise((resolve, _) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.readAsDataURL(blob);
+    });
+  }
+
+const hex2a = (hexx:string) => {
+    var hex = hexx.toString();//force conversion
+    var str = '';
+    for (var i = 0; i < hex.length; i += 2)
         str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
     return str;
 }
