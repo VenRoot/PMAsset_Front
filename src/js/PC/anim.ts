@@ -629,7 +629,7 @@ export const PDFGenerieren = async (ITNr: string) =>
     setData(device, {device: device, method: "POST", username: username, SessionID: key});
     if(window.isElectron && confirm("Möchten Sie die PDF anzeigen/unterschreiben lassen?"))
     {
-        PDFAnzeigen(device.it_nr);
+        PDFAnzeigen(device.it_nr, true);
     }
 }
 

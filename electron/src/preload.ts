@@ -33,7 +33,7 @@ contextBridge.exposeInMainWorld("api", {
     console.log(channel);
     if (toChannels.includes(channel)) ipcRenderer.send(channel, ...args);
     },
-  receive: (channel: any, callback: Function) => {
+  receive: (channel: any, callback: CallBack) => {
     console.log(channel);
 
     if(fromChannels.includes(channel)) ipcRenderer.on(channel, (event, ...args) => callback(...args));
@@ -41,3 +41,4 @@ contextBridge.exposeInMainWorld("api", {
 });
 
 console.log("Hi");
+type CallBack = (...args: any[]) => void;

@@ -2,7 +2,11 @@ import { app, BrowserWindow, ipcMain, Notification, autoUpdater, dialog } from '
 import * as path from 'path';
 import * as crypto from "crypto";
 import * as fs from "fs";
-import { spawn } from "child_process";
+import { spawn, execFile, ChildProcessWithoutNullStreams, ChildProcess } from "child_process";
+import * as env from "dotenv";
+import { PDFUpload, PDFUploadSend } from './interface';
+
+env.config({ path: path.join(__dirname, "..", ".env") });
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -46,11 +50,11 @@ ipcMain.on("toOpenPDF", (event, file: string, ITNr: string) => {
 
 
     //Wait till the file got modified
-    let old = fs.statSync(_path).mtime.getUTCMilliseconds();
-    let child;
-    process.platform == "linux" ? child = spawn("okular", [_path], {shell: "bash"}) : child = spawn("AcroRd32.exe", [_path]);
+    const old = fs.statSync(_path).mtime.getUTCMilliseconds();
+    let child:ChildProcess;
+    process.platform == "linux" ? child = spawn("okular", [_path], {shell: "bash"}) : child = execFile('C:\\Program Files (x86)\\Adobe\\Acrobat Reader DC\\Reader\\AcroRd32.exe', [_path]);
     child.on("exit", () => {
-      let newTime = fs.statSync(_path).mtime.getUTCMilliseconds();
+      const newTime = fs.statSync(_path).mtime.getUTCMilliseconds();
       if (newTime > old) {
         //file was modified
         return win.webContents.send("fromOpenPDF", {path: _path, ITNr: ITNr});
@@ -64,7 +68,7 @@ ipcMain.on("toOpenPDF", (event, file: string, ITNr: string) => {
   });
 });
 
-class FSFile
+export class FSFile
 {
     public data: FormData;
     public size: number;
@@ -76,19 +80,16 @@ class FSFile
     }
 }
 
-ipcMain.handle("toUploadPDF", (event, args: {_path: string, ITNr: string}) => {
+ipcMain.handle("toUploadPDF", (event, args: PDFUpload) => {
   win.webContents.send("log", "Ich bin in toUploadPDF");
   if(!fs.existsSync(args._path)) return alert("Die PDF-Datei existiert nicht!");
-    const pdf = fs.readFileSync(args._path);
-    //Append the file to the input automatically
-
     const file = fs.readFileSync(args._path, {encoding: "binary"});
     const filesize = fs.statSync(args._path).size;
     const f = new FormData();
     f.append("file", file);
     const File = new FSFile(f, filesize);
 
-  return win.webContents.send("fromUploadPDF", File, args.ITNr);
+  return win.webContents.send("fromUploadPDF", {File: File, ITNr: args.ITNr, type: args.type} as PDFUploadSend);
 })
 
 
@@ -141,7 +142,7 @@ const createWindow = (): void => {
   });
 
   // and load the index.html of the app.
-  win.loadURL("https://localhost:3000");
+  win.loadURL("https://localhost:4000");
 
   // Open the DevTools.
   win.webContents.openDevTools();
@@ -198,4 +199,9 @@ autoUpdater.on("update-downloaded", (event, releaseNotes, releaseName) => {
 
 autoUpdater.on("error", message => {
   console.error("Error in auto-updater. " + message);
+});
+
+
+win.webContents.setWindowOpenHandler(() => {
+  return { action: 'allow'}
 });
