@@ -4,7 +4,7 @@ declare global
 {
   interface Window
   {
-    isElectron: any,
+    isElectron: boolean,
     ipcRenderer: Electron.IpcRenderer
   }
 }
@@ -28,12 +28,12 @@ const fromChannels = channels.map(channel => `from${channel}`);
 const toChannels = channels.map(channel => `to${channel}`);
 
 contextBridge.exposeInMainWorld("api", {
-  send: (channel: any, ...args:any) => {
+  send: (channel: string, ...args:any) => {
     console.log(...args);
     console.log(channel);
     if (toChannels.includes(channel)) ipcRenderer.send(channel, ...args);
     },
-  receive: (channel: any, callback: CallBack) => {
+  receive: (channel: string, callback: CallBack) => {
     console.log(channel);
 
     if(fromChannels.includes(channel)) ipcRenderer.on(channel, (event, ...args) => callback(...args));

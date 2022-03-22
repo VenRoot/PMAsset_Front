@@ -1,8 +1,8 @@
-import { app, BrowserWindow, ipcMain, Notification, autoUpdater, dialog } from 'electron';
+import { app, BrowserWindow, ipcMain, autoUpdater, dialog } from 'electron';
 import * as path from 'path';
 import * as crypto from "crypto";
 import * as fs from "fs";
-import { spawn, execFile, ChildProcessWithoutNullStreams, ChildProcess } from "child_process";
+import { spawn, execFile, ChildProcess } from "child_process";
 import * as env from "dotenv";
 import { PDFUpload, PDFUploadSend } from './interface';
 
@@ -56,6 +56,7 @@ ipcMain.on("toOpenPDF", (event, file: string, ITNr: string) => {
     child.on("exit", () => {
       const newTime = fs.statSync(_path).mtime.getUTCMilliseconds();
       if (newTime > old) {
+        win.webContents.send("log", "Überschreibe PDF");
         //file was modified
         return win.webContents.send("fromOpenPDF", {path: _path, ITNr: ITNr});
     }
@@ -137,17 +138,34 @@ const createWindow = (): void => {
       contextIsolation: true,
       // allowRunningInsecureContent: true,
       // webSecurity: false,
-
     }
   });
 
   // and load the index.html of the app.
   win.loadURL("https://localhost:4000");
+  
+  // FIXME: The setWindowOpenHandler is not a funtion
+  win.webContents.setWindowOpenHandler(({url}) => {
+    if(url.startsWith("https://login.microsoftonline.com/")) {
+      return {action: 'allow'};
+    }
+    else return {action: 'deny'};
+  });
 
   // Open the DevTools.
   win.webContents.openDevTools();
   console.log(path.join(__dirname, "preload.js"));
 };
+
+//Erlaube SAML Authentifizierung, andere Seiten werden blockiert
+// app.on("web-contents-created", (createEvent, contents) => {
+//   contents.setWindowOpenHandler(({url}) => {
+//     if(url.startsWith("https://login.microsoftonline.com/")) {
+//       return {action: 'allow'};
+//     }
+//     else return {action: 'deny'};
+//   });
+// });
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -199,9 +217,4 @@ autoUpdater.on("update-downloaded", (event, releaseNotes, releaseName) => {
 
 autoUpdater.on("error", message => {
   console.error("Error in auto-updater. " + message);
-});
-
-
-win.webContents.setWindowOpenHandler(() => {
-  return { action: 'allow'}
 });
