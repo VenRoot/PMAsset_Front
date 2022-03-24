@@ -9,7 +9,7 @@ import { Bildschirm, InputName, Konferenz, KonfHersteller, MonTypes, PC, PCHerst
 import { uwu } from "./cart.js";
 import { PCHerstellerTypen, PCTypen, StatusTypen, MonitorTypen, PhoneTypen, MonTypen } from "./values.js";
 import {FormSelect, HerstellerSelect, StatusSelect, TypSelect} from "./templates.js";
-import { changeCurrentRow, currentRow, getDevices, GetMonitors } from "./PC/anim.js";
+import { changeCurrentRow, currentRow, getDevice, getDevices, GetMonitors } from "./PC/anim.js";
 import { getUsers, ShowError } from "./backend.js";
 import { setData } from "./PC/backend.js";
 import { autocomplete } from "./MA/ac.js";
@@ -557,8 +557,7 @@ export const SaveEntry = async (elem: HTMLElement) =>
 
     const grandparent = elem.parentElement?.parentElement?.parentElement as HTMLTableRowElement;
  
-    //@ts-ignore
-    const device = PC.devices.find(devs => devs.it_nr == (grandparent.cells[0].children[0] as HTMLInputElement).value);
+    const device = getDevice((grandparent!.cells[0]!.children[0] as HTMLInputElement).value);
     if(device == null) return ShowError("Device not found");
 
     
@@ -607,8 +606,8 @@ export const SaveEntry = async (elem: HTMLElement) =>
         hersteller: grandparent.children[2].textContent || "" as any,
         seriennummer: grandparent.children[3].textContent || "" as any,
         besitzer: grandparent.children[7].textContent || "" as any,
-        form: grandparent.children[8].textContent || "" as any,
-        check: grandparent.children[8].textContent || "" as any,
+        form: device.form,
+        check: device.check,
         passwort: (grandparent.children[9].children[0] as HTMLInputElement).value || "" as any,
         it_nr: device.it_nr,
         standort: grandparent.children[5].textContent || "" as any,
