@@ -114,5 +114,5 @@ export interface IPDF
     username?: string;
     ITNr: string;
     uploadOwn?: boolean;
-    file?: HTMLInputElement;
+    file?: HTMLInputElement | File;
 }

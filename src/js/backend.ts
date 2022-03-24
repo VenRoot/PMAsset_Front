@@ -100,8 +100,16 @@ export const PDF = (auth: IPDF): Promise<reqres> =>
         if(auth.file)
             {
                 const formData = new FormData();
-                if(!auth.file.files) throw new Error("Missing file");
-                const file = auth.file.files[0];
+                let file: File;
+                debugger;
+                if(auth.file instanceof HTMLInputElement)
+                {
+                    if(!auth.file.files) throw new Error("Missing file");
+                    file = auth.file.files[0];
+                }
+                else file = auth.file;
+                if(!file) throw new Error("Missing file");
+                
                 formData.append("file", file);
                 xmlhttp.setRequestHeader("Content-Size", file.size.toString());
                 xmlhttp.send(formData);

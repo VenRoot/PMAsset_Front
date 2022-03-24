@@ -91,13 +91,78 @@ export const SearchDevice =(it_nr: string) =>
             temp.innerText = values.besitzer as any; 
             temp.id="BESITZER";
             break;
-            case "form": temp.innerText = `${values.form || "Nein"} | ${values.check || "Nein"}`; temp.id="FORM";         
+            case "form": temp.innerText = `${values.form || "Nein"} | ${values.check || "Nein"}`; temp.id="FORM";  
             break;
             case "passwort": 
             const pwf = document.createElement("input"); pwf.type = "password"; pwf.disabled = true; pwf.value = values.passwort as any; pwf.classList.add("bpasswd");
             temp.innerHTML = pwf.outerHTML; temp.id="PASSWORT"; break;
         }
         console.debug(temp);
+
+        temp.ondragover = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            e.dataTransfer!.dropEffect = "copy";
+        }
+        temp.ondragenter = (e) => e.preventDefault();
+        // if(!temp.ondrop) throw new Error("ondrop is null");
+        //@ts-ignore
+        temp.ondrop = ((e:DragEvent) => {
+            e.stopPropagation();
+            e.preventDefault();
+            const reader = new FileReader();
+            reader.onload = readSuccess;
+
+            function readSuccess(e: ProgressEvent<FileReader>)
+            {
+                const data = e.target!.result;
+                console.log(data);
+                const pdf = data as ArrayBuffer;
+                debugger;
+            }
+
+            reader.readAsArrayBuffer(e.dataTransfer!.files![0]);
+            
+            Array.prototype.forEach.call(e.dataTransfer?.files, (file:File) => {
+                let x = e.dataTransfer;
+                let fr = new FileReader();
+                fr.onload = (function(f) {
+                    console.log(f);
+                    return function(e) {
+                        const b = e.target?.result as ArrayBuffer;
+                    debugger;
+                    };
+                })(file);
+
+                fr.readAsArrayBuffer(file);
+                // let u = new Blob([x!]);
+                // if(file.type != "application/pdf")
+                // {
+                //     alert(`Die Datei ${file.name} ist keine PDF!`);
+                //     ShowError(`Die Datei ${file.name} ist keine PDF!`);
+                //     return;
+                // }
+                // if(!confirm(`Sind Sie sicher, dass Sie die PDF für ${values.it_nr} hochladen möchten?`)) return;
+                // if(confirm(`Ist die Datei ${file.name} ein Formular (OK) oder eine Checkliste(Abbrechen)?`))
+                // {
+                //     //Ist ein Formular
+                //     if(values.form == "Ja")
+                //     {
+                //         if(!confirm("Sind Sie sicher, dass Sie die Formulardatei überschreiben möchten?")) return;
+                //     }
+                //     AddCustomPDF(values.it_nr, true, file);
+                //     return;
+                // }
+                // //Ist eine Checkliste
+                // if(values.check == "Ja")
+                // {
+                //     if(!confirm("Sind Sie sicher, dass Sie die Checkliste überschreiben möchten?")) return;
+                // }
+                // AddCustomPDF(values.it_nr, false, file);
+                // return;
+            });
+            return;
+        });
         
         template.append(temp); 
     });
@@ -621,7 +686,7 @@ export const PDFGenerieren = async (ITNr: string) =>
     setData(device, {device: device, method: "POST", username: username, SessionID: key});
 }
 
-export const AddCustomPDF = (ITNr: string, User: boolean) => {
+export const AddCustomPDF = (ITNr: string, User: boolean, _file?: File) => {
     const username = sessionStorage.getItem("username");
     const key = sessionStorage.getItem("SessionID");
     if(!username || !key) return alert("Bitte loggen Sie sich erneut ein!");
@@ -629,10 +694,27 @@ export const AddCustomPDF = (ITNr: string, User: boolean) => {
     const device = devices.find(device => device.it_nr == ITNr);
     if(!device) return;
 
-    //Select a pdf file from the computer
     const file = document.createElement("input");
     file.type = "file";
     file.accept = ".pdf";
+
+    debugger;
+    if(_file)
+    {
+
+        User ? device.form = "Ja" : device.check = "Ja";
+        UpdateTable(device);
+        setData(device, {device: device, method: "POST", username: username, SessionID: key});
+        PDF({ITNr: ITNr, method: "POST", type: User ? "User" : "Check", SessionID: key, username: username, uploadOwn: true, file: _file}).then(res => {
+            if(res.status == 200) makeToast("PDF hochgeladen!", "success");
+            else makeToast("Fehler beim Hochladen der PDF!", "error");
+        });
+        return;
+    }
+    else 
+    {
+        //Select a pdf file from the computer
+    
     file.click();
     file.addEventListener("change", async () => {
         if(!file || file.files == null || file.files[0] == null) return;
@@ -651,6 +733,9 @@ export const AddCustomPDF = (ITNr: string, User: boolean) => {
             else makeToast("Fehler beim Hochladen der PDF!", "error");
         });
     });
+    }
+
+    
 
 
     
