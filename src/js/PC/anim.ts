@@ -47,18 +47,16 @@ export let devices:PC[] = [];
 export const setDevices = (dev:PC[]) => devices = dev; 
 
 export const getDevices = (): PC[] => devices;
-export const getDevice = (it_nr: string) =>
-{
-    return devices.filter(device => device.it_nr.includes(it_nr));
-}
+export const getDevice = (it_nr: string) => devices.find(device => device.it_nr == it_nr);
+export const findDevice = (it_nr: string) => devices.filter(device => device.it_nr.includes(it_nr));
 
-export const SearchDevice =(it_nr: string) =>
- {
-    const devs = getDevice(it_nr.toLocaleUpperCase());
-    console.debug(devs);
-    ClearTable();
-    devs.forEach(device => AddRow(device));
- }
+export const SearchDevice = (it_nr: string) =>
+{
+   const devs = findDevice(it_nr.toLocaleUpperCase());
+   console.debug(devs);
+   ClearTable();
+   devs.forEach(device => AddRow(device));
+}
 
  const MakeTemplate = async (values: PC): Promise<HTMLTableRowElement> =>
  {
@@ -442,7 +440,7 @@ export const SearchDevice =(it_nr: string) =>
                     options.push({option: "", func: "", User: true});
                     switch(values.check)
                     {
-                        case "Ja": options.push({option: "Checkliste anzeigen", func: "CheckAnzeigen", User: false}, {option: "Checkliste überschreiben", func: "CheckBearbeiten", User: false}, {option: "Checkliste entfernen", func: "CheckEntfernen", User: false}); break;
+                        case "Ja": options.push({option: "Checkliste anzeigen", func: "CheckAnzeigen", User: false}, {option: "Checkliste überschreiben", func: "CheckBearbeiten", User: false}, {option: "Checkliste entfernen", func: "PDFEntfernen", User: false}); break;
                         case "Nein": options.push({option: "Checkliste hinzufügen", func: "CheckHinzufuegen", User: false}); break;
                     }
                     options.forEach(option =>
@@ -661,7 +659,8 @@ export const PDFEntfernen = (ITNr: string, User: boolean) =>
     const username = sessionStorage.getItem("username");
     const key = sessionStorage.getItem("SessionID");
     if(!username || !key) return alert("Bitte loggen Sie sich erneut ein!");
-    if(!confirm("PDF mit aktuellen Werten entfernen?")) return;
+    const str = User ? "User-" : "Checkliste-";
+    if(!confirm(User+"PDF mit aktuellen Werten entfernen?")) return;
     const device = devices.find(device => device.it_nr == ITNr);
     if(!device) return ShowError(`Das Gerät ${ITNr} wurde nicht gefunden!`);
     deletePDF(device.it_nr, User);
@@ -717,14 +716,8 @@ export const UpdateTable = (device: PC) =>
         else if(index == 5) cell.innerText = device.standort;
         else if(index == 6) cell.innerText = device.status;
         else if(index == 7) cell.innerText = device.besitzer;
-        else if(index == 8) cell.innerText = (device.form || "Nein") + "|" + (device.check || "Nein");
+        else if(index == 8) cell.innerText = (device.form || "Nein") + " | " + (device.check || "Nein");
         else if(index == 9) {
-            const ele = document.createElement("input");
-            ele.type = "password";
-            ele.classList.add("bpasswd");
-            ele.value = device.passwort || "";
-            cell.innerHTML = "";
-            cell.appendChild(ele);
         }
     });
 }
