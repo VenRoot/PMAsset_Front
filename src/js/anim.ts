@@ -580,13 +580,21 @@ export const SaveEntry = async (elem: HTMLElement) =>
                             let value = (cell.children[0] as HTMLInputElement).value;
                             cell.innerHTML = value;
                             //check if value is a mail
-                            if(!value.includes("@"))
+                            if(value.includes("@"))
                             {
                                 let Users = await getUsers();
                                 if(!Users) return resolve(void 0);
-                                let user = Users.find(user => user.name == value);
-                                console.log(user);
-                                cell.innerHTML = user?.mail || "Failed";
+                                let newUser = Users.find(user => user.userPrincipalName == value);
+                                if(newUser) cell.innerHTML = newUser.cn.split("@")[0];
+                                else cell.innerHTML = value.split("@")[0];
+                            }
+                            else
+                            {
+                                let Users = await getUsers();
+                                if(!Users) return resolve(void 0);
+                                let newUser = Users.find(user => user.cn == value);
+                                if(newUser) cell.innerHTML = newUser.cn.split("(")[0];
+                                else cell.innerHTML = value.split("(")[0];
                             }
                         }
         
