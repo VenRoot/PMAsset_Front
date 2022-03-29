@@ -32,21 +32,21 @@ export interface Gerät
 
 
 export interface User {
-    "name": string,
-    "mail": string,
-    "employeeNumber": string,
-    "department": string,
-    "departmentNumber": string,
-    "title": string,
-    "telephoneNumber": string,
-    "mobile": string,
-    "physicalDeliveryOfficeName": string,
-    "l": string,
-    "st": string,
-    "postalCode": string,
-    "co": string,
-    "userPrincipalName": string,
-    "cn": string
+    name: string,
+    mail: string,
+    employeeNumber: string,
+    department: string,
+    departmentNumber: string,
+    title: string,
+    telephoneNumber: string,
+    mobile: string,
+    physicalDeliveryOfficeName: string,
+    l: string,
+    st: string,
+    postalCode: string,
+    co: string,
+    userPrincipalName: string,
+    cn: string
 };
 
 export interface PC extends Gerät
