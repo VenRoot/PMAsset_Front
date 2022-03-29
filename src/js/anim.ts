@@ -484,7 +484,11 @@ export const EditEntry = (elem: HTMLElement) =>
             case 6: StatusSelect.value = cell.innerHTML; cell.innerHTML=""; cell.appendChild(StatusSelect.cloneNode(true)); console.warn(cell); break;
             case 8: break; FormSelect.value = cell.innerHTML; cell.innerHTML=""; cell.appendChild(FormSelect.cloneNode(true)); break;
             case 9: cell.children[0].removeAttribute("disabled"); (cell.children[0] as HTMLInputElement).type = "text"; break;
-            case 10: break;
+            case 10: 
+            
+            if(cell.id == "KOMMENTAR") cell.children[0].removeAttribute("readonly");
+            break;
+            case 11: break;
             default:
                 
             const inp = document.createElement("input");
@@ -570,10 +574,14 @@ export const SaveEntry = async (elem: HTMLElement) =>
                         case 1: case 5: cell.innerHTML = (cell.children[0] as HTMLSelectElement).value; break;
                         case 9: cell.children[0].setAttribute("disabled", ""); (cell.children[0] as HTMLInputElement).type = "password"; break;
                         case 4: case 8: break;
-                        case 10: resolve(void 0); break;
+                        case 10:
+                            if(cell.id == "KOMMENTAR") cell.children[0].setAttribute("readonly", ""); 
+                        resolve(void 0); 
+                        break;
+                        case 11: break;
                         default: 
-                        if(i != 7) cell.innerHTML = (cell.children[0] as HTMLInputElement).value;
-                        else if(i == 7)
+                        if(i != 7 && cell.id != "KOMMENTAR") cell.innerHTML = (cell.children[0] as HTMLInputElement).value;
+                        else if(i == 7 && cell.id != "KOMMENTAR")
                         {
                             console.log(cell);
                             console.log(cell.children)
@@ -606,6 +614,10 @@ export const SaveEntry = async (elem: HTMLElement) =>
     };
     await dostuff();
     console.log(grandparent.children[7]);
+    let kom: string | null  = "";
+    grandparent.children[10].id == "KOMMENTAR" ? kom = (grandparent.children[10].children[0] as HTMLTextAreaElement).value : kom = null;
+
+    
     const newPC:PC =
     {
         kind: "PC",
@@ -620,6 +632,10 @@ export const SaveEntry = async (elem: HTMLElement) =>
         it_nr: device.it_nr,
         standort: grandparent.children[5].textContent || "" as any,
         equipment: device.equipment
+    }
+    if(kom != null)
+    {
+        newPC.kommentar = kom;
     }
 
     //Update the device in the database
