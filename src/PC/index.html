@@ -4,6 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <script>
+      window.compact = localStorage.getItem("compact");
+      if(window.compact === null) {localStorage.setItem("compact", false); window.compact = false;}
+      else if(compact === "true") window.compact = true;
+      else window.compact = false;
       // On page load or when changing themes, best to add inline in `head` to avoid FOUC
       if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) document.documentElement.classList.add('dark')
       else document.documentElement.classList.remove('dark');
@@ -28,6 +32,8 @@
         import * as dark from "../js/dark.js"; window.dark = dark; 
         import * as main from"../js/main.js"; window.main = main; 
         import * as PC from "../js/PC/main.js"; window.PC = PC;
+        PC.Settings.compact = window.compact;
+        PC.Settings.check();
         main.checkUser();
         main.getUsers().then(() => {
           PC.getData();
@@ -74,10 +80,18 @@
                 <label class="form-check-label inline-block text-white dark:text-white" for="flexSwitchCheckDefault">Dark Mode</label>
               </div>
             </div>
+            <div class="flex justify-center">
+              <div class="form-check form-switch">
+                <input id="comp-toggle" class="form-check-input appearance-none w-9 -ml-10 rounded-full float-left h-5 align-top bg-white bg-no-repeat bg-contain focus:outline-none cursor-pointer shadow-sm" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+                <label class="form-check-label inline-block text-white dark:text-white" for="flexSwitchCheckDefault">comp Mode</label>
+              </div>
+            </div>
             <script>
               const darkModeSwitch = document.getElementById("lights-toggle");
               if(localStorage.getItem("theme") === "dark") darkModeSwitch.checked = true;
               else darkModeSwitch.checked = false;
+              if(localStorage.getItem("compact") === "true") document.getElementById("comp-toggle").checked = true;
+              else document.getElementById("comp-toggle").checked = false;
             </script>
             <div class="col-span-1 h-96 flex flex-col justify-between items-end">
                 <button onclick="document.location.href='/login.html'" class="absolute bottom-10 self-center align-bottom py-2.5 px-4 bg-red-900 white transition duration-200 hover:bg-black rounded-lg">Logout</button>
@@ -140,10 +154,13 @@
                                     <option value="Ja" onselect="CreateForm(this);">Ja</option>
                                 </select></th>
                                 <th class="border-2 border-black dark:border-gray-300" name="Passwort">
-                                    <a href="#" onclick="PC.GeneratePassword(this);" class="text-green-600 hover:text-green-300">
-                                        <i class="material-icons-outlined">vpn_key</i>
-                                    </a>
-                                    <input class="w-full text-center temp bg-transparent dark:text-gray-300" id="bpasswd" type="text">
+                                  <a href="#" onclick="PC.GeneratePassword(this);" class="text-green-600 hover:text-green-300">
+                                      <i class="material-icons-outlined">vpn_key</i>
+                                  </a>
+                                  <input class="w-full text-center temp bg-transparent dark:text-gray-300" id="bpasswd" type="text">
+                                </th>
+                                <th class="border-2 border-black dark:border-gray-300 hidden" id="thkommentar" name="Kommentar">
+                                  <input class="w-full text-center temp bg-transparent dark:text-gray-300" id="bkommentar" type="text">
                                 </th>
                                 <th class="icons">
                                     <a href="#" class="text-gray-700 hover:text-gray-400">

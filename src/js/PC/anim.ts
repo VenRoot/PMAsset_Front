@@ -16,6 +16,8 @@ const genPasswd = (length: number) =>
     return passwd;
 }
 
+
+
 export const ShowPassword = (elem: HTMLElement) =>
 {
     
@@ -40,17 +42,46 @@ export const GeneratePassword = (elem: HTMLElement) =>
 
     passwd.value = genPasswd(15);
     enableBtn();
-
 }
+
+export const Settings = {
+    compact: false,
+    check: () => {
+        if(!Settings.compact)
+        {
+            document.getElementById("thkommentar")?.classList.remove("hidden");
+            const trth = document.querySelector("#table thead tr") as HTMLTableRowElement;
+            const th = document.createElement("th");
+            th.classList.add("p-3", "text-center");
+            const p = document.createElement("p");
+            p.innerHTML = "Kommentar";
+            th.appendChild(p);
+            //place th in the second last position
+            trth.insertBefore(th, trth.lastElementChild);
+        }
+    }
+}
+
+export const compactSwitch = document.getElementById("comp-toggle") as HTMLInputElement;
+if(!compactSwitch) throw new Error("darkModeSwitch not found");
+compactSwitch.addEventListener("change", (ev) => {
+    compactSwitch.checked ? Settings.compact = true : Settings.compact = false;
+    compactSwitch.checked ? localStorage.setItem("compact", "true") : localStorage.setItem("compact", "false");
+    alert("Die Seite muss neu geladen werden, um die Änderungen zu übernehmen.");
+    location.reload();
+});
+
+(() => {
+    if(localStorage.getItem("compact") === "true") compactSwitch.checked = true;
+    else compactSwitch.checked = false;
+    compactSwitch.checked ? Settings.compact = true : Settings.compact = false;
+})();
 
 export let devices:PC[] = [];
 export const setDevices = (dev:PC[]) => devices = dev; 
 
 export const getDevices = (): PC[] => devices;
-export const getDevice = (it_nr: string) =>
-{
-    return devices.filter(device => device.it_nr.includes(it_nr));
-}
+export const getDevice = (it_nr: string) => devices.filter(device => device.it_nr.includes(it_nr));
 
 export const SearchDevice =(it_nr: string) =>
  {
@@ -96,6 +127,16 @@ export const SearchDevice =(it_nr: string) =>
             case "passwort": 
             const pwf = document.createElement("input"); pwf.type = "password"; pwf.disabled = true; pwf.value = values.passwort as any; pwf.classList.add("bpasswd");
             temp.innerHTML = pwf.outerHTML; temp.id="PASSWORT"; break;
+
+            case "kommentar":
+            if(Settings.compact) break;
+            const kommentar = document.createElement("textarea");
+            kommentar.readOnly = true;
+            kommentar.title = values.kommentar || "";
+            kommentar.classList.add("bg-gray-900", "text-gray-300", "border-gray-300", "background-transparent", "focus:bg-gray-900", "focus:text-gray-300", "focus:border-gray-300");
+            kommentar.value = values.kommentar || "";
+            temp.appendChild(kommentar);
+            temp.id = "KOMMENTAR";
         }
         console.debug(temp);
         
@@ -105,7 +146,8 @@ export const SearchDevice =(it_nr: string) =>
     // sortedtemplate.setAttribute("onmouseover", "main.foc(this)");
     // sortedtemplate.setAttribute("onmouseout", "main.unfoc(this)");
     sortedtemplate.classList.add("hover:bg-opacity-50", "dark:bg-gray-900", "dark:text-gray-300", "dark:border-gray-300");
-    const queries = ["#IT_NR", "#TYP", "#HERSTELLER", "#SERIENNUMMER", "#EQUIPMENT", "#STANDORT", "#STATUS", "#BESITZER", "#FORM", "#PASSWORT"];
+    const queries = ["#IT_NR", "#TYP", "#HERSTELLER", "#SERIENNUMMER", "#EQUIPMENT", "#STANDORT", "#STATUS", "#BESITZER", "#FORM", "#PASSWORT"]
+    if(!Settings.compact) queries.push("#KOMMENTAR");
     queries.forEach(query => sortedtemplate.appendChild(template.querySelector(query) as HTMLTableCellElement));
 
     const icons = createIcons();
