@@ -77,6 +77,7 @@ export const compactSwitch = document.getElementById("comp-toggle") as HTMLInput
 })();
 
 (() => {
+    if(!document.location.href.toLocaleLowerCase().includes("/pc")) return;
     if(localStorage.getItem("compact") === "true") compactSwitch.checked = true;
     else compactSwitch.checked = false;
     compactSwitch.checked ? Settings.compact = true : Settings.compact = false;
