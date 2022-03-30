@@ -47,6 +47,8 @@ export const GeneratePassword = (elem: HTMLElement) =>
 export const Settings = {
     compact: false,
     check: () => {
+        //check if the user is on the pc page
+        if(!document.location.href.toLocaleLowerCase().includes("/pc")) return;
         if(!Settings.compact)
         {
             document.getElementById("thkommentar")?.classList.remove("hidden");
@@ -63,13 +65,16 @@ export const Settings = {
 }
 
 export const compactSwitch = document.getElementById("comp-toggle") as HTMLInputElement;
-if(!compactSwitch) throw new Error("darkModeSwitch not found");
-compactSwitch.addEventListener("change", (ev) => {
+(() => {
+    if(!document.location.href.toLocaleLowerCase().includes("/pc")) return;
+    if(!compactSwitch) throw new Error("compToggleSwitch not found");
+    compactSwitch.addEventListener("change", (ev) => {
     compactSwitch.checked ? Settings.compact = true : Settings.compact = false;
     compactSwitch.checked ? localStorage.setItem("compact", "true") : localStorage.setItem("compact", "false");
     alert("Die Seite muss neu geladen werden, um die Änderungen zu übernehmen.");
     location.reload();
 });
+})();
 
 (() => {
     if(localStorage.getItem("compact") === "true") compactSwitch.checked = true;
