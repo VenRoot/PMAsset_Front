@@ -77,6 +77,7 @@ export const getInputValues = async (type: "PC" | "Bildschirm" | "Phone" | "Konf
             type: (document.getElementById("SelectInputTyp")as HTMLSelectElement).selectedOptions[0].value as PCTypes,
             hersteller: (document.getElementById("SelectHerstellerTyp")as HTMLSelectElement).selectedOptions[0].value as PCHersteller,
             seriennummer: (document.getElementById("SeriennummerInput")as HTMLInputElement).value,
+            kommentar: (document.getElementById("bkommentar")as HTMLInputElement).value || "",
             // equipment: (document.getElementById("EquipmentInput")as HTMLInputElement).value,
             standort: (document.getElementById("StandortInput")as HTMLInputElement).value,
             status: (document.getElementById("SelectInputStatus")as HTMLSelectElement).selectedOptions[0].value as Status,
@@ -418,6 +419,7 @@ export const validateInput = () =>
         const children = element.children;
         if(children == null) return;
         Array.from(children).forEach(el => {
+            if(el.id == "bkommentar") return;
             if(el.tagName != "INPUT" && el.tagName != "SELECT") return;
             if(el.parentElement!.getAttribute("name") == "Attached") return;
             if((el as HTMLInputElement).value == "") valid = false;

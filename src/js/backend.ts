@@ -121,6 +121,7 @@ export const PDF = (auth: IPDF): Promise<reqres> =>
  */
 export const insertRequest = (subdomain: string, auth: pushrequest): Promise<{message: string, status: number}> =>
 {
+    console.log(auth.device);
     return new Promise(async (resolve, reject) => {
         //Check if auth.device.besitzer is a valid email
         if(auth.device.besitzer.indexOf("@") == -1)
@@ -129,7 +130,7 @@ export const insertRequest = (subdomain: string, auth: pushrequest): Promise<{me
             if(!u) return ShowError("Could not get users", 404);
             let user = u.find(x => x.cn == auth.device.besitzer);
             if(user) auth.device.besitzer = user.mail;
-            else return ShowError("User wurde nicht gefunden", 404);
+            else ShowWarning("User wurde nicht gefunden, evtl. mit der Mail erneut versuchen", 404);
         }
         if(auth.device.status == "Bestellt") auth.device.seriennummer = "0";
         if(auth.device.kind == "PC" && auth.device.form.indexOf("|") == -1)
@@ -235,6 +236,11 @@ export const getKey = async () =>
 export const ShowError = (message: string, code: number = -1) =>
 {
     makeToast(`Es ist folgender Fehler mit dem Code ${code} aufgetreten: \n\n${message}`, "error");
+}
+
+export const ShowWarning = (message: string, code: number = -1) =>
+{
+    makeToast(`Es ist folgende Warnung mit dem Code ${code} aufgetreten: \n\n${message}`, "warning");
 }
 
 export const getEntries = async (auth: {SessionID: string, username: string}) =>

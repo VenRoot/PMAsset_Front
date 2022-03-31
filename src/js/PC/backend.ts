@@ -112,6 +112,8 @@ export const setData = (data: Item, method: pushrequest ): Promise<{message: str
 {
     return new Promise(async (resolve, reject) => 
     {
+        console.log(data);
+        
         //@ts-ignore
         if(data.passwort) data.kind = "PC";
 
