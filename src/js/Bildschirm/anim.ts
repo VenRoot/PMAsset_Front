@@ -6,13 +6,13 @@ import { setData } from "./backend.js";
 
 export let devices:Bildschirm[] = [];
 export const getDevices = () => devices;
-export const setDevices = async(dev: Bildschirm[]) => devices = dev;
+export const setDevices = (dev: Bildschirm[]) => devices = dev;
+export const getDevice = (it_nr: string) => devices.find(device => device.it_nr == it_nr);
+export const findDevice = (it_nr: string) => devices.filter(device => device.it_nr.includes(it_nr));
 
-export const getDevice = async(it_nr: string) => devices.filter(device => device.it_nr.includes(it_nr));
-
-export const SearchDevice = async(it_nr: string) =>
+export const SearchDevice = (it_nr: string) =>
  {
-    const devs = await getDevice(it_nr);
+    const devs = findDevice(it_nr);
     console.debug(devs);
     ClearTable();
      devs.forEach(device =>AddRow(device));
@@ -165,21 +165,11 @@ export const EditEntry = (elem: HTMLElement) =>
             inp.value = cell.innerText; 
             cell.innerHTML = ""; 
             //Autocomplete für Mitarbeiter
-            if(i == 7)
+            if(i == 8)
             {
                 inp.id="SearchInput"
                 inp.type="search";
                 await init(inp);
-                inp.addEventListener("keyup", async (e) =>
-                {
-                    if(inp.value == "") return;
-                    let Users = await getUsers();
-                    if(!Users) return console.error("Users konnten nicht geladen werden");
-                    let search = inp.value;
-                    console.log(Users);
-                    let result = Users.filter(user => user.cn.toLowerCase().includes(search.toLowerCase()) || user.userPrincipalName?.toLowerCase()?.includes(search.toLowerCase()));
-                
-                });
             }
             cell.appendChild(inp); 
             break;
@@ -241,6 +231,8 @@ export const SaveEntry = async (elem: HTMLElement) =>
     elem.setAttribute("onclick", "Bildschirm.EditEntry(this)");
 
     const grandparent = elem.parentElement?.parentElement?.parentElement as HTMLTableRowElement;
+    const device = getDevice((grandparent!.cells[0]!.children[0] as HTMLInputElement).value);
+    if(device == null) return ShowError("Das Gerät konnte nicht gefunden werden!", 404);
 
     const dostuff = async () =>
     {
@@ -248,16 +240,15 @@ export const SaveEntry = async (elem: HTMLElement) =>
             Array.from(grandparent.cells).forEach(async (cell, i) => {
                 switch(i)
                 {
-                    case 1: case 7: cell.innerHTML = (cell.children[0] as HTMLSelectElement).value; break;
-                    //case 3: break; cell.children[0].classList.add("disabled"); break;
-                    // case 8: cell.children[0].classList.add("disabled"); break;
-                    case 8: cell.innerHTML = (cell.children[0] as HTMLSelectElement).value; break;
-                    case 9: cell.children[0].setAttribute("disabled", ""); (cell.children[0] as HTMLInputElement).type = "password"; break;
-                    case 4: cell.innerHTML = (cell.children[0] as HTMLInputElement).value; break;
+                    // case 1: case 7: cell.innerHTML = (cell.children[0] as HTMLSelectElement).value; break;
+                    // //case 3: break; cell.children[0].classList.add("disabled"); break;
+                    // // case 8: cell.children[0].classList.add("disabled"); break;
+                    // case 8: cell.innerHTML = (cell.children[0] as HTMLSelectElement).value; break;
+                    // case 4: cell.innerHTML = (cell.children[0] as HTMLInputElement).value; break;
                     case 5: break;
                     case 9: resolve(void 0); break;
                     default: 
-                    if(i != 7) cell.innerHTML = (cell.children[0] as HTMLInputElement).value; 
+                    if(i != 8) cell.innerHTML = (cell.children[0] as HTMLInputElement).value; 
                     else
                     {
                         let value = (cell.children[0] as HTMLInputElement).value;
@@ -288,12 +279,14 @@ export const SaveEntry = async (elem: HTMLElement) =>
         type: (grandparent.cells[1] as HTMLTableCellElement).textContent || "" as any,
         hersteller: (grandparent.cells[2] as HTMLTableCellElement).textContent || "" as any,
         model: (grandparent.cells[3] as HTMLTableCellElement).textContent || "" as any,
+        attached: device.attached,
         seriennummer: (grandparent.cells[4] as HTMLTableCellElement).textContent || "" as any,
         standort: (grandparent.cells[6] as HTMLTableCellElement).textContent || "" as any,
         status: (grandparent.cells[7] as HTMLTableCellElement).textContent || "" as any,
         besitzer: (grandparent.cells[8] as HTMLTableCellElement).textContent || "" as any,
         // form: (grandparent.cells[9] as HTMLTableCellElement).textContent || "" as any
     };
+    console.log(newMon);
 
     setData(newMon, {device: newMon, method: "POST", SessionID: SessionID, username: username});
 };
