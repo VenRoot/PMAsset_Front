@@ -43,7 +43,7 @@
         import * as PC from "./js/PC/main.js"; window.PC = PC;
         import * as Bildschirm from "./js/Bildschirm/main.js"; window.Bildschirm = Bildschirm;
         import * as Phone from "./js/phone/main.js"; window.Phone = Phone;
-    
+        main.checkVersion();
         const p1 = performance.now();
         //Get all data from PC, Bildschirm and Phone with Promise.all
         await Promise.all([PC.getData(), Bildschirm.getData(), Phone.getData()]);

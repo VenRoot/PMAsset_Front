@@ -32,6 +32,7 @@
         import * as dark from "../js/dark.js"; window.dark = dark; 
         import * as main from"../js/main.js"; window.main = main; 
         import * as PC from "../js/PC/main.js"; window.PC = PC;
+        main.checkVersion();
         PC.Settings.compact = window.compact;
         PC.Settings.check();
         main.checkUser();

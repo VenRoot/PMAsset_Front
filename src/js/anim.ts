@@ -504,16 +504,6 @@ export const EditEntry = (elem: HTMLElement) =>
                 inp.id="SearchInput"
                 inp.type="search";
                 await init(inp);
-                inp.addEventListener("keyup", async (e) =>
-                {
-                    if(inp.value == "") return;
-                    let Users = await getUsers();
-                    if(!Users) return console.error("Users konnten nicht geladen werden");
-                    let search = inp.value;
-                    console.log(Users);
-                    let result = Users.filter(user => user.cn.toLowerCase().includes(search.toLowerCase()) || user.userPrincipalName?.toLowerCase()?.includes(search.toLowerCase()));
-                
-                });
             }
             cell.appendChild(inp); 
             break;
@@ -564,7 +554,7 @@ export const SaveEntry = async (elem: HTMLElement) =>
     const grandparent = elem.parentElement?.parentElement?.parentElement as HTMLTableRowElement;
  
     const device = getDevice((grandparent!.cells[0]!.children[0] as HTMLInputElement).value);
-    if(device == null) return ShowError("Device not found");
+    if(device == null) return ShowError("Das Gerät konnte nicht gefunden werden!", 404);
 
     
 
