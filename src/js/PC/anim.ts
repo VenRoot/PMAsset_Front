@@ -787,7 +787,8 @@ export const GetMonitors = async (currentRow: string) =>
     {
         if(notAvaiable.includes(entry.status)) 
         {
-            if(entry.status == "Aktiv" && entry.it_nr == currentRow) return AddMonRow(entry, currentRow);
+            if(entry.attached && entry.it_nr == currentRow) return AddMonRow(entry, currentRow);
+            if(!entry.attached || entry.attached == "-") return AddMonRow(entry, currentRow);
             return;
         }
         AddMonRow(entry, currentRow);
