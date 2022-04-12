@@ -9,7 +9,7 @@ type EquipmentTypes = "Bildschirm" | "Default";
 export type Status = "Aktiv" | "Inaktiv" | "Bestellt" | "Defekt" | "Reserviert" | "Verschrottet";
 
 export type PCHersteller = "Haug" | "Lenovo" | "Microsoft" | "HP"
-export type PCTypes = "Tower" | "CAD" | "T430" | "T450" | "T460" | "T470"  | "T480" | "T490" | "T14 G1" | "T14 G2" | "T14s G2" | "Z-Book" | "Z-Book Fury" | "Surface Book 2" | "Surface Pro 6" | "Surface Pro 7";
+export type PCTypes = "Tower" | "CAD" | "T430" | "T450" | "T460" | "T470"  | "T480" | "T490" | "T14 G1" | "T14 G2" | "T14s G2" | "P17" | "Z-Book" | "Z-Book Fury" | "Surface Book 2" | "Surface Pro 6" | "Surface Pro 7";
 export interface equipment
 {
     type: EquipmentTypes;
