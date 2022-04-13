@@ -9,7 +9,7 @@ import { Bildschirm, InputName, Konferenz, KonfHersteller, MonTypes, PC, PCHerst
 import { uwu } from "./cart.js";
 import { PCHerstellerTypen, PCTypen, StatusTypen, MonitorTypen, PhoneTypen, MonTypen } from "./values.js";
 import {FormSelect, HerstellerSelect, StatusSelect, TypSelect} from "./templates.js";
-import { changeCurrentRow, currentRow, getDevice, getDevices, GetMonitors } from "./PC/anim.js";
+import { changeCurrentRow, checkMAC, currentRow, getDevice, getDevices, GetMonitors } from "./PC/anim.js";
 import { getUsers, ShowError } from "./backend.js";
 import { setData } from "./PC/backend.js";
 import { autocomplete } from "./MA/ac.js";
@@ -78,6 +78,7 @@ export const getInputValues = async (type: "PC" | "Bildschirm" | "Phone" | "Konf
             hersteller: (document.getElementById("SelectHerstellerTyp")as HTMLSelectElement).selectedOptions[0].value as PCHersteller,
             seriennummer: (document.getElementById("SeriennummerInput")as HTMLInputElement).value,
             kommentar: (document.getElementById("bkommentar")as HTMLInputElement).value || "",
+            mac: (document.getElementById("macInput")as HTMLInputElement).value || "",
             // equipment: (document.getElementById("EquipmentInput")as HTMLInputElement).value,
             standort: (document.getElementById("StandortInput")as HTMLInputElement).value,
             status: (document.getElementById("SelectInputStatus")as HTMLSelectElement).selectedOptions[0].value as Status,
@@ -85,17 +86,6 @@ export const getInputValues = async (type: "PC" | "Bildschirm" | "Phone" | "Konf
             form: (document.getElementById("FormSelect")as HTMLSelectElement).selectedOptions[0].value,
             passwort: (document.getElementById("bpasswd")as HTMLInputElement).value,
         };
-        
-
-
-        // let values = cells.map((cell, index) => {
-        //     if(index == 0) return (cell.children[0].children[0] as HTMLInputElement).value;
-        //     if(index == 3 || index == 9) return null;
-        //     if(index == 1 || index == 5 || index == 7) return (cell.children[0] as HTMLSelectElement).selectedOptions[0].value;
-        //     if(index == 8 )return (cell.children[1] as HTMLInputElement).value;
-        //     return (cell.children[0] as HTMLInputElement).value;
-        // });
-        // console.debug(values);
         
         return pc;
         // return values as string[];
@@ -158,19 +148,19 @@ export const getInputValues = async (type: "PC" | "Bildschirm" | "Phone" | "Konf
     
 }
 
-export const getEditedValues = async (element: HTMLTableRowElement) =>
-{
-    let inputrow = element;
-    let cells = Array.from(inputrow.cells);
-    let values = cells.map((cell, index) => {
-        if(index == 0) return (cell.children[0].children[0] as HTMLInputElement).value;
-        if(index == 3 || index == 9) return null;
-        if(index == 1 || index == 5 || index == 7) return (cell.children[0] as HTMLSelectElement).selectedOptions[0].value;
-        if(index == 8 )return (cell.children[1] as HTMLInputElement).value;
-        return (cell.children[0] as HTMLInputElement).value;
-    });
-    return values;
-}
+// const getEditedValues = async (element: HTMLTableRowElement) =>
+// {
+//     let inputrow = element;
+//     let cells = Array.from(inputrow.cells);
+//     let values = cells.map((cell, index) => {
+//         if(index == 0) return (cell.children[0].children[0] as HTMLInputElement).value;
+//         if(index == 3 || index == 9) return null;
+//         if(index == 1 || index == 5 || index == 7) return (cell.children[0] as HTMLSelectElement).selectedOptions[0].value;
+//         if(index == 8 )return (cell.children[1] as HTMLInputElement).value;
+//         return (cell.children[0] as HTMLInputElement).value;
+//     });
+//     return values;
+// }
 
 //Create a function which returns if the value is odd
 const isEven = (i: number) => i % 2 === 0;
@@ -215,46 +205,6 @@ const getCellValue = (index: number) => {
     let cell = inputrow.cells[index];
     return cell.innerText;
 }
-
-// (() => {
-//     if (window.location.href.indexOf("login.html") != -1 || window.location.pathname == "/" || window.location.pathname.includes("Mitarbeiter")) return;
-//     const select = document.getElementById("SelectInputTyp") as HTMLSelectElement;
-//     select.classList.add("bg-transparent");
-//     const Hersteller = document.getElementById("SelectHerstellerTyp") as HTMLSelectElement;
-//     // if(window.location.pathname.toLocaleLowerCase().includes("pc")) PCTypen.forEach(element => select.options.add(new Option(element, element)));
-//     // else if(window.location.pathname.toLocaleLowerCase().includes("bildschirm")) {MonTypen.forEach(element => select.options.add(new Option(element, element))); MonitorTypen.forEach(el => Hersteller.options.add(new Option(el, el))); }
-//     // else if(window.location.pathname.toLocaleLowerCase().includes("phone")) PhoneTypen.forEach(element => select.options.add(new Option(element, element)));
-    
-    
-//     const select2 = (document.getElementById("SelectInputStatus") as HTMLSelectElement);
-//     select2.classList.add("bg-transparent");
-//     StatusSelect.id = "SelectInputStatus";
-//     StatusSelect.classList.add("bg-transparent");
-//     select2.parentElement!.replaceChild(StatusSelect, select2);
-    
-//     // StatusTypen.forEach(element => select2.options.add(new Option(element, element)));
-
-//     if(!window.location.pathname.toLocaleLowerCase().includes("phone")) 
-//     {
-//         const select3 = document.getElementById("SelectHerstellerTyp") as HTMLSelectElement;
-//         select3.classList.add("bg-transparent");
-//         HerstellerSelect.id = "SelectHerstellerTyp";
-//         HerstellerSelect.classList.add("bg-transparent");
-//     select3.parentElement!.replaceChild(HerstellerSelect, select3);
-//     }
-//     // PCHerstellerTypen.forEach(element => select3.options.add(new Option(element, element)));
-
-//     const select4 = document.getElementById("FormSelect") as HTMLSelectElement;
-//     select4.classList.add("bg-transparent");
-
-//     //Make the background of select4 transparent
-    
-
-//     FormSelect.id = "FormSelect";
-//     FormSelect.classList.add("bg-transparent");
-//     select4.parentElement!.replaceChild(FormSelect, select4);
-//     console.log(FormSelect, StatusSelect)
-// });
 
 export const AddEquipment = () => {
     //Show a popup window
@@ -423,6 +373,11 @@ export const validateInput = () =>
             if(el.tagName != "INPUT" && el.tagName != "SELECT") return;
             if(el.parentElement!.getAttribute("name") == "Attached") return;
             if((el as HTMLInputElement).value == "") valid = false;
+            if(el.id == "macInput") 
+            {
+                if((el as HTMLInputElement).value.length == 0 || (el as HTMLInputElement).value == "-") return;
+                if(!checkMAC((el as HTMLInputElement).value)) valid = false;
+            }
 
         });
     });
@@ -482,15 +437,15 @@ export const EditEntry = (elem: HTMLElement) =>
         switch(i)
         {
             case 1: cell.innerHTML="";  cell.appendChild(document.getElementById("SelectInputTyp")?.cloneNode(true)!); console.debug(cell); break;
-            case 4: break; cell.children[0].classList.remove("disabled"); break;
-            case 6: StatusSelect.value = cell.innerHTML; cell.innerHTML=""; cell.appendChild(StatusSelect.cloneNode(true)); console.warn(cell); break;
-            case 8: break; FormSelect.value = cell.innerHTML; cell.innerHTML=""; cell.appendChild(FormSelect.cloneNode(true)); break;
-            case 9: cell.children[0].removeAttribute("disabled"); (cell.children[0] as HTMLInputElement).type = "text"; break;
-            case 10: 
+            case 5: break; cell.children[0].classList.remove("disabled"); break;
+            case 7: StatusSelect.value = cell.innerHTML; cell.innerHTML=""; cell.appendChild(StatusSelect.cloneNode(true)); console.warn(cell); break;
+            case 9: break; FormSelect.value = cell.innerHTML; cell.innerHTML=""; cell.appendChild(FormSelect.cloneNode(true)); break;
+            case 10: cell.children[0].removeAttribute("disabled"); (cell.children[0] as HTMLInputElement).type = "text"; break;
+            case 11: 
             
             if(cell.id == "KOMMENTAR") cell.children[0].removeAttribute("readonly");
             break;
-            case 11: break;
+            case 12: break;
             default:
                 
             const inp = document.createElement("input");
@@ -563,17 +518,17 @@ export const SaveEntry = async (elem: HTMLElement) =>
             Array.from(grandparent.cells).forEach(async (cell, i) => {
                 switch(i)
                     {
-                        case 1: case 5: cell.innerHTML = (cell.children[0] as HTMLSelectElement).value; break;
-                        case 9: cell.children[0].setAttribute("disabled", ""); (cell.children[0] as HTMLInputElement).type = "password"; break;
-                        case 4: case 8: break;
-                        case 10:
+                        case 1: case 7: cell.innerHTML = (cell.children[0] as HTMLSelectElement).value; break;
+                        case 10: cell.children[0].setAttribute("disabled", ""); (cell.children[0] as HTMLInputElement).type = "password"; break;
+                        case 5: case 9: break;
+                        case 11:
                             if(cell.id == "KOMMENTAR") cell.children[0].setAttribute("readonly", ""); 
                         resolve(void 0); 
                         break;
-                        case 11: break;
+                        case 12: break;
                         default: 
-                        if(i != 7 && cell.id != "KOMMENTAR") cell.innerHTML = (cell.children[0] as HTMLInputElement).value;
-                        else if(i == 7 && cell.id != "KOMMENTAR")
+                        if(i != 8 && cell.id != "KOMMENTAR") cell.innerHTML = (cell.children[0] as HTMLInputElement).value;
+                        else if(i == 8 && cell.id != "KOMMENTAR")
                         {
                             console.log(cell);
                             console.log(cell.children)
@@ -607,24 +562,26 @@ export const SaveEntry = async (elem: HTMLElement) =>
     await dostuff();
     console.log(grandparent.children[7]);
     let kom: string | null  = "";
-    grandparent.children[10].id == "KOMMENTAR" ? kom = (grandparent.children[10].children[0] as HTMLTextAreaElement).value : kom = null;
+    grandparent.children[10].id == "KOMMENTAR" ? kom = (grandparent.children[11].children[0] as HTMLTextAreaElement).value : kom = null;
 
     
     const newPC:PC =
     {
         kind: "PC",
+        it_nr: device.it_nr,
         type: grandparent.children[1].textContent || "" as any,
-        status: grandparent.children[6].textContent || "" as any,
         hersteller: grandparent.children[2].textContent || "" as any,
         seriennummer: grandparent.children[3].textContent || "" as any,
-        besitzer: grandparent.children[7].textContent || "" as any,
+        mac: grandparent.children[4].textContent || "-" as any,
+        equipment: device.equipment,
+        standort: grandparent.children[6].textContent || "" as any,
+        status: grandparent.children[7].textContent || "" as any,
+        besitzer: grandparent.children[8].textContent || "" as any,
         form: device.form,
         check: device.check,
-        passwort: (grandparent.children[9].children[0] as HTMLInputElement).value || "" as any,
-        it_nr: device.it_nr,
-        standort: grandparent.children[5].textContent || "" as any,
-        equipment: device.equipment
+        passwort: (grandparent.children[11].children[0] as HTMLInputElement).value || "" as any,
     }
+    console.log(newPC);
     if(kom != null)
     {
         newPC.kommentar = kom;

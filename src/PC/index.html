@@ -129,12 +129,13 @@
                             <th class="p-3 text-center"> <p id="1" class="material-icons-outlined" onclick="PC.sort(this, 'type',)">keyboard_arrow_down</p><br>Typ</th>
                             <th class="p-3 text-center"> <p id="2" class="material-icons-outlined" onclick="PC.sort(this, 'hersteller')">keyboard_arrow_down</p><br>Hersteller</th>
                             <th class="p-3 text-center"> <p id="3" class="material-icons-outlined" onclick="PC.sort(this, 'seriennummer')">keyboard_arrow_down</p><br>Seriennummer</th>
-                            <th class="p-3 text-center"> <p id="4" class="material-icons-outlined" onclick="PC.sort(this, 'equipment')">keyboard_arrow_down</p><br>Equipment</th>
-                            <th class="p-3 text-center"> <p id="5" class="material-icons-outlined" onclick="PC.sort(this, 'standort')">keyboard_arrow_down</p><br>Standort</th>
-                            <th class="p-3 text-center"> <p id="6" class="material-icons-outlined" onclick="PC.sort(this, 'status')">keyboard_arrow_down</p><br>Status</th>
-                            <th class="p-3 text-center"> <p id="7" class="material-icons-outlined" onclick="PC.sort(this, 'besitzer')">keyboard_arrow_down</p><br>Mitarbeiter</th>
-                            <th class="p-3 text-center"> <p id="8" class="material-icons-outlined" onclick="PC.sort(this, 'form')">keyboard_arrow_down</p><br>Form./Check.</th>
-                            <th class="p-3 text-center"> <p id="9" class="material-icons-outlined" onclick="PC.sort(this, 'passwort')">keyboard_arrow_down</p><br>BIOS Passwort</th>
+                            <th class="p-3 text-center"> <p id="4" class="material-icons-outlined" onclick="PC.sort(this, 'bild')">keyboard_arrow_down</p><br>MAC</th>
+                            <th class="p-3 text-center"> <p id="5" class="material-icons-outlined" onclick="PC.sort(this, 'equipment')">keyboard_arrow_down</p><br>Equipment</th>
+                            <th class="p-3 text-center"> <p id="6" class="material-icons-outlined" onclick="PC.sort(this, 'standort')">keyboard_arrow_down</p><br>Standort</th>
+                            <th class="p-3 text-center"> <p id="7" class="material-icons-outlined" onclick="PC.sort(this, 'status')">keyboard_arrow_down</p><br>Status</th>
+                            <th class="p-3 text-center"> <p id="8" class="material-icons-outlined" onclick="PC.sort(this, 'besitzer')">keyboard_arrow_down</p><br>Mitarbeiter</th>
+                            <th class="p-3 text-center"> <p id="9" class="material-icons-outlined" onclick="PC.sort(this, 'form')">keyboard_arrow_down</p><br>Form./Check.</th>
+                            <th class="p-3 text-center"> <p id="10" class="material-icons-outlined" onclick="PC.sort(this, 'passwort')">keyboard_arrow_down</p><br>BIOS Passwort</th>
                             <th class="p-3 text-center bg-transparent">Aktionen</th>
                           </tr>
                         </thead>
@@ -144,6 +145,7 @@
                                 <th class="border-2 border-black dark:border-gray-300" name="Typ"><select class="bg-transparent" id="SelectInputTyp"></select></th>
                                 <th class="border-2 border-black dark:border-gray-300" name="Hersteller"><select class="bg-transparent" id="SelectHerstellerTyp"></select></th>
                                 <th class="border-2 border-black dark:border-gray-300" name="Seriennummer"><input type="text" class="bg-transparent" id="SeriennummerInput" class="w-full temp" placeholder="XXXXXXXXXXXXXXX" style="font-size: 11px;" title="Bitte hier die Seriennummer eingeben"></th>
+                                <th class="border-2 border-black dark:border-gray-300" name="Seriennummer"><input type="text" class="bg-transparent" id="macInput" class="w-full temp" placeholder="XX:XX:XX:XX:XX:XX" style="font-size: 11px;" title="Bitte hier die MAC eingeben"></th>
                                 <th class="border-2 border-black dark:border-gray-300" name="Equipment"><button class="w-full text-center bg-transparent" id="open-btn" onclick="PC.openform(this.parentElement.parentElement);">Hinzufügen</button></th>
                                 <th class="border-2 border-black dark:border-gray-300" name="text"><input class="w-full text-center temp bg-transparent" id="StandortInput" type="text"></th>
                                 <th class="border-2 border-black dark:border-gray-300" name="text"><select id="SelectInputStatus" class="w-full text-center bg-transparent" type="text"></select></th>

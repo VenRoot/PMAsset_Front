@@ -111,6 +111,7 @@ export const getPCs = async ():Promise<PC[]> =>
                 it_nr: element.ITNR as any,
                 type: element.TYPE as any,
                 hersteller: element.HERSTELLER as any,
+                mac: element.MAC as any,
                 besitzer: element.BESITZER || "",
                 seriennummer: element.SN,
                 passwort: element.PASSWORT,

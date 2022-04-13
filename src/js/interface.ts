@@ -59,6 +59,7 @@ export interface PC extends Gerät
     form: string;
     check?: string;
     kommentar?: string;
+    mac: string;
 }
 
 export interface Bildschirm extends Gerät
