@@ -452,7 +452,25 @@ export const SearchDevice = (it_nr: string) =>
                 case 1: template.innerText = values.type as any; break;
                 case 2: template.innerText = values.hersteller as any; break;
                 case 3: template.innerText = values.seriennummer as any; break;
-                case 4: template.innerText = values.mac as any; break;
+                case 4: template.innerText = values.mac as any; 
+                template.ondblclick = (ev) => {
+                    let input = ev.target as HTMLTableCellElement;
+                    const clone = input.textContent;
+                    //Remove the colons from the mac
+                    input.textContent = input.textContent!.replace(/:/g, "");
+                    input.textContent = input.textContent.toLocaleLowerCase();
+                    if (window.getSelection) { //all others
+                        let selection = window.getSelection()!;        
+                        let range = document.createRange();
+                        range.selectNodeContents(input);
+                        selection.removeAllRanges();
+                        selection.addRange(range);
+                    }
+                    document.execCommand("copy");
+                    input.textContent = clone;
+                    makeToast("MAC kopiert!", "success");
+                }
+                break;
                 case 5: 
                 const button = document.createElement("button");
                 button.id = "open-btn";
