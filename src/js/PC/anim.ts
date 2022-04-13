@@ -336,9 +336,6 @@ export const SearchDevice = (it_nr: string) =>
      element.remove();
  };
 
- export const LinkWithPC = async (pcit: string, monit: string) => {
-
- };
 
  export const AddRow = async (_values?: PC) =>
 {
@@ -806,6 +803,20 @@ export const GetMonitors = async (currentRow: string) =>
         AddMonRow(entry, currentRow);
         console.debug(entry);
     });
+}
+
+
+if(document.getElementById("macInput")) document.getElementById("macInput")!.ondblclick = (ev) =>
+{
+    let input = ev.target as HTMLInputElement;
+    const clone = input.value;
+    //Remove the colons from the mac
+    input.value = input.value.replace(/:/g, "");
+    input.value = input.value.toLocaleLowerCase();
+    input.select();
+    document.execCommand("copy");
+    input.value = clone;
+    makeToast("MAC kopiert!", "success");
 }
 
 

@@ -381,10 +381,11 @@ export const validateInput = () =>
                     console.log((el as HTMLInputElement).value);
                     console.log((el as HTMLInputElement).value.length);
                     //this mac is valid but has no colons, so we add them
-                    (el as HTMLInputElement).value = (el as HTMLInputElement).value.replace(/([0-9A-F]{2})(?!$)/gi, '$1:');
+                    (el as HTMLInputElement).value = (el as HTMLInputElement).value.replace(/([0-9A-F]{2})(?!$)/gi, '$1:').toLocaleLowerCase();
                 }
                 if((el as HTMLInputElement).value.length == 0 || (el as HTMLInputElement).value == "-") return;
                 if(!checkMAC((el as HTMLInputElement).value)) valid = false;
+                else (el as HTMLInputElement).value = (el as HTMLInputElement).value.toLocaleLowerCase();
             }
 
         });
