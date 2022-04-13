@@ -144,6 +144,9 @@ export const SearchDevice = (it_nr: string) =>
             kommentar.value = values.kommentar || "";
             temp.appendChild(kommentar);
             temp.id = "KOMMENTAR";
+            break;
+
+            case "mac": temp.innerText = values.mac as any; temp.id = "MAC"; break;
         }
         console.debug(temp);
         
@@ -153,7 +156,7 @@ export const SearchDevice = (it_nr: string) =>
     // sortedtemplate.setAttribute("onmouseover", "main.foc(this)");
     // sortedtemplate.setAttribute("onmouseout", "main.unfoc(this)");
     sortedtemplate.classList.add("hover:bg-opacity-50", "dark:bg-gray-900", "dark:text-gray-300", "dark:border-gray-300");
-    const queries = ["#IT_NR", "#TYP", "#HERSTELLER", "#SERIENNUMMER", "#EQUIPMENT", "#STANDORT", "#STATUS", "#BESITZER", "#FORM", "#PASSWORT"]
+    const queries = ["#IT_NR", "#TYP", "#HERSTELLER", "#SERIENNUMMER", "#MAC", "#EQUIPMENT", "#STANDORT", "#STATUS", "#BESITZER", "#FORM", "#PASSWORT",]
     if(!Settings.compact) queries.push("#KOMMENTAR");
     queries.forEach(query => sortedtemplate.appendChild(template.querySelector(query) as HTMLTableCellElement));
 
@@ -190,6 +193,13 @@ export const SearchDevice = (it_nr: string) =>
 
     return icons;
  }
+
+ export const checkMAC = (mac: string) => {
+     //Check if the string is a valid MAC address
+        const regex = /^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/;
+        console.log(regex.test(mac));
+        return regex.test(mac);
+ };
 
 
  export const AddMonRow = (_values: Bildschirm, currentPC: string) =>
@@ -445,7 +455,8 @@ export const SearchDevice = (it_nr: string) =>
                 case 1: template.innerText = values.type as any; break;
                 case 2: template.innerText = values.hersteller as any; break;
                 case 3: template.innerText = values.seriennummer as any; break;
-                case 4: 
+                case 4: template.innerText = values.mac as any; break;
+                case 5: 
                 const button = document.createElement("button");
                 button.id = "open-btn";
                 button.setAttribute("onclick","PC.openform(this.parentElement.parentElement);");
@@ -465,10 +476,10 @@ export const SearchDevice = (it_nr: string) =>
                     });
                 
                 break;
-                case 5: template.innerText = values.standort as any; break;
-                case 6: template.innerText = values.status as any; break;
-                case 7: template.innerText = values.besitzer as any; break;
-                case 8: template.innerText = `${values.form || "Nein"} | ${values.check || "Nein"}`; 
+                case 6: template.innerText = values.standort as any; break;
+                case 7: template.innerText = values.status as any; break;
+                case 8: template.innerText = values.besitzer as any; break;
+                case 9: template.innerText = `${values.form || "Nein"} | ${values.check || "Nein"}`; 
                 
                 //Make a custom contextmenu, which will show several options
                 template.addEventListener("contextmenu", e => {
@@ -517,7 +528,7 @@ export const SearchDevice = (it_nr: string) =>
                     e.preventDefault();
                 });                
                 break;
-                case 9: (template.children[0] as HTMLInputElement).value = values.passwort as any; 
+                case 10: (template.children[0] as HTMLInputElement).value = values.passwort as any; 
                 template.children[0].classList.add("bg-transparent");
                 break;
             }
@@ -764,11 +775,12 @@ export const UpdateTable = (device: PC) =>
         else if(index == 1) cell.innerText = device.type;
         else if(index == 2) cell.innerText = device.hersteller;
         else if(index == 3) cell.innerText = device.seriennummer;
-        else if(index == 5) cell.innerText = device.standort;
-        else if(index == 6) cell.innerText = device.status;
-        else if(index == 7) cell.innerText = device.besitzer;
-        else if(index == 8) cell.innerText = (device.form || "Nein") + " | " + (device.check || "Nein");
-        else if(index == 9) {
+        else if(index == 4) cell.innerText = device.mac;
+        else if(index == 6) cell.innerText = device.standort;
+        else if(index == 7) cell.innerText = device.status;
+        else if(index == 8) cell.innerText = device.besitzer;
+        else if(index == 9) cell.innerText = (device.form || "Nein") + " | " + (device.check || "Nein");
+        else if(index == 10) {
         }
     });
 }
@@ -874,7 +886,6 @@ if(document.location.pathname.toLocaleLowerCase().includes("/pc")) SNSearch.addE
     checkbox.type = "checkbox";
     result.forEach(element => {
         let tr = document.createElement("tr");
-
         let td1 = document.createElement("td");
         let td2 = document.createElement("td");
         let td3 = document.createElement("td");

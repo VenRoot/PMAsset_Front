@@ -5,6 +5,7 @@ export interface PC_res_data {
     EQUIPMENT: string[] | null;
     FORM?: string;
     CHECK?: string;
+    MAC: string;
     HERSTELLER: string;
     ITNR: string;
     PASSWORT: string;
