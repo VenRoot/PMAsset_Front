@@ -375,6 +375,14 @@ export const validateInput = () =>
             if((el as HTMLInputElement).value == "") valid = false;
             if(el.id == "macInput") 
             {
+                if(!(el as HTMLInputElement).value.includes(":") && (el as HTMLInputElement).value.length == 12)
+                {
+                    console.log("Wtf");
+                    console.log((el as HTMLInputElement).value);
+                    console.log((el as HTMLInputElement).value.length);
+                    //this mac is valid but has no colons, so we add them
+                    (el as HTMLInputElement).value = (el as HTMLInputElement).value.replace(/([0-9A-F]{2})(?!$)/gi, '$1:');
+                }
                 if((el as HTMLInputElement).value.length == 0 || (el as HTMLInputElement).value == "-") return;
                 if(!checkMAC((el as HTMLInputElement).value)) valid = false;
             }
@@ -527,7 +535,14 @@ export const SaveEntry = async (elem: HTMLElement) =>
                         break;
                         case 12: break;
                         default: 
-                        if(i != 8 && cell.id != "KOMMENTAR") cell.innerHTML = (cell.children[0] as HTMLInputElement).value;
+                        if(i != 8 && cell.id != "KOMMENTAR") 
+                        {
+                            if(cell.id == "MAC")
+                            {
+                                if(!(cell.children[0] as HTMLInputElement).value.includes(":") && (cell.children[0] as HTMLInputElement).value.length == 12) cell.innerHTML = (cell.children[0] as HTMLInputElement).value.replace(/([0-9A-F]{2})(?!$)/gi, '$1:');
+                            }
+                            cell.innerHTML = (cell.children[0] as HTMLInputElement).value;
+                        }
                         else if(i == 8 && cell.id != "KOMMENTAR")
                         {
                             console.log(cell);
@@ -581,6 +596,8 @@ export const SaveEntry = async (elem: HTMLElement) =>
         check: device.check,
         passwort: (grandparent.children[11].children[0] as HTMLInputElement).value || "" as any,
     }
+
+    if(!newPC.mac.includes(":") && newPC.mac.length == 12) newPC.mac = newPC.mac.replace(/([0-9A-F]{2})(?!$)/gi, '$1:');
     console.log(newPC);
     if(kom != null)
     {
