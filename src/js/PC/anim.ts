@@ -92,6 +92,11 @@ interface attr {
 
 export const SearchDevice = (search: string) => {
 
+    if(search == "")
+    {
+        ClearTable();
+        devices.forEach(device => AddRow(device));
+    }
     if (!search) return;
     let attributes: attr[] = [];
 
@@ -101,15 +106,6 @@ export const SearchDevice = (search: string) => {
     if (search.includes("inv:")) {
         //get the value from after the inv: till the next space
         const value = search.substring(search.indexOf("inv:") + 4, search.indexOf(" ", search.indexOf("inv:")));
-
-        //Check if the value has a "||" in it for or operations
-        if (value.includes("||")) {
-            //split the value by "||"
-            const values = value.split("||");
-            //for each value, add it to the attributes array
-            values.forEach(val => attributes.push({ attribute: "inv", value: val }));
-        }
-
         if (value.length != 0) attributes.push({ attribute: "inv", value: value });
 
     }
@@ -123,7 +119,7 @@ export const SearchDevice = (search: string) => {
         const value = search.substring(search.indexOf("her:") + 4, search.indexOf(" ", search.indexOf("her:")));
         if (value.length != 0) attributes.push({ attribute: "her", value: value });
     }
-    if (search.includes("st:")) {
+    if (search.includes("std:")) {
         //get the value from after the st: till the next space
         const value = search.substring(search.indexOf("st:") + 3, search.indexOf(" ", search.indexOf("st:")));
         if (value.length != 0) attributes.push({ attribute: "st", value: value });
@@ -141,10 +137,15 @@ export const SearchDevice = (search: string) => {
         }
         if (value.length != 0) attributes.push({ attribute: "kom", value: value });
     }
-    if (search.includes("eq:")) {
+    if (search.includes("equ:")) {
         //get the value from after the eq: till the next space
         const value = search.substring(search.indexOf("eq:") + 3, search.indexOf(" ", search.indexOf("eq:")));
         if (value.length != 0) attributes.push({ attribute: "eq", value: value });
+    }
+    if (search.includes("sta:")) {
+        //get the value from after the st: till the next space
+        const value = search.substring(search.indexOf("st:") + 3, search.indexOf(" ", search.indexOf("st:")));
+        if (value.length != 0) attributes.push({ attribute: "st", value: value });
     }
 
 
@@ -160,55 +161,21 @@ export const SearchDevice = (search: string) => {
         result.forEach(device => AddRow(device));
         return;
     }
-    attributes.forEach(attr => {
-        let [at, val] = [attr.attribute, attr.value];
-        switch (attr.attribute) {
-            case "inv":
-                {
-                    if (val.startsWith("<")) {
-                        val = val.substring(1, val.length - 1);
-                        result.push(...devices.filter(dev => dev.it_nr < val));
-                    }
-                    else if (val.startsWith(">")) {
-                        val = val.substring(1, val.length - 1);
-                        result.push(...devices.filter(dev => dev.it_nr > val));
-                    }
-                    break;
-                }
-            case "typ":
-                {
-                    result.push(...devices.filter(dev => dev.type.toLocaleLowerCase() === val.toLocaleLowerCase()));
-                    break;
-                }
-            case "her":
-                {
-                    result.push(...devices.filter(dev => dev.hersteller.toLocaleLowerCase() === val.toLocaleLowerCase()));
-                    break;
-                }
-            case "st":
-                {
-                    result.push(...devices.filter(dev => dev.standort.toLocaleLowerCase() === val.toLocaleLowerCase()));
-                    break;
-                }
-            case "kom":
-                {
-                    result.push(...devices.filter(dev => dev.kommentar?.toLocaleLowerCase().includes(val.toLocaleLowerCase())));
-                    break;
-                }
-            case "eq":
-                {
-                    if (val.startsWith("<")) {
-                        val = val.substring(1, val.length - 1);
-                        result.push(...devices.filter(dev => dev.it_nr < val));
-                    }
-                    else if (val.endsWith(">")) {
-                        val = val.substring(1, val.length - 1);
-                        result.push(...devices.filter(dev => dev.it_nr > val));
-                    }
-                    break;
-                }
-        }
-    });
+
+    const sel = document.getElementById("ORAND") as HTMLSelectElement;
+    if(sel.value == "OR")
+    {
+        result.push(...filterWithOR(attributes));
+    }
+    else if(sel.value == "AND")
+    {
+        result.push(...filterWithAND(attributes));
+    }
+    (document.getElementById("ResultsFound") as HTMLParagraphElement).innerHTML = result.length.toString() + " Geräte gefunden";
+    ClearTable();
+    result.forEach(device => AddRow(device));
+
+
     console.log("result", result);
 
     //    const devs = findDevice(search.toLocaleUpperCase());
@@ -217,14 +184,284 @@ export const SearchDevice = (search: string) => {
     //    devs.forEach(device => AddRow(device));
 }
 
-const ORSplitter = (str: string, result: PC[]) => 
-{
+
+const filterWithOR = (attributes: attr[]): PC[] => {
+    const result: PC[] = [];
+    attributes.forEach(attr => {
+        let [at, val] = [attr.attribute, attr.value];
+        switch (attr.attribute) {
+            case "inv":
+                {
+                    if (val.startsWith("*") && val.endsWith("*") && val.length > 2) {
+                        //Include all devices with the given prefix and suffix; using * as wildcard
+                        val = val.substring(1, val.length - 1);
+                        result.push(...devices.filter(dev => dev.type.toLocaleLowerCase().includes(val.toLocaleLowerCase())));
+                        break;
+                    }
+                    if (val.startsWith("<")) {
+                        val = val.substring(1, val.length);
+                        result.push(...devices.filter(dev => Number(dev.it_nr) < Number(val)));
+                    }
+                    else if (val.startsWith(">")) {
+                        val = val.substring(1, val.length);
+                        result.push(...devices.filter(dev => Number(dev.it_nr) > Number(val)));
+                    }
+                    if (val.endsWith("*") && val.length > 1) {
+                        //Include all devices with the given prefix; using * as wildcard
+                        val = val.substring(0, val.indexOf("*"));
+                        result.push(...devices.filter(dev => dev.it_nr.toLocaleLowerCase().startsWith(val.toLocaleLowerCase())));
+                    }
+                    if (val.startsWith("*") && val.length > 1) {
+                        //Include all devices with the given suffix; using * as wildcard
+                        val = val.substring(1, val.length);
+                        result.push(...devices.filter(dev => dev.it_nr.toLocaleLowerCase().endsWith(val.toLocaleLowerCase())));
+                    }
+                    break;
+                }
+            case "typ":
+                {
+                    if (val.startsWith("*") && val.endsWith("*") && val.length > 2) {
+                        //Include all devices with the given prefix and suffix; using * as wildcard
+                        val = val.substring(1, val.length - 1);
+                        result.push(...devices.filter(dev => dev.type.toLocaleLowerCase().includes(val.toLocaleLowerCase())));
+                        break;
+                    }
+                    if (val.endsWith("*") && val.length > 1) {
+                        //Include all devices with the given prefix; using * as wildcard
+                        val = val.substring(0, val.indexOf("*"));
+                        result.push(...devices.filter(dev => dev.type.toLocaleLowerCase().startsWith(val.toLocaleLowerCase())));
+                    }
+                    if (val.startsWith("*") && val.length > 1) {
+                        //Include all devices with the given suffix; using * as wildcard
+                        val = val.substring(1, val.length);
+                        result.push(...devices.filter(dev => dev.type.toLocaleLowerCase().endsWith(val.toLocaleLowerCase())));
+                    }
+                    result.push(...devices.filter(dev => dev.type.toLocaleLowerCase() === val.toLocaleLowerCase()));
+                    break;
+                }
+            case "her":
+                {
+                    if (val.startsWith("*") && val.endsWith("*") && val.length > 2) {
+                        //Include all devices with the given prefix and suffix; using * as wildcard
+                        val = val.substring(1, val.length - 1);
+                        result.push(...devices.filter(dev => dev.hersteller.toLocaleLowerCase().includes(val.toLocaleLowerCase())));
+                        break;
+                    }
+                    if (val.endsWith("*") && val.length > 1) {
+                        //Include all devices with the given prefix; using * as wildcard
+                        val = val.substring(0, val.indexOf("*"));
+                        result.push(...devices.filter(dev => dev.hersteller.toLocaleLowerCase().startsWith(val.toLocaleLowerCase())));
+                    }
+                    if (val.startsWith("*") && val.length > 1) {
+                        //Include all devices with the given suffix; using * as wildcard
+                        val = val.substring(1, val.length);
+                        result.push(...devices.filter(dev => dev.hersteller.toLocaleLowerCase().endsWith(val.toLocaleLowerCase())));
+                    }
+                    result.push(...devices.filter(dev => dev.hersteller.toLocaleLowerCase() === val.toLocaleLowerCase()));
+                    break;
+                }
+            case "st":
+                {
+                    if (val.startsWith("*") && val.endsWith("*") && val.length > 2) {
+                        //Include all devices with the given prefix and suffix; using * as wildcard
+                        val = val.substring(1, val.length - 1);
+                        result.push(...devices.filter(dev => dev.standort.toLocaleLowerCase().includes(val.toLocaleLowerCase())));
+                        break;
+                    }
+                    if (val.endsWith("*") && val.length > 1) {
+                        //Include all devices with the given prefix; using * as wildcard
+                        val = val.substring(0, val.indexOf("*"));
+                        result.push(...devices.filter(dev => dev.standort.toLocaleLowerCase().startsWith(val.toLocaleLowerCase())));
+                    }
+                    if (val.startsWith("*") && val.length > 1) {
+                        //Include all devices with the given suffix; using * as wildcard
+                        val = val.substring(1, val.length);
+                        result.push(...devices.filter(dev => dev.standort.toLocaleLowerCase().endsWith(val.toLocaleLowerCase())));
+                    }
+                    result.push(...devices.filter(dev => dev.standort.toLocaleLowerCase() === val.toLocaleLowerCase()));
+                    break;
+                }
+            case "kom":
+                {
+                    if (val.startsWith("*") && val.endsWith("*") && val.length > 2) {
+                        //Include all devices with the given prefix and suffix; using * as wildcard
+                        val = val.substring(1, val.length - 1);
+                        result.push(...devices.filter(dev => dev.kommentar?.includes(val.toLocaleLowerCase())));
+                    }
+                    if (val.endsWith("*") && val.length > 1) {
+                        //Include all devices with the given prefix; using * as wildcard
+                        val = val.substring(0, val.indexOf("*"));
+                        result.push(...devices.filter(dev => dev.it_nr.startsWith(val)));
+                    }
+                    if (val.startsWith("*") && val.length > 1) {
+                        //Include all devices with the given suffix; using * as wildcard
+                        val = val.substring(1, val.length);
+                        result.push(...devices.filter(dev => dev.it_nr.endsWith(val)));
+                    }
+                    result.push(...devices.filter(dev => dev.kommentar?.toLocaleLowerCase() === val.toLocaleLowerCase()));
+                    break;
+                }
+            case "eq":
+                {
+                    if (val.startsWith("<")) {
+                        val = val.substring(1, val.length);
+                        if (isNaN(Number(val))) return;
+                        result.push(...devices.filter(dev => dev.equipment.length < Number(val)));
+                    }
+                    else if (val.startsWith(">")) {
+                        val = val.substring(1, val.length);
+                        if (isNaN(Number(val))) return;
+                        result.push(...devices.filter(dev => dev.equipment.length > Number(val)));
+                    }
+                    break;
+                }
+        }
+    });
+    return result;
+}
+
+const filterWithAND = (attributes: attr[]): PC[] => {
+    let devices = getDevices();
+    attributes.forEach(attr => {
+        let [at, val] = [attr.attribute, attr.value];
+        switch (attr.attribute) {
+            case "inv":
+                {
+                    if (val.startsWith("*") && val.endsWith("*") && val.length > 2) {
+                        //Remove all devices, that don't match the given prefix and suffix; using * as wildcard
+                        val = val.substring(1, val.length - 1);
+                        devices = devices.filter(dev => dev.type.toLocaleLowerCase().includes(val.toLocaleLowerCase()));
+                        break;
+                    }
+                    if (val.startsWith("<")) {
+                        val = val.substring(1, val.length);
+                        devices = devices.filter(dev => Number(dev.it_nr) < Number(val));
+                    }
+                    else if (val.startsWith(">")) {
+                        val = val.substring(1, val.length);
+                        devices = devices.filter(dev => Number(dev.it_nr) > Number(val));
+                    }
+                    if (val.endsWith("*") && val.length > 1) {
+                        //Include all devices with the given prefix; using * as wildcard
+                        val = val.substring(0, val.indexOf("*"));
+                        devices = devices.filter(dev => dev.it_nr.toLocaleLowerCase().startsWith(val.toLocaleLowerCase()));
+                    }
+                    if (val.startsWith("*") && val.length > 1) {
+                        //Include all devices with the given suffix; using * as wildcard
+                        val = val.substring(1, val.length);
+                        devices = devices.filter(dev => dev.it_nr.toLocaleLowerCase().endsWith(val.toLocaleLowerCase()));
+                    }
+                    break;
+                }
+            case "typ":
+                {
+                    if (val.startsWith("*") && val.endsWith("*") && val.length > 2) {
+                        //Include all devices with the given prefix and suffix; using * as wildcard
+                        val = val.substring(1, val.length - 1);
+                        devices = devices.filter(dev => dev.type.toLocaleLowerCase().includes(val.toLocaleLowerCase()));
+                        break;
+                    }
+                    else if (val.endsWith("*") && val.length > 1) {
+                        //Include all devices with the given prefix; using * as wildcard
+                        val = val.substring(0, val.indexOf("*"));
+                        devices = devices.filter(dev => dev.type.toLocaleLowerCase().startsWith(val.toLocaleLowerCase()));
+                    }
+                    else if (val.startsWith("*") && val.length > 1) {
+                        //Include all devices with the given suffix; using * as wildcard
+                        val = val.substring(1, val.length);
+                        devices = devices.filter(dev => dev.type.toLocaleLowerCase().endsWith(val.toLocaleLowerCase()));
+                    }
+                    else devices = devices.filter(dev => dev.type.toLocaleLowerCase() === val.toLocaleLowerCase());
+                    break;
+                }
+            case "her":
+                {
+                    if (val.startsWith("*") && val.endsWith("*") && val.length > 2) {
+                        //Include all devices with the given prefix and suffix; using * as wildcard
+                        val = val.substring(1, val.length - 1);
+                        devices = devices.filter(dev => dev.hersteller.toLocaleLowerCase().includes(val.toLocaleLowerCase()));
+                        break;
+                    }
+                    else if (val.endsWith("*") && val.length > 1) {
+                        //Include all devices with the given prefix; using * as wildcard
+                        val = val.substring(0, val.indexOf("*"));
+                        devices = devices.filter(dev => dev.hersteller.toLocaleLowerCase().startsWith(val.toLocaleLowerCase()));
+                    }
+                    else if (val.startsWith("*") && val.length > 1) {
+                        //Include all devices with the given suffix; using * as wildcard
+                        val = val.substring(1, val.length);
+                        devices = devices.filter(dev => dev.hersteller.toLocaleLowerCase().endsWith(val.toLocaleLowerCase()));
+                    }
+                    else devices = devices.filter(dev => dev.hersteller.toLocaleLowerCase() === val.toLocaleLowerCase());
+                    break;
+                }
+            case "st":
+                {
+                    if (val.startsWith("*") && val.endsWith("*") && val.length > 2) {
+                        //Include all devices with the given prefix and suffix; using * as wildcard
+                        val = val.substring(1, val.length - 1);
+                        devices = devices.filter(dev => dev.standort.toLocaleLowerCase().includes(val.toLocaleLowerCase()));
+                        break;
+                    }
+                    else if (val.endsWith("*") && val.length > 1) {
+                        //Include all devices with the given prefix; using * as wildcard
+                        val = val.substring(0, val.indexOf("*"));
+                        devices = devices.filter(dev => dev.standort.toLocaleLowerCase().startsWith(val.toLocaleLowerCase()));
+                    }
+                    else if (val.startsWith("*") && val.length > 1) {
+                        //Include all devices with the given suffix; using * as wildcard
+                        val = val.substring(1, val.length);
+                        devices = devices.filter(dev => dev.standort.toLocaleLowerCase().endsWith(val.toLocaleLowerCase()));
+                    }
+                    else devices = devices.filter(dev => dev.standort.toLocaleLowerCase() === val.toLocaleLowerCase());
+                    break;
+                }
+            case "kom":
+                {
+                    if (val.startsWith("*") && val.endsWith("*") && val.length > 2) {
+                        //Include all devices with the given prefix and suffix; using * as wildcard
+                        val = val.substring(1, val.length - 1);
+                        devices = devices.filter(dev => dev.kommentar?.includes(val.toLocaleLowerCase()));
+                    }
+                    else if (val.endsWith("*") && val.length > 1) {
+                        //Include all devices with the given prefix; using * as wildcard
+                        val = val.substring(0, val.indexOf("*"));
+                        devices = devices.filter(dev => dev.it_nr.startsWith(val));
+                    }
+                    else if (val.startsWith("*") && val.length > 1) {
+                        //Include all devices with the given suffix; using * as wildcard
+                        val = val.substring(1, val.length);
+                        devices = devices.filter(dev => dev.it_nr.endsWith(val));
+                    }
+                    else devices = devices.filter(dev => dev.kommentar?.toLocaleLowerCase() === val.toLocaleLowerCase());
+                    break;
+                }
+            case "eq":
+                {
+                    if (val.startsWith("<")) {
+                        val = val.substring(1, val.length);
+                        if (isNaN(Number(val))) return;
+                        devices = devices.filter(dev => dev.equipment.length < Number(val));
+                    }
+                    else if (val.startsWith(">")) {
+                        val = val.substring(1, val.length);
+                        if (isNaN(Number(val))) return;
+                        devices = devices.filter(dev => dev.equipment.length > Number(val));
+                    }
+                    break;
+                }
+        }
+    });
+    return devices;
+}
+
+const ORSplitter = (str: string, result: PC[]) => {
     let index = str.indexOf("||");
-    if(index == -1) return null;
+    if (index == -1) return null;
 
     let left = str.substring(0, index);
     let right = str.substring(index + 2, str.length);
-    
+
 }
 
 

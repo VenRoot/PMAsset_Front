@@ -115,7 +115,13 @@
                 <div class="flex-1 self-center">
                     <div class="flex items-center self-center">
                         <div class="flex-1">
-                            <input type="text" class="bg-white dark:bg-gray-900 text-gray dark:text-gray-300 p-2 rounded-full" onkeyup="PC.SearchDevice(this.value);" placeholder="Search">
+                          <span class="material-icons-outlined" style="cursor: help;" title="inv, typ, her, std, kom, equ, sta">help</span>
+                          <select id="ORAND" onchange="PC.SearchDevice(document.getElementById('SearchInput').value);">
+                            <option value="OR">OR</option>
+                            <option value="AND">AND</option>
+                          </select>
+                            <input type="text" class="bg-white dark:bg-gray-900 text-gray dark:text-gray-300 p-2 rounded-full" id="SearchInput" onkeyup="PC.SearchDevice(this.value);" placeholder="Search">
+                            <p id="ResultsFound" style="display: contents;"></p>
                         </div>
                     </div>
                 </div>
