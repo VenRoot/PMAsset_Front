@@ -50,7 +50,7 @@ const server = https.createSecureServer(options, async (req, res) => {
     // }
     let requrl = path.join(__dirname, `../out/${req.url?.substr(1)}`);
     if(req.url === undefined) return;
-    res.setHeader('Cache-control', 'public, max-age=31536000');
+    res.setHeader('Cache-control', 'public, max-age=3600');
 
     //Enable compression
     res.setHeader('Content-Encoding', 'br');
